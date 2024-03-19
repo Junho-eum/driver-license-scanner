@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { FcExpand, FcNext,  } from "react-icons/fc";
 import { FiArrowRightCircle, FiCircle } from "react-icons/fi";
 import { IoReload } from "react-icons/io5";
@@ -111,9 +111,6 @@ export default function Debug() {
     const [isPagesExpanded, setIsPagesExpanded] = useState(false);
     const togglePages = () => {
       setIsPagesExpanded(!isPagesExpanded);
-    };
-    const handleChangePage = (event) => {
-      onCurrentPageChange(survey, event.target.value);
     };
 
     const [isCollapsed, setIsCollapsed] = useState(false);
