@@ -1,5 +1,6 @@
 {
   "name": "react-survey",
+  "homepage": ".",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,11 +11,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.1",
+    "mongoose": "^8.2.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.0.1",
+    "react-router-dom": "^6.22.3",
+    "survey-core": "^1.9.135",
     "survey-react": "^1.9.135",
-    "survey-react-ui": "^1.9.134"
+    "survey-react-ui": "^1.9.135"
   },
   "devDependencies": {
     "@types/react": "^18.2.64",

@@ -1,5 +1,4 @@
 import { Model } from 'survey-core';
-import * as SurveyReact from "survey-react";
 
 
 export function CameraConfirmationButton(Survey) {

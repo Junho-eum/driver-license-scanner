@@ -5,12 +5,18 @@ import { IoReload } from "react-icons/io5";
 
 import { Survey } from 'survey-react-ui';
 import { Model } from 'survey-core';
-import surveyJson from './survey';
-import TopBar from "./TopBar";
+import surveyJson from '../survey';
+import TopBar from "../web-components/TopBar";
 
+
+// custom widgets
+import { CameraConfirmationButton } from "../survey-components/ConfirmCamera";
 
 export default function Debug() {
     const survey = new Model(surveyJson);
+    
+    // custom widgets
+    CameraConfirmationButton(survey);
 
   const ResultBox = () => {
     const [data, setData] = useState(JSON.stringify(survey.data,null," "));

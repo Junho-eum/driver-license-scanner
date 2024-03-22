@@ -1,6 +1,6 @@
 import React from "react";
 
-import gwusec_logo from "./assets/gw_monogram_wht_rev.png";
+import gwusec_logo from "../assets/gw_monogram_wht_rev.png";
 
 export default function TopBar() {
   const [isOpen, setOpen] = React.useState(false);
