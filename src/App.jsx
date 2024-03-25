@@ -20,10 +20,12 @@ export default function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+
       // set cookie
       Cookies.set('prolificID', prolificID);
 
       // Redirect to the survey
+      window.location.href = '/survey';
       
     } catch (error) {
       console.error('Error setting cookie:', error);
