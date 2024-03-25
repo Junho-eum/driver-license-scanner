@@ -6,8 +6,31 @@ import gwusec_logo from "./assets/images/gwusec.svg";
 // Topbar
 import TopBar from './web-components/TopBar'
 
+// Cookies
+import { useState } from 'react';
+import Cookies from 'js-cookie';
 
 export default function App() {
+
+  const [prolificID, setProlificID] = useState('');
+  const handleChange = (e) => {
+    setProlificID(e.target.value); // Update state with the new value
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // set cookie
+      Cookies.set('prolificID', prolificID);
+
+      // Redirect to the survey
+      
+    } catch (error) {
+      console.error('Error setting cookie:', error);
+      // Handle any errors setting the cookie
+    }
+  };
+
   return (
     <>
     <TopBar />
@@ -27,8 +50,7 @@ export default function App() {
           </p>
         </div>
         <form 
-          action="?index"
-          method="post"
+          onSubmit={handleSubmit}
           className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
         >
           <div className="mb-4">
@@ -39,6 +61,7 @@ export default function App() {
               Prolific ID
             </label>
             <input
+              onChange={handleChange} 
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="id"
               name="prolificID"

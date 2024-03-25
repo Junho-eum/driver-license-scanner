@@ -16,7 +16,7 @@ export default function Debug() {
     const survey = new Model(surveyJson);
     
     // custom widgets
-    CameraConfirmationButton(survey);
+    //CameraConfirmationButton(survey);
 
   const ResultBox = () => {
     const [data, setData] = useState(JSON.stringify(survey.data,null," "));
