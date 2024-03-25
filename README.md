@@ -13,10 +13,25 @@ Currently, two official plugins are available:
 Start server:
 ```
 node ./server/server.js
-
 ```
-
 Start frontend:
 ```
 npm run dev
 ```
+
+## How To: Build Extension
+
+To re-build the extension, run `tsc.cmd ./extension/background.ts` in the main directory. In the [Extension](chrome://extensions/) page, select `Load unpacked` and upload the `extension/` directory.
+
+# Docker and MongoDB
+
+To start docker
+
+```
+docker compose up -d
+```
+
+To stop docker
+
+```
+docker compose stop
