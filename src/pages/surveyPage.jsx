@@ -1,11 +1,11 @@
 // survey info
-import { Survey } from 'survey-react-ui';
-import { Model } from 'survey-core';
-import surveyJson from '../survey';
-import {useEffect } from 'react';
+import { Survey } from "survey-react-ui";
+import { Model } from "survey-core";
+import surveyJson from "../survey";
+import { useEffect } from "react";
 
 // cookie
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
 // other components
 import TopBar from "../web-components/TopBar";
@@ -17,7 +17,6 @@ import TopBar from "../web-components/TopBar";
 
 // good resource: https://github.com/mongodb-developer/mern-stack-example/
 
-
 async function fetchData(cookieID) {
   // cookie data
   const response = await fetch(`http://localhost:8080/postsurvey`, {
@@ -25,25 +24,21 @@ async function fetchData(cookieID) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ prolificID: cookieID}),
-  })
+    body: JSON.stringify({ prolificID: cookieID }),
+  });
   if (!response.ok) {
     const message = `An error occurred: ${response.statusText}`;
     console.error(message);
     return { survey: {}, sessionData: cookieID };
-  }
-  else {
+  } else {
     const data = await response.json();
-    console.log(data)
+    console.log(data);
     const survey = data.survey;
     return { survey, sessionData: cookieID };
   }
-
 }
 
-
 export default function SurveyPage() {
-
   const cookieID = Cookies.get("prolificID");
   const survey = new Model(surveyJson);
   const data = fetchData(cookieID);
@@ -53,7 +48,7 @@ export default function SurveyPage() {
   //ExamConfirmationButton(survey);
   //CameraConfirmationButton(survey);
   //ExamNextButton(survey);
-  
+
   useEffect(() => {
     // Update data on server with better error handling
     const handleValueChanged = async () => {
@@ -67,15 +62,14 @@ export default function SurveyPage() {
         body: JSON.stringify({ prolificID: cData, surveyData: updatedData }),
       });
     };
-  
-    survey.onValueChanged.add(handleValueChanged);
-    }, [survey]);
 
-    
-    return (
-      <>
+    survey.onValueChanged.add(handleValueChanged);
+  }, [survey]);
+
+  return (
+    <>
       <TopBar />
       <Survey model={survey} />
-      </>
-    )
+    </>
+  );
 }

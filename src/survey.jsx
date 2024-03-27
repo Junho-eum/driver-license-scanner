@@ -3,7 +3,7 @@
 
 //AJA: We can probably read in HTML from some other page instead of having to embed it into the this giant JSON
 
-const surveyJson =  {
+const surveyJson = {
   pages: [
     {
       name: "consent_page",
