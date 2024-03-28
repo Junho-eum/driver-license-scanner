@@ -17,40 +17,39 @@ import TopBar from "../web-components/TopBar";
 
 // good resource: https://github.com/mongodb-developer/mern-stack-example/
 
-async function fetchData(cookieID) {
-  // cookie data
-  const response = await fetch(`http://localhost:8080/postsurvey`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ prolificID: cookieID }),
-  });
-  if (!response.ok) {
-    const message = `An error occurred: ${response.statusText}`;
-    console.error(message);
-    return { survey: {}, sessionData: cookieID };
-  } else {
-    const data = await response.json();
-    console.log(data);
-    const survey = data.survey;
-    return { survey, sessionData: cookieID };
-  }
+
+const storageItemKey = "survey-data";
+function saveSurveyData (survey) {
+  const data = survey.data;
+  data.pageNo = survey.currentPageNo;
+  window.localStorage.setItem(storageItemKey, JSON.stringify(data));
 }
 
-export default function SurveyPage() {
-  const cookieID = Cookies.get("prolificID");
-  const survey = new Model(surveyJson);
-  const data = fetchData(cookieID);
-  survey.data = data.survey;
 
+export default function SurveyPage() {
   // custom widgets
   //ExamConfirmationButton(survey);
   //CameraConfirmationButton(survey);
   //ExamNextButton(survey);
 
+  // getting stored value
+
+  const survey = new Model(surveyJson);
+  survey.onValueChanged.add(saveSurveyData);
+  survey.onCurrentPageChanged.add(saveSurveyData);
+
+  // Restore survey results
+  const prevData = window.localStorage.getItem(storageItemKey) || null;
+  if (prevData) {
+      const data = JSON.parse(prevData);
+      survey.data = data;
+      if (data.pageNo) {
+          survey.currentPageNo = data.pageNo;
+      }
+  }
+
   useEffect(() => {
-    // Update data on server with better error handling
+
     const handleValueChanged = async () => {
       const cData = Cookies.get("prolificID");
       const updatedData = survey.data;

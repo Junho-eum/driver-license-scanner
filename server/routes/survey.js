@@ -8,14 +8,13 @@ const router = express.Router();
 router.post("/", async (request, res) => {
   let collection = await db.collection("survey-results");
   const prolificID = request.body.prolificID;
-
   const record = await collection.findOne({ PID: prolificID });
 
   if (!record) {
-    console.log("in record: ");
     res.send({ survey: {}, sessionData: prolificID }).status(200);
   } else {
     const survey = record.survey;
+    console.log(survey);
     return { survey: survey, sessionData: prolificID };
   }
 });
@@ -29,6 +28,7 @@ router.patch("/", async (request, res) => {
     // get survey info and prolificID and store it in JSON
     const jsonData = JSON.stringify(data.surveyData);
     const prolificID = data.prolificID;
+
     const surveyData = {
       PID: prolificID,
       survey: jsonData,
