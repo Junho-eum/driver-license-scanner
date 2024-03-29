@@ -12,7 +12,7 @@ import TopBar from "../web-components/TopBar";
 
 // custom widgets
 //import { CameraConfirmationButton } from "../survey-components/ConfirmCamera";
-//import { ExamConfirmationButton } from "../survey-components/ExamConfirmationButton";
+import { ExamConfirmationButton } from "../survey-components/ExamConfirmationButton";
 //import { ExamNextButton } from "../survey-components/NextButton";
 
 // good resource: https://github.com/mongodb-developer/mern-stack-example/
@@ -27,8 +27,9 @@ function saveSurveyData (survey) {
 
 
 export default function SurveyPage() {
+  
   // custom widgets
-  //ExamConfirmationButton(survey);
+  ExamConfirmationButton(survey);
   //CameraConfirmationButton(survey);
   //ExamNextButton(survey);
 
