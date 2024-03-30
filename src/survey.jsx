@@ -364,7 +364,7 @@ const surveyJson = {
         },
         {
           type: "html",
-          name: "camera",
+          name: "confirm-exam",
         },
       ],
     },

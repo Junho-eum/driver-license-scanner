@@ -1,10 +1,10 @@
-import { Model } from "survey-core";
+import * as SurveyCore from 'survey-core';
 
 export function CameraConfirmationButton(Survey) {
-  const componentName = "camera";
+  const componentName = "confirm-camera";
   const activateCamera = {
     // Unique name for the widget
-    name: "camera",
+    name: "confirm-camera",
 
     // Check if the widget applies to the current question
     isFit: (question) => question.name === componentName,
@@ -14,5 +14,5 @@ export function CameraConfirmationButton(Survey) {
       "&nbsp;&nbsp;" +
       "</div>",
   };
-  Model.CustomWidgetCollection.Instance.add(activateCamera, "myCustomWidget");
+  SurveyCore.CustomWidgetCollection.Instance.addCustomWidget(activateCamera, "myCustomWidget");
 }

@@ -1,4 +1,4 @@
-import { default as surveyCore } from "survey-core";
+import * as SurveyCore from 'survey-core';
 
 export function ExamNextButton(Survey) {
   const componentName = "examnextbutton";
@@ -14,7 +14,7 @@ export function ExamNextButton(Survey) {
       "&nbsp;&nbsp;" +
       "</div>",
   };
-  surveyCore.CustomWidgetCollection.Instance.add(
+  SurveyCore.CustomWidgetCollection.Instance.addCustomWidget(
     activateCamera,
     "myCustomWidget"
   );

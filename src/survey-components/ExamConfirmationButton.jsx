@@ -1,10 +1,10 @@
-import { default as surveyCore } from "survey-core";
+import * as SurveyCore from 'survey-core';
 
 export function ExamConfirmationButton(Survey) {
-  const componentName = "custombutton";
+  const componentName = "confirm-exam";
   const checkExtensionID = {
-    // Unique name for the widget
-    name: "custombutton",
+    // Unique name for /the widget
+    name: "confirm-exam",
 
     // Check if the widget applies to the current question
     isFit: (question) => question.name === componentName,
@@ -27,7 +27,7 @@ export function ExamConfirmationButton(Survey) {
       });
     },
   };
-  surveyCore.CustomWidgetCollection.Instance.add(
+  SurveyCore.CustomWidgetCollection.Instance.addCustomWidget(
     checkExtensionID,
     "myCustomWidget"
   );

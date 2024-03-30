@@ -29,7 +29,7 @@ function saveSurveyData (survey) {
 export default function SurveyPage() {
   
   // custom widgets
-  ExamConfirmationButton(survey);
+  //ExamConfirmationButton(survey);
   //CameraConfirmationButton(survey);
   //ExamNextButton(survey);
 
