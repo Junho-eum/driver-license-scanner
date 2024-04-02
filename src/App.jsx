@@ -5,6 +5,7 @@ import gwusec_logo from "./assets/images/gwusec.svg";
 
 // Topbar
 import TopBar from "./web-components/TopBar";
+import VolumeBar from "./web-components/VolumeBar"
 
 // Cookies
 import { useState } from "react";
@@ -33,6 +34,7 @@ export default function App() {
   return (
     <>
       <TopBar />
+      <VolumeBar />
       <div>
         <div className="px-4 py-5 my-5 text-center">
           <img
