@@ -1,72 +1,91 @@
-import { useState, useEffect, useMemo } from "react";
-import { FcExpand, FcNext,  } from "react-icons/fc";
+import { useState, useEffect } from "react";
+import { FcExpand, FcNext } from "react-icons/fc";
 import { FiArrowRightCircle, FiCircle } from "react-icons/fi";
 import { IoReload } from "react-icons/io5";
 
-import { Survey } from 'survey-react-ui';
-import { Model } from 'survey-core';
-import surveyJson from './survey';
-import TopBar from "./TopBar";
+import { Survey } from "survey-react-ui";
+import { Model } from "survey-core";
+import surveyJson from "../survey";
+import TopBar from "../web-components/TopBar";
 
+
+
+// custom widgets
+//import { CameraConfirmationButton } from "../survey-components/ConfirmCamera";
+import { ExamConfirmationButton } from "../survey-components/ExamConfirmationButton";
 
 export default function Debug() {
-    const survey = new Model(surveyJson);
+  const survey = new Model(surveyJson);
+
+  // custom widgets
+  ExamConfirmationButton(survey);
 
   const ResultBox = () => {
-    const [data, setData] = useState(JSON.stringify(survey.data,null," "));
+    const [data, setData] = useState(JSON.stringify(survey.data, null, " "));
 
     survey.onValueChanged.add((survey, { name, question, value }) => {
-        setData(JSON.stringify(survey.data,null," "))
-      });
+      setData(JSON.stringify(survey.data, null, " "));
+    });
 
     useEffect(() => {
-      setData(JSON.stringify(survey.data,null," "));
-     }, []);
-  
+      setData(JSON.stringify(survey.data, null, " "));
+    }, []);
+
     return (
       <div>
-      <button className="text-white text-lg "
-      onClick={() => {setData(JSON.stringify(survey.data,null," "))}}>
-        <IoReload />
-      </button>
-      <div className="whitespace-pre-wrap h-64 overflow-y-scroll p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-      {data}
-      </div> 
+        <button
+          className="text-white text-lg "
+          onClick={() => {
+            setData(JSON.stringify(survey.data, null, " "));
+          }}
+        >
+          <IoReload />
+        </button>
+        <div className="whitespace-pre-wrap h-64 overflow-y-scroll p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+          {data}
+        </div>
       </div>
-    )
+    );
   };
 
-  
-  
   const Pages = () => {
     const [pages, setPages] = useState(survey.pages);
     const [curPage, setCurPage] = useState(survey.currentPage);
 
     survey.onValueChanged.add((survey, { name, question, value }) => {
-        setCurPage(survey.currentPage);
-      });
+      setCurPage(survey.currentPage);
+    });
 
     return (
       <div>
-      <button className="text-white text-lg"
-      onClick={() => {setCurPage(survey.currentPage)}}>
-        <IoReload />
-      </button>    
+        <button
+          className="text-white text-lg"
+          onClick={() => {
+            setCurPage(survey.currentPage);
+          }}
+        >
+          <IoReload />
+        </button>
         <ul className="dark:text-white text-sm ml-2">
           {pages
             .filter((page) => page.isVisible)
-            .map((page) => (                            
-                <li className="my-2" key={page.name}>
-                  {curPage === page ?
-                  (<span className="float-left mr-2"><FiArrowRightCircle /></span>) :
-                  (<span className="float-left mr-2"><FiCircle /></span>) 
-                  }
-                 {survey.visiblePages.indexOf(page) + 1}-{page.name}
-                </li>              
+            .map((page) => (
+              <li className="my-2" key={page.name}>
+                {curPage === page ? (
+                  <span className="float-left mr-2">
+                    <FiArrowRightCircle />
+                  </span>
+                ) : (
+                  <span className="float-left mr-2">
+                    <FiCircle />
+                  </span>
+                )}
+                {survey.visiblePages.indexOf(page) + 1}-{page.name}
+              </li>
             ))}
         </ul>
-    </div>
-    )
+      </div>
+    );
   };
 
   const Sidebar = () => {
@@ -111,9 +130,6 @@ export default function Debug() {
     const [isPagesExpanded, setIsPagesExpanded] = useState(false);
     const togglePages = () => {
       setIsPagesExpanded(!isPagesExpanded);
-    };
-    const handleChangePage = (event) => {
-      onCurrentPageChange(survey, event.target.value);
     };
 
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -204,13 +220,14 @@ export default function Debug() {
           <ul className="space-y-2 font-medium">
             <li
               onClick={togglePages}
-              className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+              className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+            >
               <span className="mr-2">
                 {isPagesExpanded ? <FcExpand /> : <FcNext />}
               </span>
               Pages
             </li>
-            {isPagesExpanded && (<Pages />)}
+            {isPagesExpanded && <Pages />}
           </ul>
 
           <li
@@ -218,11 +235,12 @@ export default function Debug() {
             onClick={handleClick}
             aria-expanded={!isCollapsed}
           >
-            <span className="mr-2">{isCollapsed ? <FcExpand /> : <FcNext />}</span>
+            <span className="mr-2">
+              {isCollapsed ? <FcExpand /> : <FcNext />}
+            </span>
             Survey Results
           </li>
-          {isCollapsed &&
-            (<ResultBox s/>)}
+          {isCollapsed && <ResultBox s />}
 
           <h6 className="flex text-lg py-4 dark:text-white">
             <span>Survey Info</span>
@@ -266,32 +284,34 @@ export default function Debug() {
 
   return (
     <>
-    <TopBar/>
-    
-    <div> 
-      <nav className="bg-white border-gray-200 dark:bg-gray-900">
-        <div className="max-w-screen-xl flex flex-wrap items-center justify-end mx-auto p-4">
-          <div className="hidden w-full md:block md:w-auto" id="navbar-default">
-            <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-              <li>
-                <span className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
-                  Debug Mode
-                </span>
-              </li>
-              {/* <li className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
+      <TopBar />
+
+      <div>
+        <nav className="bg-white border-gray-200 dark:bg-gray-900">
+          <div className="max-w-screen-xl flex flex-wrap items-center justify-end mx-auto p-4">
+            <div
+              className="hidden w-full md:block md:w-auto"
+              id="navbar-default"
+            >
+              <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+                <li>
+                  <span className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
+                    Debug Mode
+                  </span>
+                </li>
+                {/* <li className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
                 <Link to="..">Leave Debug Mode</Link>
               </li> */}
-            </ul>
+              </ul>
+            </div>
           </div>
+        </nav>
+
+        <div className="p-4 sm:ml-64">
+          <Survey model={survey} />
         </div>
-      </nav>
-      
-      <div className="p-4 sm:ml-64">
-      <Survey model={survey} />
+        <Sidebar />
       </div>
-      <Sidebar />
-      
-    </div>
     </>
   );
 }
