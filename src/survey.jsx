@@ -378,6 +378,16 @@ const surveyJson = {
         },
       ],
     },
+    {
+      name: "confirm_camera_page",
+      elements: [
+        {
+          type: "html",
+          name: "confirm_camera",
+          html: "<div><camera-start></camera-start></div>",
+        },
+      ],
+    },
   ],
   sendResultOnPageNext: true,
   showPrevButton: false,

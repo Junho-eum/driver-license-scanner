@@ -10,6 +10,8 @@ import Cookies from "js-cookie";
 // other components
 import TopBar from "../web-components/TopBar";
 
+
+
 // custom widgets
 import { CameraConfirmationButton } from "../survey-components/ConfirmCamera";
 import { ExamConfirmationButton } from "../survey-components/ExamConfirmationButton";
@@ -32,8 +34,6 @@ export default function SurveyPage() {
   ExamConfirmationButton(survey);
   CameraConfirmationButton(survey);
   ExamNextButton(survey);
-
-  // getting stored value
 
   const survey = new Model(surveyJson);
   survey.onValueChanged.add(saveSurveyData);
