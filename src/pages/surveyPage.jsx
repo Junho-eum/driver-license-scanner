@@ -30,14 +30,15 @@ function saveSurveyData (survey) {
 
 export default function SurveyPage() {
   
+  const survey = new Model(surveyJson);
+  survey.onValueChanged.add(saveSurveyData);
+  survey.onCurrentPageChanged.add(saveSurveyData);
+
   // custom widgets
   ExamConfirmationButton(survey);
   CameraConfirmationButton(survey);
   ExamNextButton(survey);
 
-  const survey = new Model(surveyJson);
-  survey.onValueChanged.add(saveSurveyData);
-  survey.onCurrentPageChanged.add(saveSurveyData);
 
   // Restore survey results
   const prevData = window.localStorage.getItem(storageItemKey) || null;

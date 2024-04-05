@@ -11,14 +11,18 @@ import TopBar from "../web-components/TopBar";
 
 
 // custom widgets
-//import { CameraConfirmationButton } from "../survey-components/ConfirmCamera";
+import { CameraConfirmationButton } from "../survey-components/ConfirmCamera";
 import { ExamConfirmationButton } from "../survey-components/ExamConfirmationButton";
+import { ExamNextButton } from "../survey-components/NextButton";
+
 
 export default function Debug() {
   const survey = new Model(surveyJson);
 
   // custom widgets
   ExamConfirmationButton(survey);
+  CameraConfirmationButton(survey);
+  ExamNextButton(survey);
 
   const ResultBox = () => {
     const [data, setData] = useState(JSON.stringify(survey.data, null, " "));

@@ -15,8 +15,8 @@ export function ExamConfirmationButton(Survey) {
       "</div>",
 
     // Render the widget after DOM element is created
-    afterRender: (question, el) => {
-      const buttonCustom = el.getElementsByTagName("button")[0];
+    afterRender: () => {
+      const buttonCustom = document.getElementById("confirm_buttom");
       buttonCustom.addEventListener("click", function () {
         // Implement your button's logic here
         if (document.getElementById("GWSECExtensionID")) {

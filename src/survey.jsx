@@ -1,8 +1,5 @@
 //images
 //import { extension } from "../assets/images/extension.png";
-
-//AJA: We can probably read in HTML from some other page instead of having to embed it into the this giant JSON
-
 const surveyJson = {
   pages: [
     {
@@ -49,6 +46,10 @@ const surveyJson = {
               text: "I consent to participate in the research",
             },
           ],
+        },
+        {
+          type: "html",
+          name: "exam_next_button",
         },
       ],
     },
@@ -239,7 +240,12 @@ const surveyJson = {
             },
           ],
         },
+        {
+          type: "html",
+          name: "exam_next_button",
+        },
       ],
+      
     },
     {
       name: "pre-quiz questionaire",
@@ -352,6 +358,10 @@ const surveyJson = {
           isRequired: true,
           choices: ["Yes", "No", "Prefer not to answer"],
         },
+        {
+          type: "html",
+          name: "exam_next_button",
+        },
       ],
     },
     {
@@ -366,6 +376,10 @@ const surveyJson = {
           type: "html",
           name: "confirm-exam",
         },
+        {
+          type: "html",
+          name: "exam_next_button",
+        },
       ],
     },
     {
@@ -375,6 +389,10 @@ const surveyJson = {
           type: "html",
           name: "survey_instructions",
           html: '<div><h4>Thank you for your interest in our survey.</h4><p class="lead">Your answers are important to us!</p><hr class="my-4"><p>Please read the following instructions carefully:</p><ul><li>Take your time in reading and answering the questions.</li><li>Answer the questions as accurately as possible.</li><li>It is okay to say that you don’t know an answer.</li><li>Some questions asked for estimations, so it’s okay to guess if you don’t know the exact answer.</li></ul>\n</div>',
+        },
+        {
+          type: "html",
+          name: "exam_next_button",
         },
       ],
     },
@@ -386,6 +404,10 @@ const surveyJson = {
           name: "confirm_camera",
           html: "<div><camera-start></camera-start></div>",
         },
+        {
+          type: "html",
+          name: "exam_next_button",
+        },
       ],
     },
   ],
@@ -395,7 +417,7 @@ const surveyJson = {
   showProgressBar: "bottom",
   showQuestionNumbers: "off",
   widthMode: "responsive",
-  showNavigationButtons: true,
+  showNavigationButtons: false,
   clearInvisibleValues: "onHidden",
   renderAs: "standard",
 };

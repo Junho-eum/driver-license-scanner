@@ -1,18 +1,30 @@
 import * as SurveyCore from 'survey-core';
 
 export function CameraConfirmationButton(Survey) {
-  const componentName = "confirm-camera";
+  const componentName = "confirm_camera";
   const activateCamera = {
     // Unique name for the widget
-    name: "confirm-camera",
+    name: "confirm_camera",
 
     // Check if the widget applies to the current question
     isFit: (question) => question.name === componentName,
     htmlTemplate:
       "<div style='height: 39px'>" +
-      "<button type='button' id='request_camera_permission' class='bg-gw-primary-blue rounded px-8 py-4 mb-5 shadow-lg text-2xl font-extrabold text-white'> Confirm Camera Permissions </button>" +
+      "<button type='button' id='confirm_camera' class='bg-gw-primary-blue rounded px-8 py-4 mb-5 shadow-lg text-2xl font-extrabold text-white'> Confirm Camera Permissions </button>" +
       "&nbsp;&nbsp;" +
       "</div>",
-  };
+
+    afterRender: () => {
+      const buttonCustom = document.getElementById("confirm_camera");
+      buttonCustom.addEventListener("click", function () {
+        // Implement your button's logic here
+        if (document.getElementById("GWSECExtensionID")) {
+          return console.log("true");
+        } else {
+          return console.log("false");
+        }
+      });
+    },
+};
   SurveyCore.CustomWidgetCollection.Instance.addCustomWidget(activateCamera, "myCustomWidget");
 }
