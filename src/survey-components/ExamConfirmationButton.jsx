@@ -1,4 +1,4 @@
-import * as SurveyCore from 'survey-core';
+import * as SurveyCore from "survey-core";
 
 export function ExamConfirmationButton(Survey) {
   const componentName = "confirm-exam";

@@ -1,4 +1,4 @@
-import * as SurveyCore from 'survey-core';
+import * as SurveyCore from "survey-core";
 
 export function ExamNextButton(Survey) {
   const componentName = "exam_next_button";
@@ -16,22 +16,18 @@ export function ExamNextButton(Survey) {
 
     afterRender: () => {
       const buttonCustom = document.getElementById("exam_next_button");
-      {Survey.isLastPage ? (
-        buttonCustom.innerText = "Complete"
-      ) : (
-        buttonCustom.innerText = "Next"
-      )}
+      {
+        Survey.isLastPage
+          ? (buttonCustom.innerText = "Complete")
+          : (buttonCustom.innerText = "Next");
+      }
 
       buttonCustom.addEventListener("click", function () {
-        {Survey.isLastPage ? (
-          Survey.completeLastPage()
-        ) : (
-          Survey.nextPage()
-        )}
+        {
+          Survey.isLastPage ? Survey.completeLastPage() : Survey.nextPage();
+        }
       });
     },
-
-      
   };
   SurveyCore.CustomWidgetCollection.Instance.addCustomWidget(
     activateCamera,

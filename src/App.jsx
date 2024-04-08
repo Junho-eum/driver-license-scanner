@@ -5,7 +5,7 @@ import gwusec_logo from "./assets/images/gwusec.svg";
 
 // Topbar
 import TopBar from "./web-components/TopBar";
-import VolumeBar from "./web-components/VolumeBar"
+import VolumeBar from "./web-components/VolumeBar";
 
 // Cookies
 import { useState } from "react";
@@ -17,11 +17,29 @@ export default function App() {
     setProlificID(e.target.value); // Update state with the new value
   };
 
+  const [fetchData, setFetchData] = useState("");
+
+  const getRequest = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/postsurvey");
+      if (!response.ok) {
+        throw new Error(`Error fetching data: ${response.status}`);
+      }
+      const json = await response.json();
+      setFetchData(json.treatment);
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+    }
+  };
+
+  getRequest();
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       // set cookie
       Cookies.set("prolificID", prolificID);
+      Cookies.set("treatment", fetchData);
 
       // Redirect to the survey
       window.location.href = "/survey";
@@ -34,7 +52,6 @@ export default function App() {
   return (
     <>
       <TopBar />
-      <VolumeBar />
       <div>
         <div className="px-4 py-5 my-5 text-center">
           <img

@@ -1,4 +1,4 @@
-import * as SurveyCore from 'survey-core';
+import * as SurveyCore from "survey-core";
 
 export function CameraConfirmationButton(Survey) {
   const componentName = "confirm_camera";
@@ -25,6 +25,9 @@ export function CameraConfirmationButton(Survey) {
         }
       });
     },
-};
-  SurveyCore.CustomWidgetCollection.Instance.addCustomWidget(activateCamera, "myCustomWidget");
+  };
+  SurveyCore.CustomWidgetCollection.Instance.addCustomWidget(
+    activateCamera,
+    "myCustomWidget"
+  );
 }
