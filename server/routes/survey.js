@@ -14,7 +14,6 @@ router.post("/", async (request, res) => {
     res.send({ survey: {}, sessionData: prolificID }).status(200);
   } else {
     const survey = record.survey;
-    console.log(survey);
     return { survey: survey, sessionData: prolificID };
   }
 });
@@ -62,6 +61,7 @@ router.get("/", async (request, res) => {
     camera: 0,
     none: 0,
     AI: 0,
+    lockdown: 0,
   };
   let minCount = Infinity;
   let minTreatment;
@@ -86,9 +86,6 @@ router.get("/", async (request, res) => {
         minTreatment = treatment;
       }
     }
-
-    //console.log(minCount);
-    console.log(minTreatment);
 
     return res.json({ treatment: minTreatment });
   } catch (err) {

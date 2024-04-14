@@ -1,7 +1,7 @@
 import { MongoClient } from "mongodb";
 
 let connectionString =
-  process.env.CONNECTION_STRING || "mongodb://127.0.0.1:27017/";
+  process.env.CONNECTION_STRING || "mongodb://root:example@localhost:27000/";
 console.log(connectionString);
 
 if (!connectionString) {

@@ -67,15 +67,14 @@ export default function SurveyPage() {
     survey.onValueChanged.add(handleValueChanged);
   }, [survey]);
 
+  // <CameraBox />
+  // <div className="ml-56">
+  //</div>
   return (
     <>
       <TopBar />
 
-      <CameraBox />
-
-      <div className="ml-56">
-        <Survey model={survey} />
-      </div>
+      <Survey model={survey} />
     </>
   );
 }
