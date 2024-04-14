@@ -6,6 +6,7 @@ const router = express.Router();
 
 // This section will help you get a single record by id
 router.post("/", async (request, res) => {
+  console.log("Server: POST: "+request);
   let collection = await db.collection("survey-results");
   const prolificID = request.body.prolificID;
   const record = await collection.findOne({ PID: prolificID });

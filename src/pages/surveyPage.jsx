@@ -9,8 +9,8 @@ import Cookies from "js-cookie";
 
 // other components
 import TopBar from "../web-components/TopBar";
-import Webcam from "react-webcam";
-import CameraBox from "../web-components/CameraBox";
+//import Webcam from "react-webcam";
+//import CameraBox from "../web-components/CameraBox";
 
 // custom widgets
 import { CameraConfirmationButton } from "../survey-components/ConfirmCamera";
@@ -46,12 +46,15 @@ export default function SurveyPage() {
     }
   }
 
-  useEffect(() => {
-    const handleValueChanged = async () => {
+  
+  //AJA: moved this to a direct call back function -- also maybe we save results only on next?
+  survey.onValueChanged.add( async (survey, { name, question, value }) => {
       const cDataProlific = Cookies.get("prolificID");
       const cDataTreatment = Cookies.get("treatment");
       const updatedData = survey.data;
-      await fetch("http://localhost:8080/postsurvey", {
+      console.log("SurveyJS: updating values");
+      
+      await fetch("/postsurvey", { //This should be read from an .env so it can change, right now assuming everything running on the same port
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -62,10 +65,7 @@ export default function SurveyPage() {
           treatment: cDataTreatment,
         }),
       });
-    };
-
-    survey.onValueChanged.add(handleValueChanged);
-  }, [survey]);
+    });
 
   // <CameraBox />
   // <div className="ml-56">
