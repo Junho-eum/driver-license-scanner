@@ -19,9 +19,10 @@ export default function App() {
 
   const [fetchData, setFetchData] = useState("");
 
+  
   const getRequest = async () => {
     try {
-      const response = await fetch("http://localhost:8080/postsurvey");
+      const response = await fetch("/postsurvey");
       if (!response.ok) {
         throw new Error(`Error fetching data: ${response.status}`);
       }

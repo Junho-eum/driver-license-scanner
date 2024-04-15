@@ -2,7 +2,7 @@
 import { Survey } from "survey-react-ui";
 import { Model } from "survey-core";
 import surveyJson from "../survey";
-import { useEffect } from "react";
+//import { useEffect } from "react";
 
 // cookie
 import Cookies from "js-cookie";
@@ -54,7 +54,8 @@ export default function SurveyPage() {
       const updatedData = survey.data;
       console.log("SurveyJS: updating values");
       
-      await fetch("/postsurvey", { //This should be read from an .env so it can change, right now assuming everything running on the same port
+      
+      await fetch("/postsurvey", { 
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
