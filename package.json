@@ -9,7 +9,7 @@
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "server": "vite build; node --env-file .env server/server.js"
+    "serve": "vite build; node --env-file .env server/server.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
