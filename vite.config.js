@@ -1,8 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-const exPort = process.env.EXPRESS_PORT || 8080;
-
 
 // https://vitejs.dev/config/
 export default defineConfig({
