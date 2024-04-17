@@ -1,6 +1,5 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -9,7 +8,7 @@ export default defineConfig({
   server: {
     //establish a proxy from the dev server to express for the purpose of development
     proxy: {
-      "/postsurvey": 'http://localhost:8888',
-    }
-  }
-})
+      "/postsurvey": "http://localhost:8888",
+    },
+  },
+});

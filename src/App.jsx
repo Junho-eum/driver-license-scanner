@@ -19,7 +19,6 @@ export default function App() {
 
   const [fetchData, setFetchData] = useState("");
 
-  
   const getRequest = async () => {
     try {
       const response = await fetch("/postsurvey");
