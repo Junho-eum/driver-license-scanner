@@ -11,11 +11,15 @@ import VolumeBar from "./web-components/VolumeBar";
 import { useState } from "react";
 import Cookies from "js-cookie";
 
+import { useLocation } from 'react-router-dom';
+
 export default function App() {
-  const [prolificID, setProlificID] = useState("");
-  const handleChange = (e) => {
-    setProlificID(e.target.value); // Update state with the new value
-  };
+
+
+  var location = useLocation();
+  location = (location.search).split("=");
+  //console.log(location[1]);
+
 
   const [fetchData, setFetchData] = useState("");
 
@@ -36,9 +40,11 @@ export default function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const submittedProlificID = e.target.elements.prolificID.value;
+
     try {
       // set cookie
-      Cookies.set("prolificID", prolificID);
+      Cookies.set("prolificID", submittedProlificID);
       Cookies.set("treatment", fetchData);
 
       // Redirect to the survey
@@ -79,12 +85,11 @@ export default function App() {
                 Prolific ID
               </label>
               <input
-                onChange={handleChange}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="id"
                 name="prolificID"
-                type="text"
-                placeholder="Prolific ID"
+                value={location[1]}
+                readOnly
               />
             </div>
             <br />
