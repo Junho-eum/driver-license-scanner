@@ -26,7 +26,7 @@ router.patch("/", async (request, res) => {
     const collection = await db.collection("survey-results");
 
     // get survey info and prolificID and store it in JSON
-    const jsonData = JSON.stringify(data.surveyData);
+    const jsonData = data.surveyData;
     const prolificID = data.prolificID;
     const treatmentID = data.treatment;
 
@@ -55,6 +55,7 @@ router.patch("/", async (request, res) => {
   }
 });
 
+// GET is just used to choose a treatment
 router.get("/", async (request, res) => {
   const treatments = ["microphone", "camera", "none", "AI"];
   const treatmentMinCounts = {

@@ -293,6 +293,10 @@ const surveyJson = {
             "Based on the description above, have you taken an online proctored exam or assessment?",
           choices: ["Yes", "No", "Unsure"],
         },
+        {
+          type: "html",
+          name: "exam_next_button",
+        },
       ],
     },
     {

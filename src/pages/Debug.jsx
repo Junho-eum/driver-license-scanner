@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect} from "react";
+import { Link } from "react-router-dom";
 import { FcExpand, FcNext } from "react-icons/fc";
 import { FiArrowRightCircle, FiCircle } from "react-icons/fi";
 import { IoReload } from "react-icons/io5";
@@ -13,6 +14,15 @@ import { CameraConfirmationButton } from "../survey-components/ConfirmCamera";
 import { ExamConfirmationButton } from "../survey-components/ExamConfirmationButton";
 import { ExamNextButton } from "../survey-components/NextButton";
 
+const storageItemKey = "survey-data";
+
+function saveSurveyData(survey) {
+  const data = survey.data;
+  data.pageNo = survey.currentPageNo;
+  window.localStorage.setItem(storageItemKey, JSON.stringify(data));
+}
+
+
 export default function Debug() {
   const survey = new Model(surveyJson);
 
@@ -20,6 +30,18 @@ export default function Debug() {
   ExamConfirmationButton(survey);
   CameraConfirmationButton(survey);
   ExamNextButton(survey);
+
+
+  const prevData = window.localStorage.getItem(storageItemKey) || null;
+  if (prevData) {
+    const data = JSON.parse(prevData);
+    survey.data = data;
+    if (data.pageNo) {
+      survey.currentPageNo = data.pageNo;
+    }
+  }
+  survey.onValueChanged.add(saveSurveyData);
+  survey.onCurrentPageChanged.add(saveSurveyData);
 
   const ResultBox = () => {
     const [data, setData] = useState(JSON.stringify(survey.data, null, " "));
@@ -300,9 +322,9 @@ export default function Debug() {
                     Debug Mode
                   </span>
                 </li>
-                {/* <li className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
+                <li className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
                 <Link to="..">Leave Debug Mode</Link>
-              </li> */}
+              </li>
               </ul>
             </div>
           </div>
