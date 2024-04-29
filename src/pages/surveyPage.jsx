@@ -45,14 +45,13 @@ export default function SurveyPage() {
       survey.currentPageNo = data.pageNo;
     }
   }
-
   
   //AJA: moved this to a direct call back function -- also maybe we save results only on next?
   survey.onValueChanged.add( async (survey, { name, question, value }) => {
       const cDataProlific = Cookies.get("prolificID");
       const cDataTreatment = Cookies.get("treatment");
       const updatedData = survey.data;
-      console.log("SurveyJS: updating values");
+      const WD = "false";
       
       
       await fetch("/postsurvey", { 
@@ -64,6 +63,7 @@ export default function SurveyPage() {
           prolificID: cDataProlific,
           surveyData: updatedData,
           treatment: cDataTreatment,
+          withdrawn: WD,
         }),
       });
     });

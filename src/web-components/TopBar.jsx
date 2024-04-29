@@ -1,15 +1,52 @@
 
 import gwusec_logo from "../assets/gw_monogram_wht_rev.png";
+
 // survey info
-import { Survey } from "survey-react-ui";
 import { useState} from "react";
+import { Model } from "survey-core";
+const storageItemKey = "survey-data";
+
+// cookie
+import Cookies from "js-cookie";
+
+// checks if there's an actual survey in storage
+async function checkWithdraw() {
+  if (window.localStorage.getItem(storageItemKey) == null){
+    alert("No survey detected. Please withdraw once you started the survey.");
+  }
+  else{
+    const cDataProlific = Cookies.get("prolificID");
+    const cDataTreatment = Cookies.get("treatment");
+    const survey = new Model(JSON.parse(window.localStorage.getItem(storageItemKey)));
+    const updatedData = survey.data;
+    const WD = "true";
+
+    await fetch("/postsurvey", { 
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        prolificID: cDataProlific,
+        surveyData: updatedData,
+        treatment: cDataTreatment,
+        withdrawn: WD,
+      }),
+    });
+
+    survey.setValue('has_withdrawn', 'true');
+    survey.doComplete();
+    alert("Successfully withdrawn.");
+  }
+  
+}
 
 export default function TopBar() {
 
   const [isSurveyOpen, setIsSurveyOpen] = useState(false);
-  const handleCloseSurvey = () => setIsSurveyOpen(false);
+  const handleCloseSurvey = () => setIsSurveyOpen(!isSurveyOpen);
   const handleWithdrawSurvey = () => {
-    alert("Withdrawing from Survey"); // Placeholder for now
+    checkWithdraw();
     handleCloseSurvey();
   };
 
@@ -45,34 +82,26 @@ export default function TopBar() {
         </div>
 
         {isSurveyOpen && (
-          <div className="modal">
-            <div className="modal-header">
-              <h5 className="modal-title" id="withdrawDialogBackdropLabel">
+          <div className="bg-dark p-4">
+            <div className="">
+              <h5 className="card-title text-white text-xl font-bold h4 my-2" id="withdrawDialogBackdropLabel">
                 Withdraw from the Survey
               </h5>
-              <button
-                type="button"
-                className="btn-close"
-                aria-label="Close"
-                onClick={handleCloseSurvey}
-              >
-                {/* Add close icon */}
-              </button>
             </div>
-            <div className="modal-body">
+            <div className="text-white h4 my-2">
               Do you really want to withdraw from the survey?
             </div>
             <div className="modal-footer">
               <button
                 type="button"
-                className="btn btn-success"
+                className="buttonSuccess"
                 onClick={handleCloseSurvey}
               >
                 No, take me back
               </button>
               <button
                 type="button"
-                className="btn btn-danger"
+                className="buttonDanger"
                 onClick={handleWithdrawSurvey}
               >
                 Yes, I want to withdraw
@@ -80,7 +109,7 @@ export default function TopBar() {
             </div>
           </div>
         )}
-        <button className="opt-out" onClick={() => setIsSurveyOpen(true)}>Opt-Out</button>
+        <button className="opt-out" onClick={handleCloseSurvey}>Opt-Out</button>
 
       </div>
     </nav>

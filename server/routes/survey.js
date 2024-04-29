@@ -5,6 +5,7 @@ import db from "../db/connection.js";
 const router = express.Router();
 
 // This section will help you get a single record by id
+// AH: This is currently NOT USED. 
 router.post("/", async (request, res) => {
   console.log("Server: POST: "+request);
   let collection = await db.collection("survey-results");
@@ -19,6 +20,7 @@ router.post("/", async (request, res) => {
   }
 });
 
+// either add a new record or edit an existing one
 router.patch("/", async (request, res) => {
   try {
     // data from fetch
@@ -29,11 +31,13 @@ router.patch("/", async (request, res) => {
     const jsonData = data.surveyData;
     const prolificID = data.prolificID;
     const treatmentID = data.treatment;
-
+    const isWithdrawn = data.withdrawn;
+    
     const surveyData = {
       PID: prolificID,
       survey: jsonData,
       treatment: treatmentID,
+      withdrawn: isWithdrawn,
     };
 
     const p = await collection.findOne({ PID: prolificID });
@@ -41,7 +45,8 @@ router.patch("/", async (request, res) => {
       const result = await collection.updateOne(
         { PID: prolificID },
         { $set: { survey: jsonData } },
-        { treatment: treatmentID }
+        { treatment: treatmentID },
+        {withdrawn: isWithdrawn}
       );
       console.log(result);
       return result;
