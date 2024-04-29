@@ -1,5 +1,5 @@
 .opt-out {
-  @apply text-lg font-medium border rounded-md p-2 bg-white ring-gw-accent-gold border-black ring-2 hover:ring-4 hover:bg-gw-accent-blue hover:text-white;
+  @apply text-base font-medium border rounded-md p-2 bg-white ring-gw-accent-gold border-black ring-2 hover:ring-4 hover:bg-gw-accent-blue hover:text-white;
 }
 
 

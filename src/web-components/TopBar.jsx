@@ -1,7 +1,17 @@
 
 import gwusec_logo from "../assets/gw_monogram_wht_rev.png";
+// survey info
+import { Survey } from "survey-react-ui";
+import { useState} from "react";
 
 export default function TopBar() {
+
+  const [isSurveyOpen, setIsSurveyOpen] = useState(false);
+  const handleCloseSurvey = () => setIsSurveyOpen(false);
+  const handleWithdrawSurvey = () => {
+    alert("Withdrawing from Survey"); // Placeholder for now
+    handleCloseSurvey();
+  };
 
   return (
     <nav className="bg-gw-primary-blue text-color-white ">
@@ -19,9 +29,6 @@ export default function TopBar() {
             </span>
           </div>
 
-          <div className="place-self-center">
-            <span className="opt-out">Opt-Out</span>
-          </div>
         </div>
         <div>
           <div className="bg-dark p-4">
@@ -36,6 +43,45 @@ export default function TopBar() {
             </h4>
           </div>
         </div>
+
+        {isSurveyOpen && (
+          <div className="modal">
+            <div className="modal-header">
+              <h5 className="modal-title" id="withdrawDialogBackdropLabel">
+                Withdraw from the Survey
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                aria-label="Close"
+                onClick={handleCloseSurvey}
+              >
+                {/* Add close icon */}
+              </button>
+            </div>
+            <div className="modal-body">
+              Do you really want to withdraw from the survey?
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-success"
+                onClick={handleCloseSurvey}
+              >
+                No, take me back
+              </button>
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={handleWithdrawSurvey}
+              >
+                Yes, I want to withdraw
+              </button>
+            </div>
+          </div>
+        )}
+        <button className="opt-out" onClick={() => setIsSurveyOpen(true)}>Opt-Out</button>
+
       </div>
     </nav>
   );
