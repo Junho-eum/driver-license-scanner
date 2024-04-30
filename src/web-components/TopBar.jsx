@@ -1,50 +1,50 @@
-
 import gwusec_logo from "../assets/gw_monogram_wht_rev.png";
 
 // survey info
-import { useState} from "react";
+import { useState } from "react";
 import { Model } from "survey-core";
 const storageItemKey = "survey-data";
 
 // cookie
 import Cookies from "js-cookie";
 
-// checks if there's an actual survey in storage
-async function checkWithdraw() {
-  if (window.localStorage.getItem(storageItemKey) == null){
-    alert("No survey detected. Please withdraw once you started the survey.");
-  }
-  else{
-    const cDataProlific = Cookies.get("prolificID");
-    const cDataTreatment = Cookies.get("treatment");
-    const survey = new Model(JSON.parse(window.localStorage.getItem(storageItemKey)));
-    const updatedData = survey.data;
-    const WD = "true";
-
-    await fetch("/postsurvey", { 
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        prolificID: cDataProlific,
-        surveyData: updatedData,
-        treatment: cDataTreatment,
-        withdrawn: WD,
-      }),
-    });
-
-    survey.setValue('has_withdrawn', 'true');
-    survey.doComplete();
-    alert("Successfully withdrawn.");
-  }
-  
-}
-
 export default function TopBar() {
-
   const [isSurveyOpen, setIsSurveyOpen] = useState(false);
   const handleCloseSurvey = () => setIsSurveyOpen(!isSurveyOpen);
+
+  // checks if there's an actual survey in storage
+  const checkWithdraw = async () => {
+    if (window.localStorage.getItem(storageItemKey) == null) {
+      alert("No survey detected. Please withdraw once you started the survey.");
+    } else {
+      console.log("here");
+      const cDataProlific = Cookies.get("prolificID");
+      const cDataTreatment = Cookies.get("treatment");
+      const survey = new Model(
+        JSON.parse(window.localStorage.getItem(storageItemKey))
+      );
+      const updatedData = survey.data;
+      const WD = "true";
+
+      await fetch("/postsurvey", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          prolificID: cDataProlific,
+          surveyData: updatedData,
+          treatment: cDataTreatment,
+          withdrawn: WD,
+        }),
+      });
+
+      survey.setValue("has_withdrawn", "true");
+      survey.doComplete();
+      alert("Successfully withdrawn.");
+    }
+  };
+
   const handleWithdrawSurvey = () => {
     checkWithdraw();
     handleCloseSurvey();
@@ -65,13 +65,11 @@ export default function TopBar() {
               Exam Proctoring
             </span>
           </div>
-
         </div>
         <div>
           <div className="bg-dark p-4">
             <h5 className=" card-title text-white h4">
-              <strong>Research Study:</strong>{" "}
-              <em>Exam Proctoring Software</em>
+              <strong>Research Study:</strong> <em>Exam Proctoring Software</em>
             </h5>
             <hr></hr>
             <h4 className="text-white h4">
@@ -84,7 +82,10 @@ export default function TopBar() {
         {isSurveyOpen && (
           <div className="bg-dark p-4">
             <div className="">
-              <h5 className="card-title text-white text-xl font-bold h4 my-2" id="withdrawDialogBackdropLabel">
+              <h5
+                className="card-title text-white text-xl font-bold h4 my-2"
+                id="withdrawDialogBackdropLabel"
+              >
                 Withdraw from the Survey
               </h5>
             </div>
@@ -109,8 +110,9 @@ export default function TopBar() {
             </div>
           </div>
         )}
-        <button className="opt-out" onClick={handleCloseSurvey}>Opt-Out</button>
-
+        <button className="opt-out" onClick={handleCloseSurvey}>
+          Opt-Out
+        </button>
       </div>
     </nav>
   );
