@@ -140,9 +140,12 @@ export default function SurveyPage() {
   //</div>
   return (
     <>
-      
-      <TopBar />
-      <OptOutButton surveyRef={surveyRef} handleWithdrawSurvey={handleWithdrawSurvey} />
+      <div className="absolute">
+        <TopBar />
+        <div className="static">
+          <OptOutButton surveyRef={surveyRef} handleWithdrawSurvey={handleWithdrawSurvey} />
+        </div>
+      </div>
       <Survey model={survey} ref={surveyRef} />
     </>
   );
