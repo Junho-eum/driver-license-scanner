@@ -12,7 +12,7 @@ Currently, two official plugins are available:
 
 Start server:
 ```
-node ./server/server.js
+docker compose build
 ```
 Start frontend:
 ```
@@ -35,3 +35,12 @@ To stop docker
 
 ```
 docker compose stop
+
+
+# Input Prolific ID
+
+To add a prolific ID to the start of the survey, you must edit the url to add:
+```
+http://localhost:5173/?=[ID_HERE]
+```
+Where [ID_HERE] is the prolific ID.
