@@ -19,6 +19,12 @@ Start frontend:
 npm run dev
 ```
 
+To dump the database to a CSV file, run:
+```
+
+node mongo_to_csv.ks
+```
+
 ## How To: Build Extension
 
 To re-build the extension, run `tsc.cmd ./extension/background.ts` in the main directory. In the [Extension](chrome://extensions/) page, select `Load unpacked` and upload the `extension/` directory.
