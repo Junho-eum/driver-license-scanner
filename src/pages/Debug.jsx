@@ -179,12 +179,12 @@ export default function Debug() {
               className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
             >
               <span className="mr-2">
-                {isNavigationOpen ? <FcExpand /> : <FcNext />}
+                
               </span>
               Navigation
             </li>
           </ul>
-          {isNavigationOpen && (
+          {(
             <ul className="ml-4 text-sm list-inside">
               <li
                 onClick={nextPage}
