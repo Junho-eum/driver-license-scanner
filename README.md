@@ -21,7 +21,7 @@ npm run dev
 
 To dump the database to a CSV file, run:
 ```
-node mongo_to_csv.ks
+node mongo_to_csv.js
 ```
 
 ## How To: Build Extension
