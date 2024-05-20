@@ -93,7 +93,13 @@ export default function Debug() {
           {pages
             .filter((page) => page.isVisible)
             .map((page) => (
-              <li className="my-2" key={page.name}>
+              <button 
+                onClick={() => {
+                  survey.currentPageNo = page.num - 1;
+                  setCurPage(survey.currentPage);
+                  
+                }}
+                className="my-2" key={page.name}> 
                 {curPage === page ? (
                   <span className="float-left mr-2">
                     <FiArrowRightCircle />
@@ -104,7 +110,7 @@ export default function Debug() {
                   </span>
                 )}
                 {survey.visiblePages.indexOf(page) + 1}-{page.name}
-              </li>
+              </button>
             ))}
         </ul>
       </div>
