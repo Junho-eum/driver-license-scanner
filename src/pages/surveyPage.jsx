@@ -48,45 +48,48 @@ const OptOutButton = ({ surveyRef, handleWithdrawSurvey }) => {
   const handleCloseSurvey = () => setIsSurveyOpen(!isSurveyOpen);
 
   return (
-    <nav>
-      <div className="topnav-right">
-        {isSurveyOpen && (
-          <div className="bg-dark p-4">
-            <div>
-              <h5
-                className="card-title text-black text-xl font-bold h4 my-2"
-                id="withdrawDialogBackdropLabel"
-              >
-                Withdraw from the Survey
-              </h5>
+    <nav >
+      <div className="topnav"> 
+        <div className="topnav-right">
+          {isSurveyOpen && (
+            <div  className="bg-dark p-4">
+              <div>
+                <h5
+                  className="card-title text-black text-xl font-bold h4 my-2"
+                  id="withdrawDialogBackdropLabel"
+                >
+                  Withdraw from the Survey
+                </h5>
+              </div>
+              <div 
+                className="text-black h4 my-2">
+                Do you really want to withdraw from the survey?
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="buttonSuccess"
+                  onClick={handleCloseSurvey}
+                >
+                  No, take me back
+                </button>
+                <button
+                  type="button"
+                  className="buttonDanger"
+                  onClick={() => {
+                    handleCloseSurvey();
+                    handleWithdrawSurvey(); // Call the callback function passed as a prop
+                  }}
+                >
+                  Yes, I want to withdraw
+                </button>
+              </div>
             </div>
-            <div className="text-black h4 my-2">
-              Do you really want to withdraw from the survey?
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="buttonSuccess"
-                onClick={handleCloseSurvey}
-              >
-                No, take me back
-              </button>
-              <button
-                type="button"
-                className="buttonDanger"
-                onClick={() => {
-                  handleCloseSurvey();
-                  handleWithdrawSurvey(); // Call the callback function passed as a prop
-                }}
-              >
-                Yes, I want to withdraw
-              </button>
-            </div>
-          </div>
-        )}
-        <button className="opt-out" onClick={handleCloseSurvey}>
-          Opt-Out
-        </button>
+          )}
+          <button style={{  marginTop: '1%'}} className="opt-out" onClick={handleCloseSurvey}>
+            Opt-Out
+          </button>
+        </div>
       </div>
     </nav>
   );
