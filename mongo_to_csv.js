@@ -19,3 +19,4 @@ const csvData = csv.parse(results);
 fs.writeFileSync(outputFile, csvData);
 
 console.log(`Survey results exported to ${outputFile}`)
+process.exit(0);
