@@ -91,15 +91,23 @@ export default function Debug() {
         </button>
         <ul className="dark:text-white text-sm ml-2">
           {pages
-            .filter((page) => page.isVisible)
+            //.filter((page) => page.isVisible) -- FOR IF IT SHOULD BE HIDDEN & also set survey.pages.indexOf to survey.visiblePages.indexO=
             .map((page) => (
               <button 
                 onClick={() => {
+                  if(page.isVisible == false){
+
+                    //it gets in here but doesnt do anything 
+
+                  }
+                  
                   survey.currentPageNo = page.num - 1;
                   setCurPage(survey.currentPage);
                   
                 }}
+                
                 className="my-2" key={page.name}> 
+
                 {curPage === page ? (
                   <span className="float-left mr-2">
                     <FiArrowRightCircle />
@@ -109,12 +117,66 @@ export default function Debug() {
                     <FiCircle />
                   </span>
                 )}
-                {survey.visiblePages.indexOf(page) + 1}-{page.name}
+                {survey.pages.indexOf(page) + 1}-{page.name}
               </button>
             ))}
         </ul>
       </div>
     );
+  };
+
+  const Updates = () => {
+
+    const [curPage, setCurPage] = useState(survey.currentPage);
+
+    useEffect(() => {
+
+      const pageChange = () => {
+      
+          setCurPage(survey.currentPage);
+
+      };
+
+      survey.onCurrentPageChanged.add(pageChange);
+
+    });
+
+    return(
+
+          <><h6 className="flex text-lg py-4 dark:text-white">
+        <span>Survey Info</span>
+      </h6><div className="input-group input-group-sm mb-3 row-cols-3">
+          <span
+            className="input-group-text dark:text-white"
+            id="debug-mode-survey-state dark:text-white"
+          >
+            Survey State
+          </span>
+          <input
+            type="text"
+            className="form-control col-2"
+            value={survey.state}
+            readOnly
+            aria-label="Survey State"
+            aria-describedby="debug-mode-survey-state" />
+        </div><div className="input-group input-group-sm mb-3 row-cols-3">
+          <span
+            className="input-group-text dark:text-white"
+            id="debug-mode-survey-currentPage"
+          >
+            Current Page
+          </span>
+          <input
+            type="text"
+            className="form-control col-2"
+            value={curPage}
+            readOnly
+            aria-label="Survey State"
+            aria-describedby="debug-mode-survey-currentPage" />
+        </div></>
+
+    );
+
   };
 
   const Sidebar = () => {
@@ -142,10 +204,23 @@ export default function Debug() {
     };
     const clearSurvey = () => {
       // Clear the survey and restart from the beginning
+      if(isCollapsed){
+
+        setIsCollapsed(!isCollapsed);
+
+      };
+
       survey.clear(true, false);
       survey.deleteCookie();
+
     };
     const restartSurvey = () => {
+      if(isCollapsed){
+
+        setIsCollapsed(!isCollapsed);
+
+      };
+
       survey.clear(true, true);
       survey.deleteCookie();
     };
@@ -271,41 +346,8 @@ export default function Debug() {
           </li>
           {isCollapsed && <ResultBox s />}
 
-          <h6 className="flex text-lg py-4 dark:text-white">
-            <span>Survey Info</span>
-          </h6>
-          <div className="input-group input-group-sm mb-3 row-cols-3">
-            <span
-              className="input-group-text dark:text-white"
-              id="debug-mode-survey-state dark:text-white"
-            >
-              Survey State
-            </span>
-            <input
-              type="text"
-              className="form-control col-2"
-              value={survey.state}
-              readOnly
-              aria-label="Survey State"
-              aria-describedby="debug-mode-survey-state"
-            />
-          </div>
-          <div className="input-group input-group-sm mb-3 row-cols-3">
-            <span
-              className="input-group-text dark:text-white"
-              id="debug-mode-survey-currentPage"
-            >
-              Current Page
-            </span>
-            <input
-              type="text"
-              className="form-control col-2"
-              value={survey.currentPage}
-              readOnly
-              aria-label="Survey State"
-              aria-describedby="debug-mode-survey-currentPage"
-            />
-          </div>
+          <Updates s/>
+
         </div>
       </aside>
     );
