@@ -127,7 +127,6 @@ export default function Debug() {
 
   const Updates = () => {
 
-    const [pages, setPages] = useState(survey.pages);
     const [curPage, setCurPage] = useState(survey.currentPage);
 
     useEffect(() => {
@@ -205,10 +204,23 @@ export default function Debug() {
     };
     const clearSurvey = () => {
       // Clear the survey and restart from the beginning
+      if(isCollapsed){
+
+        setIsCollapsed(!isCollapsed);
+
+      };
+
       survey.clear(true, false);
       survey.deleteCookie();
+
     };
     const restartSurvey = () => {
+      if(isCollapsed){
+
+        setIsCollapsed(!isCollapsed);
+
+      };
+
       survey.clear(true, true);
       survey.deleteCookie();
     };
