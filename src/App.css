@@ -6,7 +6,20 @@
 .topnav-right {
   float: right;
   overflow: hidden;
+  background-color: #F3F3F3;
+  width: 28%;
+  margin-left: auto;
+  margin-right: 1%;
+  text-align: right;
   
+}
+
+.topnav{
+
+  width: 100%;
+  display: flex;
+  background-color: #F3F3F3;
+
 }
 
 .sd-element__num {

@@ -23,6 +23,10 @@ export default function App() {
 
   const [fetchData, setFetchData] = useState("");
 
+
+  // for disabling button
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const getRequest = async () => {
     try {
       const response = await fetch("/postsurvey");
@@ -40,18 +44,28 @@ export default function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // prolific id in url
     const submittedProlificID = e.target.elements.prolificID.value;
 
-    try {
-      // set cookie
-      Cookies.set("prolificID", submittedProlificID);
-      Cookies.set("treatment", fetchData);
+    if (submittedProlificID != ""){
+      setIsSubmitting(true);
 
-      // Redirect to the survey
-      window.location.href = "/survey";
-    } catch (error) {
-      console.error("Error setting cookie:", error);
-      // Handle any errors setting the cookie
+      try {
+        // set cookie
+        Cookies.set("prolificID", submittedProlificID);
+        Cookies.set("treatment", fetchData);
+  
+        // Redirect to the survey
+        window.location.href = "/survey";
+      } catch (error) {
+        console.error("Error setting cookie:", error);
+        // Handle any errors setting the cookie
+      }
+
+    }
+    else {
+      alert("Requires Prolific ID.")
+      setIsSubmitting(false);
     }
   };
 
@@ -97,6 +111,7 @@ export default function App() {
               <button
                 type="submit"
                 className="bg-gw-primary-blue rounded px-8 py-4 mb-5 shadow-lg text-2xl font-extrabold text-white"
+                disabled={isSubmitting}
               >
                 Start Survey
               </button>
