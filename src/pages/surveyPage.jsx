@@ -126,7 +126,7 @@ export default function SurveyPage() {
   };
 
   //AJA: moved this to a direct call back function -- also maybe we save results only on next?
-  survey.onValueChanged.add( async (survey, { name, question, value }) => {
+  survey.onValueChanged.add( async (survey) => {
       const cDataProlific = Cookies.get("prolificID");
       const cDataTreatment = Cookies.get("treatment");
       const updatedData = survey.data;

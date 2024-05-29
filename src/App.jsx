@@ -69,6 +69,8 @@ export default function App() {
     }
   };
 
+  const [prolificID, setProlificID] = useState(location[1] || "");
+
   return (
     <>
       <TopBar />
@@ -102,8 +104,8 @@ export default function App() {
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="id"
                 name="prolificID"
-                value={location[1]}
-                readOnly
+                value={prolificID}
+                onChange={(e) => setProlificID(e.target.value)}
               />
             </div>
             <br />
