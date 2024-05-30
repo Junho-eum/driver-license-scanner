@@ -1,8 +1,9 @@
 import { useState, useEffect} from "react";
 import { Link } from "react-router-dom";
 import { FcExpand, FcNext } from "react-icons/fc";
-import { FiArrowRightCircle, FiCheckCircle, FiCircle } from "react-icons/fi";
+import {FiCheckCircle, FiCircle } from "react-icons/fi";
 import { IoReload } from "react-icons/io5";
+import React from "react";
 
 import { Survey } from "survey-react-ui";
 import { Model } from "survey-core";
@@ -15,8 +16,6 @@ import { ExamConfirmationButton } from "../survey-components/ExamConfirmationBut
 import { ExamNextButton } from "../survey-components/NextButton";
 
 const storageItemKey = "survey-data";
-
-
 function saveSurveyData(survey) {
   const data = survey.data;
   data.pageNo = survey.currentPageNo;
@@ -31,9 +30,9 @@ export default function Debug() {
   ExamConfirmationButton(survey);
   CameraConfirmationButton(survey);
   ExamNextButton(survey);
-
-
   const prevData = window.localStorage.getItem(storageItemKey) || null;
+
+
   if (prevData) {
     const data = JSON.parse(prevData);
     survey.data = data;
@@ -41,9 +40,9 @@ export default function Debug() {
       survey.currentPageNo = data.pageNo;
     }
   }
-  survey.onValueChanged.add(saveSurveyData);
-  survey.onCurrentPageChanged.add(saveSurveyData);
+  //survey.onValueChanged.add(saveSurveyData);
 
+  
   const ResultBox = () => {
     const [data, setData] = useState(JSON.stringify(survey.data, null, " "));
 
@@ -78,6 +77,7 @@ export default function Debug() {
 
     survey.onValueChanged.add((survey) => {
       setCurPage(survey.currentPage);
+      ExamNextButton(survey, setCurPage);
     });
 
     return (
@@ -97,41 +97,27 @@ export default function Debug() {
               <button 
                 onClick={() => {
                   if(page.isVisible == false){
-
                     //it gets in here but doesnt do anything 
-
                   }
-                  
                   survey.currentPageNo = page.num - 1;
                   setCurPage(survey.currentPage);
-                  
+          
                 }}
-                
                 className="my-2" key={page.name}> 
 
                 {curPage === page ? (
                   <span style={{ display: 'flex', fontWeight: 'bold', color: 'rgb(73, 148, 236)'}} className="float-left mr-2">
-
                     <FiCheckCircle style={{ marginRight: '3px' }} /> 
-
                     <span style={{ position: 'relative', top: '-3px'}}>
-
                       {survey.pages.indexOf(page) + 1}-{page.name}
-
                     </span>
-
                   </span>
                 ) : (
                   <span style={{ display: 'flex' }} className="float-left mr-2">
-                    
                     <FiCircle style={{ marginRight: '3px' }} /> 
-
                     <span style={{ position: 'relative', top: '-3px'}}>
-
                       {survey.pages.indexOf(page) + 1}-{page.name}
-
                     </span>
-
                   </span>
                 )}
               </button>
@@ -238,6 +224,16 @@ export default function Debug() {
   };
 
   const Sidebar = () => {
+
+    useEffect(() => {
+      const togPage = () => {
+        if (isPagesExpanded){
+          togglePages();
+        }
+      };
+      survey.onCurrentPageChanged.add(togPage);
+    });
+    
     // for dropdown menus
     const [isNavigationOpen, setIsNavigationOpen] = useState(false);
     const toggleNavigation = () => {
@@ -254,6 +250,7 @@ export default function Debug() {
     };
     const previousPage = () => {
       survey.currentPageNo = survey.currentPageNo - 1;
+
     };
 
     // survey operations
@@ -404,7 +401,6 @@ export default function Debug() {
           {isCollapsed && <ResultBox s />}
 
           <Updates s/>
-          <Consistency s/>
 
         </div>
       </aside>
