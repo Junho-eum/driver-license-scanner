@@ -124,7 +124,7 @@ export default function Debug() {
                 ) : (
                   <span style={{ display: 'flex' }} className="float-left mr-2">
                     
-                    <FiCheckCircle style={{ marginRight: '3px' }} /> 
+                    <FiCircle style={{ marginRight: '3px' }} /> 
 
                     <span style={{ position: 'relative', top: '-3px'}}>
 
