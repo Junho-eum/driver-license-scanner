@@ -1,7 +1,7 @@
 import { useState, useEffect} from "react";
 import { Link } from "react-router-dom";
 import { FcExpand, FcNext } from "react-icons/fc";
-import { FiArrowRightCircle, FiCircle } from "react-icons/fi";
+import { FiArrowRightCircle, FiCheckCircle, FiCircle } from "react-icons/fi";
 import { IoReload } from "react-icons/io5";
 
 import { Survey } from "survey-react-ui";
@@ -110,15 +110,30 @@ export default function Debug() {
                 className="my-2" key={page.name}> 
 
                 {curPage === page ? (
-                  <span className="float-left mr-2">
-                    <FiArrowRightCircle />
+                  <span style={{ display: 'flex', fontWeight: 'bold', color: 'rgb(73, 148, 236)'}} className="float-left mr-2">
+
+                    <FiCheckCircle style={{ marginRight: '3px' }} /> 
+
+                    <span style={{ position: 'relative', top: '-3px'}}>
+
+                      {survey.pages.indexOf(page) + 1}-{page.name}
+
+                    </span>
+
                   </span>
                 ) : (
-                  <span className="float-left mr-2">
-                    <FiCircle />
+                  <span style={{ display: 'flex' }} className="float-left mr-2">
+                    
+                    <FiCheckCircle style={{ marginRight: '3px' }} /> 
+
+                    <span style={{ position: 'relative', top: '-3px'}}>
+
+                      {survey.pages.indexOf(page) + 1}-{page.name}
+
+                    </span>
+
                   </span>
                 )}
-                {survey.pages.indexOf(page) + 1}-{page.name}
               </button>
             ))}
         </ul>
