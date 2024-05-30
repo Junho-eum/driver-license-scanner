@@ -8,6 +8,27 @@ Currently, two official plugins are available:
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
 
+When we collect data, the web app will be run on a server, so everyone can interact with the same instance. But for development, you will need to follow these steps to run the web app on your own device.
+
+## Step 1: Install dependencies using NPM
+
+This project includes several components:
+
+- Install [NPM](https://www.npmjs.com/). Once installed, open this directory and run `npm i` to install dependencies. You may need to run `npm i --force`.
+
+## Step 2: Install Docker
+In addition to the NPM dependencies, we will be using:
+- Node.js, which will run our JavaScript application
+- MongoDB, our database.
+- MongoExpress, an interface used to interact with MongoDB on the web.
+
+It would be time-consuming to install and configure all of these on your computer, so we use [Docker](https://docs.docker.com/get-docker/). Importantly, if you use **Windows**, you will need to download the Windows Subsystem for Linux (WSL) from the Microsoft Store.
+
+## Step 3: Initialize Docker
+
+Once you have downloaded and opened Docker, run `docker compose up` or `docker compose up -d` in the exam directory. This will create a Docker instance with all the required software installed. Use `docker compose stop` to stop the instance. You can run `docker container ls` to see a list of your containers. Learn more about Docker commands [here](https://docs.docker.com/engine/reference/commandline/container_ls/).
+
+
 ## How To Run
 
 Start server:
@@ -30,13 +51,13 @@ To re-build the extension, run `tsc.cmd ./extension/background.ts` in the main d
 
 # Docker and MongoDB
 
-To start docker
+To start docker:
 
 ```
 docker compose up -d
 ```
 
-To stop docker
+To stop docker:
 
 ```
 docker compose stop

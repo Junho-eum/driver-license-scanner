@@ -10,13 +10,20 @@ router.post("/", async (request, res) => {
   console.log("Server: POST: "+request);
   let collection = await db.collection("survey-results");
   const prolificID = request.body.prolificID;
-  const record = await collection.findOne({ PID: prolificID });
 
-  if (!record) {
-    res.send({ survey: {}, sessionData: prolificID }).status(200);
-  } else {
-    const survey = record.survey;
-    return { survey: survey, sessionData: prolificID };
+  if (prolificID == "getAll"){
+    const record = await collection.find({}).toArray();
+    return { survey: record, sessionData: prolificID };
+  }
+  else {
+    const record = await collection.findOne({ PID: prolificID });
+
+    if (!record) {
+      res.send({ survey: {}, sessionData: prolificID }).status(200);
+    } else {
+      const survey = record.survey;
+      return { survey: survey, sessionData: prolificID };
+    }
   }
 });
 

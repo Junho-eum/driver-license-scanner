@@ -16,6 +16,7 @@ import { ExamNextButton } from "../survey-components/NextButton";
 
 const storageItemKey = "survey-data";
 
+
 function saveSurveyData(survey) {
   const data = survey.data;
   data.pageNo = survey.currentPageNo;
@@ -46,7 +47,7 @@ export default function Debug() {
   const ResultBox = () => {
     const [data, setData] = useState(JSON.stringify(survey.data, null, " "));
 
-    survey.onValueChanged.add((survey, { name, question, value }) => {
+    survey.onValueChanged.add((survey) => {
       setData(JSON.stringify(survey.data, null, " "));
     });
 
@@ -72,10 +73,10 @@ export default function Debug() {
   };
 
   const Pages = () => {
-    const [pages, setPages] = useState(survey.pages);
+    const [pages] = useState(survey.pages);
     const [curPage, setCurPage] = useState(survey.currentPage);
 
-    survey.onValueChanged.add((survey, { name, question, value }) => {
+    survey.onValueChanged.add((survey) => {
       setCurPage(survey.currentPage);
     });
 
@@ -128,17 +129,11 @@ export default function Debug() {
   const Updates = () => {
 
     const [curPage, setCurPage] = useState(survey.currentPage);
-
     useEffect(() => {
-
       const pageChange = () => {
-      
           setCurPage(survey.currentPage);
-
       };
-
       survey.onCurrentPageChanged.add(pageChange);
-
     });
 
     return(
@@ -179,6 +174,54 @@ export default function Debug() {
 
   };
 
+  const Consistency = () => {
+
+    const [surveyData, setSurveyData] = useState("");
+
+    const GetAllData = async () => {
+      const response = await fetch("/postsurvey", { 
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          prolificID: "getAll",
+        }),
+      });
+    
+      const data = await response.json();
+      const survey = data.survey;
+      setSurveyData(survey);
+      
+      //console.log(JSON.stringify(survey));
+    }
+
+    useEffect(() => {
+      const pageChange = () => {
+        GetAllData();
+      };
+      survey.onCurrentPageChanged.add(pageChange);
+    });
+
+
+    return(
+
+          <><h6 className="flex text-lg py-4 dark:text-white">
+        <span>Synced Status</span>
+      </h6><div className="input-group input-group-sm mb-3 row-cols-3">
+          <input
+            type="text"
+            className="form-control col-2"
+            value={surveyData}
+            readOnly
+            aria-label="Survey State"
+            aria-describedby="debug-mode-survey-state" />
+        </div></>
+
+    );
+
+  };
+
   const Sidebar = () => {
     // for dropdown menus
     const [isNavigationOpen, setIsNavigationOpen] = useState(false);
@@ -208,8 +251,7 @@ export default function Debug() {
 
         setIsCollapsed(!isCollapsed);
 
-      };
-
+      }
       survey.clear(true, false);
       survey.deleteCookie();
 
@@ -219,7 +261,7 @@ export default function Debug() {
 
         setIsCollapsed(!isCollapsed);
 
-      };
+      }
 
       survey.clear(true, true);
       survey.deleteCookie();
@@ -347,6 +389,7 @@ export default function Debug() {
           {isCollapsed && <ResultBox s />}
 
           <Updates s/>
+          <Consistency s/>
 
         </div>
       </aside>

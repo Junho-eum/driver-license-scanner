@@ -8,7 +8,7 @@ export default defineConfig({
   server: {
     //establish a proxy from the dev server to express for the purpose of development
     proxy: {
-      "/postsurvey": "http://localhost:8888",
+      "/postsurvey": "http://localhost:8080",
     },
   },
 });
