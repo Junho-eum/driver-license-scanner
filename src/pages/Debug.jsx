@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { FcExpand, FcNext } from "react-icons/fc";
 import {FiCheckCircle, FiCircle } from "react-icons/fi";
 import { IoReload } from "react-icons/io5";
-import React from "react";
 
 import { Survey } from "survey-react-ui";
 import { Model } from "survey-core";
@@ -82,23 +81,12 @@ export default function Debug() {
 
     return (
       <div>
-        <button
-          className="text-white text-lg"
-          onClick={() => {
-            setCurPage(survey.currentPage);
-          }}
-        >
-          <IoReload />
-        </button>
         <ul className="dark:text-white text-sm ml-2">
           {pages
             //.filter((page) => page.isVisible) -- FOR IF IT SHOULD BE HIDDEN & also set survey.pages.indexOf to survey.visiblePages.indexO=
             .map((page) => (
               <button 
                 onClick={() => {
-                  if(page.isVisible == false){
-                    //it gets in here but doesnt do anything 
-                  }
                   survey.currentPageNo = page.num - 1;
                   setCurPage(survey.currentPage);
           
