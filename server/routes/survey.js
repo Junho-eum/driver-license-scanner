@@ -5,7 +5,6 @@ import db from "../db/connection.js";
 const router = express.Router();
 
 // This section will help you get a single record by id
-// AH: This is currently NOT USED. 
 router.post("/", async (request, res) => {
   console.log("Server: POST: "+request);
   let collection = await db.collection("survey-results");
@@ -13,7 +12,7 @@ router.post("/", async (request, res) => {
 
   if (prolificID == "getAll"){
     const record = await collection.find({}).toArray();
-    return { survey: record, sessionData: prolificID };
+    return res.json({ survey: record, sessionData: prolificID });
   }
   else {
     const record = await collection.findOne({ PID: prolificID });
@@ -22,7 +21,7 @@ router.post("/", async (request, res) => {
       res.send({ survey: {}, sessionData: prolificID }).status(200);
     } else {
       const survey = record.survey;
-      return { survey: survey, sessionData: prolificID };
+      return res.json({ survey: survey, sessionData: prolificID });
     }
   }
 });

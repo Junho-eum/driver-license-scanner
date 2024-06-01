@@ -2,12 +2,14 @@ import { useState, useEffect} from "react";
 import { Link } from "react-router-dom";
 import { FcExpand, FcNext } from "react-icons/fc";
 import {FiCheckCircle, FiCircle } from "react-icons/fi";
-import { IoReload } from "react-icons/io5";
 
 import { Survey } from "survey-react-ui";
 import { Model } from "survey-core";
 import surveyJson from "../survey";
 import TopBar from "../web-components/TopBar";
+
+// cookie
+import Cookies from "js-cookie";
 
 // custom widgets
 import { CameraConfirmationButton } from "../survey-components/ConfirmCamera";
@@ -39,7 +41,7 @@ export default function Debug() {
       survey.currentPageNo = data.pageNo;
     }
   }
-  //survey.onValueChanged.add(saveSurveyData);
+  survey.onValueChanged.add(saveSurveyData);
 
   
   const ResultBox = () => {
@@ -55,14 +57,6 @@ export default function Debug() {
 
     return (
       <div>
-        <button
-          className="text-white text-lg "
-          onClick={() => {
-            setData(JSON.stringify(survey.data, null, " "));
-          }}
-        >
-          <IoReload />
-        </button>
         <div className="whitespace-pre-wrap h-64 overflow-y-scroll p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
           {data}
         </div>
@@ -83,7 +77,6 @@ export default function Debug() {
       <div>
         <ul className="dark:text-white text-sm ml-2">
           {pages
-            //.filter((page) => page.isVisible) -- FOR IF IT SHOULD BE HIDDEN & also set survey.pages.indexOf to survey.visiblePages.indexO=
             .map((page) => (
               <button 
                 onClick={() => {
@@ -165,29 +158,40 @@ export default function Debug() {
 
   const Consistency = () => {
 
-    const [surveyData, setSurveyData] = useState("");
-
-    const GetAllData = async () => {
-      const response = await fetch("/postsurvey", { 
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          prolificID: "getAll",
-        }),
-      });
-    
-      const data = await response.json();
-      const survey = data.survey;
-      setSurveyData(survey);
-      
-      //console.log(JSON.stringify(survey));
-    }
+    const [surveyData, setSurveyData] = useState([]);
 
     useEffect(() => {
-      const pageChange = () => {
-        GetAllData();
+  
+      const cDataProlific = Cookies.get("prolificID");
+      const GetAllData = async () => {
+        try {
+        const response = await fetch("/postsurvey", { 
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            prolificID: cDataProlific,
+          }),
+        });
+  
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setSurveyData(data.survey);
+      }
+      catch (error) {
+        console.log(error)
+      }
+      }
+
+      
+      GetAllData();
+      const pageChange = async () => {
+        const prevData = window.localStorage.getItem(storageItemKey);
+        console.log(JSON.parse(prevData));
+        console.log(surveyData)
       };
       survey.onCurrentPageChanged.add(pageChange);
     });
@@ -201,7 +205,7 @@ export default function Debug() {
           <input
             type="text"
             className="form-control col-2"
-            value={surveyData}
+            value={JSON.parse(prevData) == surveyData}
             readOnly
             aria-label="Survey State"
             aria-describedby="debug-mode-survey-state" />
@@ -389,6 +393,7 @@ export default function Debug() {
           {isCollapsed && <ResultBox s />}
 
           <Updates s/>
+          <Consistency />
 
         </div>
       </aside>
