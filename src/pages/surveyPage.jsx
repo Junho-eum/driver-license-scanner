@@ -3,6 +3,7 @@ import { Survey } from "survey-react-ui";
 import { Model } from "survey-core";
 import surveyJson from "../survey";
 import {useRef, useState } from "react";
+import { redirect } from "react-router-dom";
 
 // cookie
 import Cookies from "js-cookie";
@@ -96,7 +97,7 @@ const OptOutButton = ({ surveyRef, handleWithdrawSurvey }) => {
 };
 
 export default function SurveyPage() {
-  const survey = new Model(surveyJson);
+  var survey = new Model(surveyJson);
   survey.onValueChanged.add(saveSurveyData);
   survey.onCurrentPageChanged.add(saveSurveyData);
 
@@ -125,7 +126,6 @@ export default function SurveyPage() {
     survey.doComplete();
   };
 
-  //AJA: moved this to a direct call back function -- also maybe we save results only on next?
   survey.onValueChanged.add( async (survey) => {
       const cDataProlific = Cookies.get("prolificID");
       const cDataTreatment = Cookies.get("treatment");
@@ -136,8 +136,22 @@ export default function SurveyPage() {
       
     });
 
+    survey.onComplete.add (async (survey) => {
+        const cDataProlific = Cookies.get("prolificID");
+        const cDataTreatment = Cookies.get("treatment");
+        const updatedData = survey.data;
+        const WD = "false";
+      
+        SendToServer(updatedData, cDataProlific, cDataTreatment, WD);
+
+        console.log("Survey is on the last page!");
+        localStorage.removeItem("survey-data");
+        window.location.href = 'https://google.com';
+
+      });
 
     const surveyRef = useRef(survey);
+
   // <CameraBox />
   // <div className="ml-56">
   //</div>

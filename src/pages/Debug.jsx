@@ -190,8 +190,8 @@ export default function Debug() {
       GetAllData();
       const pageChange = async () => {
         const prevData = window.localStorage.getItem(storageItemKey);
-        console.log(JSON.parse(prevData));
-        console.log(surveyData)
+        //console.log("Prev data: ", JSON.parse(prevData));
+        //console.log(surveyData)
       };
       survey.onCurrentPageChanged.add(pageChange);
     });
@@ -205,7 +205,7 @@ export default function Debug() {
           <input
             type="text"
             className="form-control col-2"
-            value={JSON.parse(prevData) == surveyData}
+            value={JSON.stringify(surveyData) == prevData}
             readOnly
             aria-label="Survey State"
             aria-describedby="debug-mode-survey-state" />

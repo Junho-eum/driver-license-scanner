@@ -22,7 +22,6 @@ const surveyJson = {
   sendResultOnPageNext: true,
   showPrevButton: false,
   progressBarType: "pages",
-  showProgressBar: "bottom",
   showQuestionNumbers: "off",
   widthMode: "responsive",
   showNavigationButtons: false,
