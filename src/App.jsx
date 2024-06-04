@@ -25,8 +25,18 @@ function setWithExpiry() {
 	localStorage.setItem("expire-time", JSON.stringify(item));
 }
 
+const storageItemKey = "survey-data";
+function checkStorage(){
+  const prevData = window.localStorage.getItem(storageItemKey);
+  const itemStr = localStorage.getItem("expire-time");
+  
+  if ( prevData != null || itemStr != null) {
+    window.location.href = "/survey";
+  }
+}
 export default function App() {
 
+  checkStorage();
   var location = useLocation();
   location = (location.search).split("=");
   //console.log(location[1]);

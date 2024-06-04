@@ -107,13 +107,28 @@ function getWithExpiry() {
 	if (now.getTime() > item.expiry) {
 		localStorage.removeItem("survey-data");
     localStorage.removeItem("expire-date");
-		window.location.href = 'https://google.com';
+		window.location.href = window.history.back();
 	}
 }
 
+function checkStorage(){
+  const itemStr = localStorage.getItem("expire-time");
+  
+  if ( itemStr == null) {
+    window.location.href = window.history.back();
+  }
+}
+
+
 export default function SurveyPage() {
 
+  // check if we have storage
+  checkStorage();
+
+  // check if we're expired
   getWithExpiry();
+
+  
   var survey = new Model(surveyJson);
   survey.onValueChanged.add(saveSurveyData);
   survey.onCurrentPageChanged.add(saveSurveyData);
@@ -124,7 +139,7 @@ export default function SurveyPage() {
   ExamNextButton(survey);
 
   // Restore survey results
-  const prevData = window.localStorage.getItem(storageItemKey) || null;
+  const prevData = window.localStorage.getItem(storageItemKey);
   if (prevData) {
     const data = JSON.parse(prevData);
     survey.data = data;
@@ -154,7 +169,7 @@ export default function SurveyPage() {
       
     });
 
-    // gotta do it this way to actually send to the survey, yes it's annoying but the only fix I could come up with
+    // gotta do it this way to actually send to the survey, yes it's annoying
     survey.onComplete.add (async (survey) => {
         const cDataProlific = Cookies.get("prolificID");
         const cDataTreatment = Cookies.get("treatment");
@@ -165,7 +180,7 @@ export default function SurveyPage() {
 
         console.log("Survey is on the last page!");
         localStorage.removeItem("survey-data");
-        window.location.href = 'https://google.com';
+        window.location.href = window.history.back();
 
       });
 
