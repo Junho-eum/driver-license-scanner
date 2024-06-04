@@ -13,16 +13,27 @@ import Cookies from "js-cookie";
 
 import { useLocation } from 'react-router-dom';
 
-export default function App() {
 
+const expireTime = import.meta.env.VITE_TIME_TO_EXPIRE;
+function setWithExpiry() {
+	const now = new Date();
+  const newTime = now.setDate(new Date().getDate() + expireTime);
+  console.log(new Date(newTime));
+	const item = {
+		expiry: newTime,
+	}
+	localStorage.setItem("expire-time", JSON.stringify(item));
+}
+
+export default function App() {
 
   var location = useLocation();
   location = (location.search).split("=");
   //console.log(location[1]);
 
-
   const [fetchData, setFetchData] = useState("");
 
+  //console.log("expire time: ", expireTime);
 
   // for disabling button
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -54,7 +65,10 @@ export default function App() {
         // set cookie
         Cookies.set("prolificID", submittedProlificID);
         Cookies.set("treatment", fetchData);
-  
+
+        // add expire date
+        setWithExpiry();
+        
         // Redirect to the survey
         window.location.href = "/survey";
       } catch (error) {

@@ -95,7 +95,25 @@ const OptOutButton = ({ surveyRef, handleWithdrawSurvey }) => {
   );
 };
 
+
+function getWithExpiry() {
+
+	const itemStr = localStorage.getItem("expire-time")
+	const item = JSON.parse(itemStr);
+  
+	const now = new Date();
+
+	// compare the expiry time of the item with the current time
+	if (now.getTime() > item.expiry) {
+		localStorage.removeItem("survey-data");
+    localStorage.removeItem("expire-date");
+		window.location.href = 'https://google.com';
+	}
+}
+
 export default function SurveyPage() {
+
+  getWithExpiry();
   var survey = new Model(surveyJson);
   survey.onValueChanged.add(saveSurveyData);
   survey.onCurrentPageChanged.add(saveSurveyData);
@@ -132,6 +150,7 @@ export default function SurveyPage() {
       const WD = "false";
       
       SendToServer(updatedData, cDataProlific, cDataTreatment, WD);
+      getWithExpiry();
       
     });
 
