@@ -3,7 +3,6 @@ import { Survey } from "survey-react-ui";
 import { Model } from "survey-core";
 import surveyJson from "../survey";
 import {useRef, useState } from "react";
-import { redirect } from "react-router-dom";
 
 // cookie
 import Cookies from "js-cookie";
@@ -136,6 +135,7 @@ export default function SurveyPage() {
       
     });
 
+    // gotta do it this way to actually send to the survey, yes it's annoying but the only fix I could come up with
     survey.onComplete.add (async (survey) => {
         const cDataProlific = Cookies.get("prolificID");
         const cDataTreatment = Cookies.get("treatment");
