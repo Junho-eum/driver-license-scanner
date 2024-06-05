@@ -25,6 +25,7 @@ export function ExamNextButton(Survey) {
       buttonCustom.addEventListener("click", function () {
         {
           Survey.isLastPage ? Survey.completeLastPage() : Survey.nextPage();
+          document.getElementById('top-bar').scrollIntoView(); 
         }
       });
     },

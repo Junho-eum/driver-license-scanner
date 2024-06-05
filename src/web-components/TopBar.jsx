@@ -2,7 +2,7 @@ import gwusec_logo from "../assets/gw_monogram_wht_rev.png";
 
 
 export default function TopBar() {
-  return (
+  return (    
     <nav className="bg-gw-primary-blue text-color-white ">
       <div
         id="top-bar"
