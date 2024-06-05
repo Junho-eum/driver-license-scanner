@@ -2,6 +2,7 @@
 import "./App.css";
 import "survey-core/defaultV2.min.css";
 import gwusec_logo from "./assets/images/gwusec.svg";
+import { useSearchParams } from "react-router-dom";
 
 // Topbar
 import TopBar from "./web-components/TopBar";
@@ -37,8 +38,13 @@ function checkStorage(){
 export default function App() {
 
   checkStorage();
-  var location = useLocation();
-  location = (location.search).split("=");
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const [prolificID, setProlificID] = useState(searchParams.get("prolificID") || "");
+    
+
+  //var location = useLocation();
+  //location = (location.search).split("=");
   //console.log(location[1]);
 
   const [fetchData, setFetchData] = useState("");
@@ -93,7 +99,6 @@ export default function App() {
     }
   };
 
-  const [prolificID, setProlificID] = useState(location[1] || "");
 
   return (
     <>
