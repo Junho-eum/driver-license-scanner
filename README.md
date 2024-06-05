@@ -18,7 +18,7 @@ This project includes several components:
 
 ## Step 2: Install Docker
 In addition to the NPM dependencies, we will be using:
-- Node.js, which will run our JavaScript application
+- Node.js, which will run our JavaScript application.
 - MongoDB, our database.
 - MongoExpress, an interface used to interact with MongoDB on the web.
 
@@ -65,8 +65,16 @@ docker compose stop
 
 # Input Prolific ID
 
-To add a prolific ID to the start of the survey, you must edit the url to add:
+To add a prolific ID to the start of the survey, you can edit the url to add:
 ```
 http://localhost:5173/?=[ID_HERE]
 ```
 Where [ID_HERE] is the prolific ID.
+
+# Run Production
+
+To run the production build, use: 
+
+```
+npm run build
+```
