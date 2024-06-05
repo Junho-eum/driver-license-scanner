@@ -43,10 +43,6 @@ export default function App() {
   const [prolificID, setProlificID] = useState(searchParams.get("prolificID") || "");
     
 
-  //var location = useLocation();
-  //location = (location.search).split("=");
-  //console.log(location[1]);
-
   const [fetchData, setFetchData] = useState("");
 
   //console.log("expire time: ", expireTime);
@@ -135,6 +131,7 @@ export default function App() {
                 name="prolificID"
                 value={prolificID}
                 onChange={(e) => setProlificID(e.target.value)}
+                readOnly
               />
             </div>
             <br />

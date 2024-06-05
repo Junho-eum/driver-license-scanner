@@ -180,7 +180,7 @@ export default function SurveyPage() {
 
         console.log("Survey is on the last page!");
         localStorage.removeItem("survey-data");
-        window.location.href = window.history.back();
+        window.location.href = "/end";
 
       });
 

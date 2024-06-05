@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import Debug from "./pages/Debug.jsx";
 import SurveyPage from "./pages/surveyPage";
+import EndingPage from "./pages/endingPage.jsx";
 
 class CameraStartComponent extends HTMLElement {
   constructor() {
@@ -44,6 +45,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <Route path="/" element={<App />} />
       <Route path="/debug" element={<Debug />} />
       <Route path="/survey" element={<SurveyPage />} />
+      <Route path="/end" element={<EndingPage />} />
     </Routes>
   </Router>
 );
