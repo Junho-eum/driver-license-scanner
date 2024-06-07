@@ -1,22 +1,72 @@
 import TopBar from "../web-components/TopBar";
-
+import gwusec_logo from "../assets/images/gwusec.svg";
+import {useState} from "react";
 
 export default function EndingPage() {
 
+  const FeedbackForm = () => {
+    const [feedback, setFeedback] = useState('');
+    const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+  
+    const handleFeedbackChange = (event) => {
+      setFeedback(event.target.value);
+    };
+  
+    const submitFeedback = () => {
+      setFeedbackSubmitted(true);
+      setFeedback(''); // Clear feedback after submit
+    };
+  
+    return (
+      <div className="container mx-auto px-4 py-8">
+        {!feedbackSubmitted && (
+          <div className="card shadow-md rounded-lg bg-gray-100">
+            <div className="card-header bg-secondary text-black font-bold text-center rounded-t-lg pt-3">
+              Please provide any thoughts or suggestions on the survey. (Optional)
+            </div>
+            <div className="card-body px-4 py-6">
+              <textarea
+                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                aria-label="Feedback"
+                placeholder="Type your feedback here"
+                rows="3"
+                value={feedback}
+                onChange={handleFeedbackChange}
+              />
+            </div>
+            <div className="card-footer flex justify-center py-4">
+              <button
+                type="button"
+                className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700"
+                onClick={submitFeedback}
+              >
+                Submit Feedback
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <>
       <div>
         <TopBar />
-
-          <div class="endPageTotal">
-            <h4 class="endPageTop">Thank you for participating in this survey!</h4>
-            <p class="endPageBottom">Please click the button below to complete the study and return to Prolific.</p>
-          </div>
-
-          <surveyjs-feedback-form>
-                
-          </surveyjs-feedback-form>
+        <div className="px-4 py-5 my-5 text-center">
+          <img
+            className="mx-auto mb-4"
+            src={gwusec_logo}
+            alt=""
+            width="72"
+            height="57"
+          ></img>
+          <FeedbackForm />
+        </div>
+        <div className="">
+          <h4 className="endPageTop">Thank you for participating in this survey!</h4>
+          <p className="endPageBottom">Please click the button below to complete the study and return to Prolific.</p>
+        </div>
 
       </div>
     </>
