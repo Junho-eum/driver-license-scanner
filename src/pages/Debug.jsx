@@ -287,6 +287,36 @@ export default function Debug() {
       setIsCollapsed(!isCollapsed);
     };
 
+    async function SendToServer(surveyData, prolific, T, WD){
+
+      await fetch("/postsurvey", { 
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          prolificID: prolific,
+          surveyData: surveyData,
+          treatment: T,
+          withdrawn: WD,
+        }),
+      });
+    }
+
+    survey.onComplete.add (async (survey) => {
+      const cDataProlific = Cookies.get("prolificID");
+      const cDataTreatment = Cookies.get("treatment");
+      const updatedData = survey.data;
+      const WD = "false";
+    
+      SendToServer(updatedData, cDataProlific, cDataTreatment, WD);
+
+      console.log("Survey is on the last page!");
+      localStorage.removeItem("survey-data");
+      window.location.href = "/end";
+
+    });
+
     return (
       <aside
         id="default-sidebar"
