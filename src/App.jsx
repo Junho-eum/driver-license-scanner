@@ -12,8 +12,6 @@ import VolumeBar from "./web-components/VolumeBar";
 import { useState } from "react";
 import Cookies from "js-cookie";
 
-import { useLocation } from 'react-router-dom';
-
 
 const expireTime = import.meta.env.VITE_TIME_TO_EXPIRE;
 function setWithExpiry() {

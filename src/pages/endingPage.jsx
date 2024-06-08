@@ -1,11 +1,46 @@
 import TopBar from "../web-components/TopBar";
 import gwusec_logo from "../assets/images/gwusec.svg";
 import {useState} from "react";
+import { Model } from "survey-core";
+import surveyJson from "../survey";
+
+// cookie
+import Cookies from "js-cookie";
+
+const storageItemKey = "survey-data";
+
+async function SendToServer(survey, FB){
+
+  const cDataProlific = Cookies.get("prolificID");
+  const cDataTreatment = Cookies.get("treatment");
+  const updatedData = survey.data;
+  const withdraw = "false";
+
+  await fetch("/postsurvey", { 
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      prolificID: cDataProlific,
+      surveyData: updatedData,
+      treatment: cDataTreatment,
+      withdrawn: withdraw,
+      feedback: FB,
+    }),
+  });
+}  
+
 
 export default function EndingPage() {
 
+  const survey = new Model(surveyJson);
+  const prevData = window.localStorage.getItem(storageItemKey);
+  const data = JSON.parse(prevData);
+  survey.data = data;
+
   const FeedbackForm = () => {
-    const [feedback, setFeedback] = useState('');
+    const [feedback, setFeedback] = useState("");
     const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   
     const handleFeedbackChange = (event) => {
@@ -14,6 +49,8 @@ export default function EndingPage() {
   
     const submitFeedback = () => {
       setFeedbackSubmitted(true);
+      SendToServer(survey, feedback);
+      //localStorage.removeItem("survey-data");
       setFeedback(''); // Clear feedback after submit
     };
   

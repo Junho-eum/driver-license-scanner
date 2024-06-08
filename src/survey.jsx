@@ -9,6 +9,7 @@ import confirm_camera_page from './surveyPages/confirm_camera_page.jsx';
 
 
 const surveyJson = {
+  completedHtml: "<div class=\"container mb-4\"><div class=\"bg-light p-5\"><h4>Thank you for participating in this survey!</h4><hr class=\"my-4\"><p class=\"lead\">Please click the button below to complete the study and return to Prolific.</p></div></div><surveyjs-feedback-form></surveyjs-feedback-form>",
   completedHtmlOnCondition: [
     {
       expression: "{has_withdrawn} = true",

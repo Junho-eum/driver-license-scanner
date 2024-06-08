@@ -39,6 +39,7 @@ async function SendToServer(surveyData, prolific, T, WD){
       surveyData: surveyData,
       treatment: T,
       withdrawn: WD,
+      feedback: "",
     }),
   });
 }
@@ -179,7 +180,7 @@ export default function SurveyPage() {
         SendToServer(updatedData, cDataProlific, cDataTreatment, WD);
 
         console.log("Survey is on the last page!");
-        localStorage.removeItem("survey-data");
+        //localStorage.removeItem("survey-data");
         window.location.href = "/end";
 
       });

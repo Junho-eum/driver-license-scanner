@@ -299,6 +299,7 @@ export default function Debug() {
           surveyData: surveyData,
           treatment: T,
           withdrawn: WD,
+          feedback: "",
         }),
       });
     }

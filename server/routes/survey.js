@@ -38,12 +38,14 @@ router.patch("/", async (request, res) => {
     const prolificID = data.prolificID;
     const treatmentID = data.treatment;
     const isWithdrawn = data.withdrawn;
-    
+    const hasFeedback = data.feedback;
+
     const surveyData = {
       PID: prolificID,
       survey: jsonData,
       treatment: treatmentID,
       withdrawn: isWithdrawn,
+      feedback: hasFeedback,
     };
 
     const p = await collection.findOne({ PID: prolificID });
@@ -52,12 +54,14 @@ router.patch("/", async (request, res) => {
         { PID: prolificID },
         { $set: { survey: jsonData } },
         { treatment: treatmentID },
-        {withdrawn: isWithdrawn}
+        {withdrawn: isWithdrawn },
+        {feedback: hasFeedback },
       );
-      console.log(result);
+      console.log("prolificID: " , prolificID);
       return result;
     } else {
       const result = await collection.insertOne(surveyData);
+      console.log("Feedback: " , hasFeedback);
       res.send(result).status(200);
     }
   } catch (err) {
