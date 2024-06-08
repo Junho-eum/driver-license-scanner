@@ -159,7 +159,7 @@ export default function SurveyPage() {
     survey.doComplete();
   };
 
-  survey.onValueChanged.add( async (survey) => {
+  survey.onCurrentPageChanged.add( async (survey) => {
       const cDataProlific = Cookies.get("prolificID");
       const cDataTreatment = Cookies.get("treatment");
       const updatedData = survey.data;
