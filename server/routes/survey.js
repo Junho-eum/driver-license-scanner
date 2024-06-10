@@ -6,7 +6,7 @@ const router = express.Router();
 
 // This section will help you get a single record by id
 router.post("/", async (request, res) => {
-  console.log("Server: POST: "+request);
+  console.log("Server: POST: " + request);
   let collection = await db.collection("survey-results");
   const prolificID = request.body.prolificID;
 
@@ -48,20 +48,26 @@ router.patch("/", async (request, res) => {
       feedback: hasFeedback,
     };
 
+    const updateData = {
+      $set: {
+          survey: jsonData,
+          treatment: treatmentID,
+          withdrawn: isWithdrawn,
+          feedback: hasFeedback,
+      }
+    };
+
     const p = await collection.findOne({ PID: prolificID });
     if (p) {
+
       const result = await collection.updateOne(
         { PID: prolificID },
-        { $set: { survey: jsonData } },
-        { treatment: treatmentID },
-        {withdrawn: isWithdrawn },
-        {feedback: hasFeedback },
+        updateData
       );
-      console.log("prolificID: " , prolificID);
+
       return result;
     } else {
       const result = await collection.insertOne(surveyData);
-      console.log("Feedback: " , hasFeedback);
       res.send(result).status(200);
     }
   } catch (err) {

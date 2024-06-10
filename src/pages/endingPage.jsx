@@ -31,6 +31,7 @@ async function SendToServer(survey, FB){
   });
 }  
 
+const prolificLink = import.meta.env.VITE_PROLIFIC_LINK;
 
 export default function EndingPage() {
 
@@ -51,7 +52,6 @@ export default function EndingPage() {
       setFeedbackSubmitted(true);
       SendToServer(survey, feedback);
       //localStorage.removeItem("survey-data");
-      setFeedback(''); // Clear feedback after submit
     };
   
     return (
@@ -86,7 +86,15 @@ export default function EndingPage() {
     );
   };
 
+  const backtoProlific = () => {
+    localStorage.removeItem("survey-data");
+    Cookies.remove('prolificID');
+    Cookies.remove('treatment');
+    window.location.href = prolificLink;
+  }
+
   return (
+    
     <>
       <div>
         <TopBar />
@@ -103,6 +111,16 @@ export default function EndingPage() {
         <div className="">
           <h4 className="endPageTop">Thank you for participating in this survey!</h4>
           <p className="endPageBottom">Please click the button below to complete the study and return to Prolific.</p>
+
+          <div className="flex flex-col items-center py-6">
+              <button
+                onClick={backtoProlific}
+                className="bg-gw-primary-blue rounded px-8 py-4 mb-5 shadow-lg text-2xl font-extrabold text-white"
+              >
+                Return To Prolific
+              </button>
+          </div>
+        
         </div>
 
       </div>

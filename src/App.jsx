@@ -27,9 +27,9 @@ function setWithExpiry() {
 const storageItemKey = "survey-data";
 function checkStorage(){
   const prevData = window.localStorage.getItem(storageItemKey);
-  const itemStr = localStorage.getItem("expire-time");
+  const expireTime = localStorage.getItem("expire-time");
   
-  if ( prevData != null || itemStr != null) {
+  if ( prevData != null || expireTime != null && Cookies.get('prolificID') != null) {
     window.location.href = "/survey";
   }
 }
