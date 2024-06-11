@@ -10,6 +10,7 @@ router.post("/", async (request, res) => {
   let collection = await db.collection("survey-results");
   const prolificID = request.body.prolificID;
 
+  // used to get every record
   if (prolificID == "getAll"){
     const record = await collection.find({}).toArray();
     return res.json({ survey: record, sessionData: prolificID });

@@ -9,11 +9,14 @@ import TopBar from "./web-components/TopBar";
 import VolumeBar from "./web-components/VolumeBar";
 
 // Cookies
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 
 
 const expireTime = import.meta.env.VITE_TIME_TO_EXPIRE;
+const redirectLink = import.meta.env.VITE_PROLIFIC_LINK;
+
+// this function sets the expiration time of the localstorage
 function setWithExpiry() {
 	const now = new Date();
   const newTime = now.setDate(new Date().getDate() + expireTime);
@@ -25,10 +28,13 @@ function setWithExpiry() {
 }
 
 const storageItemKey = "survey-data";
+var surveyVal = {};
+
 function checkStorage(){
+  
   const prevData = window.localStorage.getItem(storageItemKey);
   const expireTime = localStorage.getItem("expire-time");
-  
+
   if ( prevData != null || expireTime != null && Cookies.get('prolificID') != null) {
     window.location.href = "/survey";
   }
@@ -39,15 +45,42 @@ export default function App() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [prolificID, setProlificID] = useState(searchParams.get("prolificID") || "");
-    
+  
 
   const [fetchData, setFetchData] = useState("");
 
-  //console.log("expire time: ", expireTime);
+  
+  const ContactServer = async (PID) => {
+    const [surveyData, setSurveyData] = useState([]);
+    const response = await fetch("/postsurvey", { 
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        prolificID: PID,
+      }),
+    });
+  
+    if (!response.ok) {
+      throw new Error(`Error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    setSurveyData(data.survey);
+    surveyVal = surveyData;
+  
+  };
+
+  ContactServer(prolificID);
+  if (Object.keys(surveyVal) != 0) {
+    alert("Data is already in the database.");
+    window.location.href = redirectLink;
+  }
 
   // for disabling button
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // this is used to set the treatment
   const getRequest = async () => {
     try {
       const response = await fetch("/postsurvey");
@@ -62,12 +95,11 @@ export default function App() {
   };
 
   getRequest();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     // prolific id in url
     const submittedProlificID = e.target.elements.prolificID.value;
-
     if (submittedProlificID != ""){
       setIsSubmitting(true);
 
@@ -75,17 +107,13 @@ export default function App() {
         // set cookie
         Cookies.set("prolificID", submittedProlificID);
         Cookies.set("treatment", fetchData);
-
         // add expire date
         setWithExpiry();
-        
-        // Redirect to the survey
-        window.location.href = "/survey";
+
       } catch (error) {
         console.error("Error setting cookie:", error);
         // Handle any errors setting the cookie
       }
-
     }
     else {
       alert("Requires Prolific ID.")

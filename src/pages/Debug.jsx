@@ -24,13 +24,9 @@ function saveSurveyData(survey) {
 }
 
 function makeVisible(survey){
-
   survey.pages.forEach(function(page) {
-
     page.visible = true;
-
   });
-
 }
 
 
@@ -202,8 +198,7 @@ export default function Debug() {
       GetAllData();
       const pageChange = async () => {
         const prevData = window.localStorage.getItem(storageItemKey);
-        //console.log("Prev data: ", JSON.parse(prevData));
-        //console.log(surveyData)
+        console.log("Prev data: ", JSON.parse(prevData));
       };
       survey.onCurrentPageChanged.add(pageChange);
     });
