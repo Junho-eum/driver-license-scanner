@@ -43,35 +43,34 @@ export default function App() {
 
   checkStorage();
   const [searchParams, setSearchParams] = useSearchParams();
-
   const [prolificID, setProlificID] = useState(searchParams.get("prolificID") || "");
-  
-
   const [fetchData, setFetchData] = useState("");
+  const [surveyVal, setSurveyData] = useState([]);
 
-  
-  const ContactServer = async (PID) => {
-    const [surveyData, setSurveyData] = useState([]);
-    const response = await fetch("/postsurvey", { 
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        prolificID: PID,
-      }),
-    });
-  
-    if (!response.ok) {
-      throw new Error(`Error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    setSurveyData(data.survey);
-    surveyVal = surveyData;
-  
-  };
+  // this useEffect checks if there's already data in the database
+  useEffect(() => {
+    const fetchData = async () => {
 
-  ContactServer(prolificID);
+      const response = await fetch("/postsurvey", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          prolificID,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setSurveyData(data.survey);
+    };
+
+    fetchData();
+  }, []); // one time execute
+
   if (Object.keys(surveyVal) != 0) {
     alert("Data is already in the database.");
     window.location.href = redirectLink;
