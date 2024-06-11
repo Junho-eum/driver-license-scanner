@@ -23,9 +23,21 @@ function saveSurveyData(survey) {
   window.localStorage.setItem(storageItemKey, JSON.stringify(data));
 }
 
+function makeVisible(survey){
+
+  survey.pages.forEach(function(page) {
+
+    page.visible = true;
+
+  });
+
+}
+
 
 export default function Debug() {
   const survey = new Model(surveyJson);
+
+  makeVisible(survey);
 
   // custom widgets
   ExamConfirmationButton(survey);
