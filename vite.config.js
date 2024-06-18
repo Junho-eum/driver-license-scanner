@@ -21,6 +21,10 @@ export default defineConfig({
             new URL(
               'src/pages/Debug.jsx',
               import.meta.url
+            ),
+            new URL(
+              'src/pages/endingPage.jsx',
+              import.meta.url
             )
           ),
         ],

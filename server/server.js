@@ -22,6 +22,7 @@ mongoose
 
   app.use('/', express.static("./dist"));
   app.use('/debug', express.static("./dist"));
+  app.use('/end', express.static("./dist"));
   app.use('/survey', express.static("./dist"));
 
 //AJA: needed to add this to actually list on the survey
