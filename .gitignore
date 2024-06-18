@@ -24,3 +24,4 @@ dist-ssr
 *.sw?
 
 data/*
+prolific_survey_data.csv
