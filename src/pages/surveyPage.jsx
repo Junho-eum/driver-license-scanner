@@ -9,23 +9,20 @@ import Cookies from "js-cookie";
 
 // other components
 import TopBar from "../web-components/TopBar";
-//import Webcam from "react-webcam";
-//import CameraBox from "../web-components/CameraBox";
 
 // custom widgets
-import { CameraConfirmationButton } from "../survey-components/ConfirmCamera";
 import { ExamConfirmationButton } from "../survey-components/ExamConfirmationButton";
 import { ExamNextButton } from "../survey-components/NextButton";
 
 // good resource: https://github.com/mongodb-developer/mern-stack-example/
 
 const storageItemKey = "survey-data";
+const currentDate = Date();
 function saveSurveyData(survey) {
   const data = survey.data;
   data.pageNo = survey.currentPageNo;
   window.localStorage.setItem(storageItemKey, JSON.stringify(data));
 }
-
 
 async function SendToServer(surveyData, prolific, T, WD){
 
@@ -38,6 +35,7 @@ async function SendToServer(surveyData, prolific, T, WD){
       prolificID: prolific,
       surveyData: surveyData,
       treatment: T,
+      startDate: currentDate,
       withdrawn: WD,
       feedback: "",
     }),
@@ -97,11 +95,11 @@ const OptOutButton = ({ surveyRef, handleWithdrawSurvey }) => {
 };
 
 
+// this function checks the expire time of the data
 function getWithExpiry() {
 
 	const itemStr = localStorage.getItem("expire-time")
 	const item = JSON.parse(itemStr);
-  
 	const now = new Date();
 
 	// compare the expiry time of the item with the current time
@@ -111,10 +109,8 @@ function getWithExpiry() {
 		window.location.href = window.history.back();
 	}
 }
-
 function checkStorage(){
   const itemStr = localStorage.getItem("expire-time");
-  
   if ( itemStr == null) {
     window.location.href = window.history.back();
   }
@@ -122,13 +118,11 @@ function checkStorage(){
 
 
 export default function SurveyPage() {
-
+  
   // check if we have storage
   checkStorage();
-
   // check if we're expired
   getWithExpiry();
-
   
   var survey = new Model(surveyJson);
   survey.onValueChanged.add(saveSurveyData);
@@ -136,7 +130,6 @@ export default function SurveyPage() {
 
   // custom widgets
   ExamConfirmationButton(survey);
-  CameraConfirmationButton(survey);
   ExamNextButton(survey);
 
   // Restore survey results
@@ -180,16 +173,11 @@ export default function SurveyPage() {
         SendToServer(updatedData, cDataProlific, cDataTreatment, WD);
 
         console.log("Survey is on the last page!");
-        //localStorage.removeItem("survey-data");
         window.location.href = "/end";
-
       });
 
     const surveyRef = useRef(survey);
 
-  // <CameraBox />
-  // <div className="ml-56">
-  //</div>
   return (
     <>
       <div>

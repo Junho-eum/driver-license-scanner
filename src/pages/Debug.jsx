@@ -12,7 +12,6 @@ import TopBar from "../web-components/TopBar";
 import Cookies from "js-cookie";
 
 // custom widgets
-import { CameraConfirmationButton } from "../survey-components/ConfirmCamera";
 import { ExamConfirmationButton } from "../survey-components/ExamConfirmationButton";
 import { ExamNextButton } from "../survey-components/NextButton";
 
@@ -37,7 +36,6 @@ export default function Debug() {
 
   // custom widgets
   ExamConfirmationButton(survey);
-  CameraConfirmationButton(survey);
   ExamNextButton(survey);
   const prevData = window.localStorage.getItem(storageItemKey) || null;
 

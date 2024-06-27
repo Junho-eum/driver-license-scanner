@@ -6,7 +6,6 @@ import { useSearchParams } from "react-router-dom";
 
 // Topbar
 import TopBar from "./web-components/TopBar";
-import VolumeBar from "./web-components/VolumeBar";
 
 // Cookies
 import { useState, useEffect } from "react";
@@ -28,13 +27,11 @@ function setWithExpiry() {
 }
 
 const storageItemKey = "survey-data";
-var surveyVal = {};
 
+// check to see if we already have data in localstorage
 function checkStorage(){
-  
   const prevData = window.localStorage.getItem(storageItemKey);
   const expireTime = localStorage.getItem("expire-time");
-
   if ( prevData != null || expireTime != null && Cookies.get('prolificID') != null) {
     window.location.href = "/survey";
   }
@@ -50,7 +47,6 @@ export default function App() {
   // this useEffect checks if there's already data in the database
   useEffect(() => {
     const fetchData = async () => {
-
       const response = await fetch("/postsurvey", {
         method: "POST",
         headers: {
@@ -119,7 +115,6 @@ export default function App() {
       setIsSubmitting(false);
     }
   };
-
 
   return (
     <>

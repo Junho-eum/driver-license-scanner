@@ -40,11 +40,18 @@ router.patch("/", async (request, res) => {
     const treatmentID = data.treatment;
     const isWithdrawn = data.withdrawn;
     const hasFeedback = data.feedback;
+    const startDate = data.startDate;
+
+    const endDate = data.endDate;
+    const completed = data.complete;
 
     const surveyData = {
       PID: prolificID,
       survey: jsonData,
       treatment: treatmentID,
+      start: startDate,
+      end: endDate,
+      complete: completed,
       withdrawn: isWithdrawn,
       feedback: hasFeedback,
     };
@@ -53,6 +60,8 @@ router.patch("/", async (request, res) => {
       $set: {
           survey: jsonData,
           treatment: treatmentID,
+          end: endDate,
+          complete: completed,
           withdrawn: isWithdrawn,
           feedback: hasFeedback,
       }
@@ -79,10 +88,10 @@ router.patch("/", async (request, res) => {
 
 // GET is just used to choose a treatment
 router.get("/", async (request, res) => {
-  const treatments = ["microphone", "camera", "none", "AI"];
+  const treatments = ["camera", "proctor", "none", "AI", "lockdown"];
   const treatmentMinCounts = {
-    microphone: 0,
     camera: 0,
+    proctor: 0,
     none: 0,
     AI: 0,
     lockdown: 0,

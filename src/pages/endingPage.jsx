@@ -15,6 +15,8 @@ async function SendToServer(survey, FB){
   const cDataTreatment = Cookies.get("treatment");
   const updatedData = survey.data;
   const withdraw = "false";
+  const endDate = Date();
+  const hasCompleted = "true";
 
   await fetch("/postsurvey", { 
     method: "PATCH",
@@ -25,13 +27,16 @@ async function SendToServer(survey, FB){
       prolificID: cDataProlific,
       surveyData: updatedData,
       treatment: cDataTreatment,
+      endDate: endDate,
       withdrawn: withdraw,
       feedback: FB,
+      complete: hasCompleted,
     }),
   });
 }  
 
 const prolificLink = import.meta.env.VITE_PROLIFIC_LINK;
+
 
 export default function EndingPage() {
 
@@ -40,8 +45,9 @@ export default function EndingPage() {
   const data = JSON.parse(prevData);
   survey.data = data;
 
+  const [feedback, setFeedback] = useState("");
+
   const FeedbackForm = () => {
-    const [feedback, setFeedback] = useState("");
     const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   
     const handleFeedbackChange = (event) => {
@@ -51,7 +57,6 @@ export default function EndingPage() {
     const submitFeedback = () => {
       setFeedbackSubmitted(true);
       SendToServer(survey, feedback);
-      //localStorage.removeItem("survey-data");
     };
   
     return (
@@ -87,6 +92,7 @@ export default function EndingPage() {
   };
 
   const backtoProlific = () => {
+    SendToServer(survey, feedback);
     localStorage.removeItem("survey-data");
     Cookies.remove('prolificID');
     Cookies.remove('treatment');
