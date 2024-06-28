@@ -33,7 +33,7 @@ async function initDB() {
     // if the collection doesn't exist, create it
     if (existingDocs === 0) {
       console.log(`Collection '${collectionName}' is empty. Creating initial document...`);
-      const initialDoc = {prolificID: ".."};
+      const initialDoc = {PID: ".."};
       await collection.insertOne(initialDoc);
     } else {
       console.log(`Collection '${collectionName}' already contains documents.`);
