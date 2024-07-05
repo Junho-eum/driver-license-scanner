@@ -250,6 +250,18 @@ export default function Debug() {
 
     };
 
+    const generation = () => {
+
+      localStorage.clear();
+
+      var chars = "abcdefghijklmnopqrstuvwxyz"
+
+      var randID = chars[Math.floor(Math.random() * 26)] + chars[Math.floor(Math.random() * 26)] + chars[Math.floor(Math.random() * 26)] + chars[Math.floor(Math.random() * 26)] + chars[Math.floor(Math.random() * 26)];
+
+      window.location.href = "/?prolificID=" + randID;
+
+    };
+
     // survey operations
     const completeSurvey = () => {
       survey.doComplete();
@@ -430,6 +442,12 @@ export default function Debug() {
 
           <Updates s/>
           <Consistency />
+
+          <br></br>
+
+          <button className="opt-out" onClick={generation}>
+            Generate random Survey ID
+          </button>
 
         </div>
       </aside>
