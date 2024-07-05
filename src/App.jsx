@@ -43,6 +43,8 @@ export default function App() {
   const [prolificID, setProlificID] = useState(searchParams.get("prolificID") || "");
   const [fetchData, setFetchData] = useState("");
   const [surveyVal, setSurveyData] = useState([]);
+  // for disabling button
+  const [isSubmitting, setIsSubmitting] = useState(true);
 
   // this useEffect checks if there's already data in the database
   useEffect(() => {
@@ -66,14 +68,6 @@ export default function App() {
 
     fetchData();
   }, []); // one time execute
-
-  if (Object.keys(surveyVal) != 0) {
-    alert("Data is already in the database.");
-    window.location.href = redirectLink;
-  }
-
-  // for disabling button
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // this is used to set the treatment
   const getRequest = async () => {
@@ -156,13 +150,16 @@ export default function App() {
             </div>
             <br />
             <div className="d-grid gap-2 d-sm-flex justify-content-sm-center">
-              <button
+            {
+            (Object.keys(surveyVal) != 0 || isSubmitting == false) ? "Your Prolific ID is invalid or your survey data is already collected." 
+            :
+            <button
                 type="submit"
                 className="bg-gw-primary-blue rounded px-8 py-4 mb-5 shadow-lg text-2xl font-extrabold text-white"
-                disabled={isSubmitting}
               >
                 Start Survey
               </button>
+            }
             </div>
           </form>
         </div>
