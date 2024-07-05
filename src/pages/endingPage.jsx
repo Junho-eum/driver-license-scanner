@@ -1,6 +1,6 @@
 import TopBar from "../web-components/TopBar";
 import gwusec_logo from "../assets/images/gwusec.svg";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import { Model } from "survey-core";
 import surveyJson from "../survey";
 
@@ -47,19 +47,14 @@ export default function EndingPage() {
   survey.data = data;
 
   const [feedback, setFeedback] = useState("");
-
   
     const [feedbackSubmitted, setFeedbackSubmitted] = useState(() => {
-
       const submitted = localStorage.getItem('isSubmitted');
       return submitted !== null ? JSON.parse(submitted) : false;
-
     });
 
     useEffect(() => {
-
       localStorage.setItem('isSubmitted', JSON.stringify(feedbackSubmitted));
-
     });
     
   
@@ -122,31 +117,6 @@ export default function EndingPage() {
           </div>
         )}
       </div>
-    );
-  };
-
-  const backtoProlific = () => {
-    SendToServer(survey, feedback);
-    localStorage.removeItem("survey-data");
-    Cookies.remove('prolificID');
-    Cookies.remove('treatment');
-    window.location.href = prolificLink;
-  }
-
-  return (
-    
-    <>
-      <div>
-        <TopBar />
-        <div className="px-4 py-5 my-5 text-center">
-          <img
-            className="mx-auto mb-4"
-            src={gwusec_logo}
-            alt=""
-            width="72"
-            height="57"
-          ></img>
-          <FeedbackForm />
         </div>
         <div className="">
           <h4 className="endPageTop">Thank you for participating in this survey!</h4>
