@@ -41,10 +41,8 @@ router.patch("/", async (request, res) => {
     const isWithdrawn = data.withdrawn;
     const hasFeedback = data.feedback;
     const startDate = data.startDate;
-
     const endDate = data.endDate;
     const completed = data.complete;
-
     const surveyData = {
       PID: prolificID,
       survey: jsonData,
@@ -56,25 +54,34 @@ router.patch("/", async (request, res) => {
       feedback: hasFeedback,
     };
 
-    const updateData = {
-      $set: {
-          survey: jsonData,
-          treatment: treatmentID,
-          end: endDate,
-          complete: completed,
-          withdrawn: isWithdrawn,
-          feedback: hasFeedback,
-      }
-    };
+    var updateData = {};
+    // we don't want to update the withdrawn status from the end page
+    if (data.pageSource !== 'end') {
+      updateData.$set = {
+        survey: jsonData,
+        treatment: treatmentID,
+        end: endDate,
+        complete: completed,
+        feedback: hasFeedback,
+        withdrawn: isWithdrawn,
+    }
+    }
+    else{
+      updateData.$set = {
+        survey: jsonData,
+        treatment: treatmentID,
+        end: endDate,
+        complete: completed,
+        feedback: hasFeedback,
+    } 
+    }
 
     const p = await collection.findOne({ PID: prolificID });
     if (p) {
-
       const result = await collection.updateOne(
         { PID: prolificID },
         updateData
       );
-
       return result;
     } else {
       const result = await collection.insertOne(surveyData);

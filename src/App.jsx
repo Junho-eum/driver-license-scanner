@@ -13,7 +13,6 @@ import Cookies from "js-cookie";
 
 
 const expireTime = import.meta.env.VITE_TIME_TO_EXPIRE;
-const redirectLink = import.meta.env.VITE_PROLIFIC_LINK;
 
 // this function sets the expiration time of the localstorage
 function setWithExpiry() {
@@ -98,6 +97,7 @@ export default function App() {
         Cookies.set("treatment", fetchData);
         // add expire date
         setWithExpiry();
+        window.location.href = "/survey";
 
       } catch (error) {
         console.error("Error setting cookie:", error);

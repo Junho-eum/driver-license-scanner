@@ -70,6 +70,24 @@ export default function Debug() {
     );
   };
 
+  const clear = () => {
+
+    localStorage.clear();
+
+    var toDelete = document.cookie.split(';');
+
+    for( var i = 0; i < toDelete.length; i++){
+
+      const pos = toDelete[i].indexOf('=');
+      const name = pos > -1 ? toDelete[i].substring(0, pos) : toDelete[i];
+      document.cookie = name + '=;expires=Tue, 02 Jun 2024 00:00:00 GMT';
+
+    }
+
+    window.location.reload();
+
+  };
+
   const Pages = () => {
     const [pages] = useState(survey.pages);
     const [curPage, setCurPage] = useState(survey.currentPage);
@@ -204,7 +222,7 @@ export default function Debug() {
 
     return(
 
-          <><h6 className="flex text-lg py-4 dark:text-white">
+      <><h6 className="flex text-lg py-4 dark:text-white">
         <span>Synced Status</span>
       </h6><div className="input-group input-group-sm mb-3 row-cols-3">
           <input
@@ -430,6 +448,16 @@ export default function Debug() {
 
           <Updates s/>
           <Consistency />
+
+          <br></br>
+          <button className="opt-out" onClick={generation}>
+            Generate random Survey ID
+          </button>
+          <br></br>
+          <br></br>
+          <button className="opt-out" onClick={clear}>
+            Reset Cookies & Storage
+          </button>
 
         </div>
       </aside>
