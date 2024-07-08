@@ -184,11 +184,14 @@ export default function Debug() {
 
     localStorage.clear();
 
-    var chars = "abcdefghijklmnopqrstuvwxyz"
+    var chars = "abcdefghijklmnopqrstuvwxyz";
+    const generateID = () => [...Array(6)].map(() => chars[Math.floor(Math.random() * 26)]).join('');
 
-    var randID = chars[Math.floor(Math.random() * 26)] + chars[Math.floor(Math.random() * 26)] + chars[Math.floor(Math.random() * 26)] + chars[Math.floor(Math.random() * 26)] + chars[Math.floor(Math.random() * 26)];
+    const pid = generateID();
+    const sid = generateID();
+    const stid = generateID();
 
-    window.location.href = "/?prolificID=" + randID;
+    window.location.href = `/?PROLIFIC_PID=${pid}&STUDY_ID=${stid}&SESSION_ID=${sid}`;
 
   };
   

@@ -63,7 +63,7 @@ docker compose stop
 
 To add a prolific ID to the start of the survey, you can edit the url to add:
 ```
-http://localhost:5173/?prolificID=[ID_HERE]
+http://localhost:5173/?PROLIFIC_PID=[ID_HERE]
 ```
 Where [ID_HERE] is the prolific ID.
 
