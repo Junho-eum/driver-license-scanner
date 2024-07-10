@@ -463,7 +463,6 @@ export default function Debug() {
           {isCollapsed && <ResultBox s />}
 
           <Updates s/>
-          <Consistency />
 
           <br></br>
           <button className="opt-out" onClick={generation}>
