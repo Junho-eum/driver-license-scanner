@@ -1,4 +1,6 @@
 import * as SurveyCore from "survey-core";
+import Cookies from "js-cookie";
+
 
 export function ExamNextButton(Survey) {
   const componentName = "exam_next_button";
