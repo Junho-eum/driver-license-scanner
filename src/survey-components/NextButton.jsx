@@ -24,8 +24,44 @@ export function ExamNextButton(Survey) {
 
       buttonCustom.addEventListener("click", function () {
         {
-          Survey.isLastPage ? Survey.completeLastPage() : Survey.nextPage();
-          document.getElementById('top-bar').scrollIntoView(); 
+
+          const localCheck = window.localStorage.getItem("expire-time");
+          const cookieCheck = Cookies.get('treatment');
+
+          if(localCheck == null){
+
+            alert("Error with localstorage corrupted. Please return to prolific and reclick the survey link");
+            localStorage.clear();
+            window.location.reload();
+            window.location.href = "/";
+
+          }
+          else if(cookieCheck == null){
+
+            alert("Error with cookie corrupted. Please return to prolific and reclick the survey link");
+            localStorage.clear();
+            window.location.reload();
+            window.location.href = "/";
+
+          }
+          else{
+
+            if(Survey.isLastPage){
+
+              localStorage.setItem("finished", "true");
+              Survey.doComplete();
+              document.getElementById('top-bar').scrollIntoView(); 
+
+
+            }
+            else{
+
+              Survey.nextPage();
+              document.getElementById('top-bar').scrollIntoView(); 
+
+            }
+          }
+
         }
       });
     },
