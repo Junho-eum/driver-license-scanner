@@ -44,7 +44,12 @@ async function SendToServer(surveyData, prolific, T, WD){
 
 const OptOutButton = ({ surveyRef, handleWithdrawSurvey }) => {
   const [isSurveyOpen, setIsSurveyOpen] = useState(false);
-  const handleCloseSurvey = () => setIsSurveyOpen(!isSurveyOpen);
+  const handleCloseSurvey = () => {
+    
+    localStorage.setItem("finished","true");
+    setIsSurveyOpen(!isSurveyOpen);
+
+  };
 
   return (
     <nav >
