@@ -233,23 +233,33 @@ export default function Debug() {
         console.log("Prev data: ", JSON.parse(prevData));
       };
       survey.onCurrentPageChanged.add(pageChange);
-    });
+    }, []);
 
+    const compare = () => {
 
-    return(
+      const prevData = JSON.parse(window.localStorage.getItem(storageItemKey));
 
-      <><h6 className="flex text-lg py-4 dark:text-white">
-        <span>Synced Status</span>
-      </h6><div className="input-group input-group-sm mb-3 row-cols-3">
-          <input
-            type="text"
-            className="form-control col-2"
-            value={JSON.stringify(surveyData) == prevData}
-            readOnly
-            aria-label="Survey State"
-            aria-describedby="debug-mode-survey-state" />
-        </div></>
+      console.log("Database data :" + JSON.stringify(surveyData));
+      console.log("LocalStorage data :" + JSON.stringify(prevData));
 
+      if (JSON.stringify(surveyData) == JSON.stringify(prevData) || (JSON.stringify(surveyData) == "{}" && JSON.stringify(prevData) == "null")) {
+
+        console.log("same");
+
+      } else {
+
+        console.log("differing");
+
+      }
+
+    };
+
+    return (
+      <div>
+        <button className="opt-out" onClick={compare}>
+          Compare
+        </button>
+      </div>
     );
 
   };
@@ -487,10 +497,16 @@ export default function Debug() {
           </button>
 
           <br></br>
+          <br></br>
 
           <button className="opt-out" onClick={generation}>
             Generate random Survey ID
           </button>
+
+          <br></br>
+          <br></br>
+
+          <Consistency ></Consistency>
 
         </div>
       </aside>

@@ -156,6 +156,7 @@ export default function SurveyPage() {
       const cDataProlific = Cookies.get("prolificID");
       const cDataTreatment = Cookies.get("treatment");
       const updatedData = survey.data;
+      updatedData.pageNo = survey.currentPageNo;
       const WD = "false";
       
       SendToServer(updatedData, cDataProlific, cDataTreatment, WD);
