@@ -13,7 +13,6 @@ import Cookies from "js-cookie";
 
 
 const expireTime = import.meta.env.VITE_TIME_TO_EXPIRE;
-const redirectLink = import.meta.env.VITE_PROLIFIC_LINK;
 
 // this function sets the expiration time of the localstorage
 function setWithExpiry() {
@@ -39,8 +38,12 @@ function checkStorage(){
 export default function App() {
 
   checkStorage();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [prolificID, setProlificID] = useState(searchParams.get("prolificID") || "");
+
+  const [searchParams] = useSearchParams();
+  const [prolificID, setProlificID] = useState(searchParams.get("PROLIFIC_PID") || "");
+  const studyID = searchParams.get("STUDY_ID" || "");
+  const sessionID = searchParams.get("SESSION_ID" || "");
+
   const [fetchData, setFetchData] = useState("");
   const [surveyVal, setSurveyData] = useState([]);
   // for disabling button
@@ -95,9 +98,12 @@ export default function App() {
       try {
         // set cookie
         Cookies.set("prolificID", submittedProlificID);
+        Cookies.set("studyID", studyID);
+        Cookies.set("sessionID", sessionID);
         Cookies.set("treatment", fetchData);
         // add expire date
         setWithExpiry();
+        window.location.href = "/survey";
 
       } catch (error) {
         console.error("Error setting cookie:", error);

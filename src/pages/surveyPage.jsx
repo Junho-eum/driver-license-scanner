@@ -144,12 +144,12 @@ export default function SurveyPage() {
 
   const handleWithdrawSurvey = () => {
     const cDataProlific = Cookies.get("prolificID");
-      const cDataTreatment = Cookies.get("treatment");
-      const updatedData = survey.data;
-      const WD = "true";
-      
-      SendToServer(updatedData, cDataProlific, cDataTreatment, WD);
-    survey.doComplete();
+    const cDataTreatment = Cookies.get("treatment");
+    const updatedData = survey.data;
+    const WD = "true";
+    
+    SendToServer(updatedData, cDataProlific, cDataTreatment, WD);
+    window.location.href = "/end";
   };
 
   survey.onCurrentPageChanged.add( async (survey) => {

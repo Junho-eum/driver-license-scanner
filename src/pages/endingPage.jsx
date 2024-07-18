@@ -14,7 +14,7 @@ async function SendToServer(survey, FB){
   const cDataProlific = Cookies.get("prolificID");
   const cDataTreatment = Cookies.get("treatment");
   const updatedData = survey.data;
-  const withdraw = "false";
+  const withdraw = "true";
   const endDate = Date();
   const hasCompleted = "true";
 
@@ -31,6 +31,7 @@ async function SendToServer(survey, FB){
       withdrawn: withdraw,
       feedback: FB,
       complete: hasCompleted,
+      pageSource: "end",
     }),
   });
 }  
@@ -46,13 +47,10 @@ export default function EndingPage() {
   survey.data = data;
 
   const [feedback, setFeedback] = useState("");
-
   
     const [feedbackSubmitted, setFeedbackSubmitted] = useState(() => {
-
       const submitted = localStorage.getItem('isSubmitted');
       return submitted !== null ? JSON.parse(submitted) : false;
-
     });
 
     useEffect(() => {
