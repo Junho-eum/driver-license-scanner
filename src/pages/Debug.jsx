@@ -308,6 +308,7 @@ export default function Debug() {
 
     // survey operations
     const completeSurvey = () => {
+      localStorage.setItem("finished","true");
       survey.doComplete();
     };
     const clearSurvey = () => {
