@@ -10,7 +10,7 @@ export function ExamConfirmationButton(Survey) {
     isFit: (question) => question.name === componentName,
     htmlTemplate:
       "<div>" +
-      "<button type='button' id='confirm_buttom' class='bg-gw-primary-blue rounded px-8 py-4 mb-5 shadow-lg text-2xl font-extrabold text-white'> Confirm Installation </button>" +
+      "<button type='button' id='confirm_buttom' class='bg-gw-primary-blue rounded px-8 py-4 mb-5 shadow-lg text-2xl font-extrabold text-white focus:outline-none focus:ring focus:ring-red-500'> Confirm Installation </button>" +
       "&nbsp;&nbsp;" +
       "</div>",
 

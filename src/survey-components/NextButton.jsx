@@ -12,7 +12,7 @@ export function ExamNextButton(Survey) {
     isFit: (question) => question.name === componentName,
     htmlTemplate:
       "<div style='height: 39px'>" +
-      "<button type='button' id='exam_next_button' style='float:right'class='bg-gw-primary-blue rounded px-8 py-4 mb-5 shadow-lg text-2xl font-extrabold text-white'></button>" +
+      "<button type='button' id='exam_next_button' style='float:right' class= 'bg-gw-primary-blue rounded px-8 py-4 mb-5 shadow-lg text-2xl font-extrabold text-white focus:outline-none focus:ring focus:ring-red-500'></button>" +
       "&nbsp;&nbsp;" +
       "</div>",
 
