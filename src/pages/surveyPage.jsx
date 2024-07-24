@@ -44,7 +44,12 @@ async function SendToServer(surveyData, prolific, T, WD){
 
 const OptOutButton = ({ surveyRef, handleWithdrawSurvey }) => {
   const [isSurveyOpen, setIsSurveyOpen] = useState(false);
-  const handleCloseSurvey = () => setIsSurveyOpen(!isSurveyOpen);
+  const handleCloseSurvey = () => {
+    
+    localStorage.setItem("finished","true");
+    setIsSurveyOpen(!isSurveyOpen);
+
+  };
 
   return (
     <nav >
@@ -146,6 +151,7 @@ export default function SurveyPage() {
     const cDataProlific = Cookies.get("prolificID");
     const cDataTreatment = Cookies.get("treatment");
     const updatedData = survey.data;
+    updatedData.pageNo = survey.currentPageNo;
     const WD = "true";
     
     SendToServer(updatedData, cDataProlific, cDataTreatment, WD);
@@ -156,6 +162,7 @@ export default function SurveyPage() {
       const cDataProlific = Cookies.get("prolificID");
       const cDataTreatment = Cookies.get("treatment");
       const updatedData = survey.data;
+      updatedData.pageNo = survey.currentPageNo;
       const WD = "false";
       
       SendToServer(updatedData, cDataProlific, cDataTreatment, WD);

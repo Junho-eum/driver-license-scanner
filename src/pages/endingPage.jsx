@@ -53,8 +53,25 @@ export default function EndingPage() {
       return submitted !== null ? JSON.parse(submitted) : false;
     });
 
+    const [showPage, setShowPage] = useState(false);
+
     useEffect(() => {
+
+      const finished = localStorage.getItem("finished");
+
+      if(finished == "true"){
+
+        setShowPage(true);
+
+      }
+      else{
+
+        window.location.href = "/survey";
+
+      }
+      
       localStorage.setItem('isSubmitted', JSON.stringify(feedbackSubmitted));
+
     });
     
   
@@ -70,7 +87,6 @@ export default function EndingPage() {
   const backtoProlific = () => {
     SendToServer(survey, feedback);
     localStorage.removeItem("survey-data");
-    localStorage.removeItem("isSubmitted");
     Cookies.remove('prolificID');
     Cookies.remove('treatment');
     window.location.href = prolificLink;
