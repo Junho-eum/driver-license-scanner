@@ -10,7 +10,7 @@ export default function TopBar() {
       >
         <div className="grid grid-cols-3 gap-4">
           <div className="place-self-center">
-            <img src={gwusec_logo} className="max-h-16 p-2"></img>
+            <img src={gwusec_logo} className="max-h-16 p-2" alt="The George Washington University Security Lab logo"></img>
           </div>
           <div className="place-self-center">
             <span className="text-2xl font-bold underline text-white">
@@ -20,14 +20,14 @@ export default function TopBar() {
         </div>
         <div>
           <div className="bg-dark p-4">
-            <h5 className=" card-title text-white h4">
-              <strong>Research Study:</strong> <em>Exam Proctoring Software</em>
-            </h5>
+            <p className=" card-title text-white h4">
+              <strong>Research Study: </strong> <em>Exam Proctoring Software</em>
+            </p>
             <hr></hr>
-            <h4 className="text-white h4">
+            <p className="text-white h4">
               <strong>Principle Investigator:</strong> Dr. Adam J. Aviv, The
               George Washington University
-            </h4>
+            </p>
           </div>
         </div>
       </div>
