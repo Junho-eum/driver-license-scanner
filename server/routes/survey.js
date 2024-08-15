@@ -82,7 +82,7 @@ router.patch("/", async (request, res) => {
         { PID: prolificID },
         updateData
       );
-      return result;
+      res.send(result).status(200);
     } else {
       const result = await collection.insertOne(surveyData);
       res.send(result).status(200);
