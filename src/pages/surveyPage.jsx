@@ -193,7 +193,7 @@ export default function SurveyPage() {
           <OptOutButton surveyRef={surveyRef} handleWithdrawSurvey={handleWithdrawSurvey} />
         </div>
       </div>
-      <Survey model={survey} ref={surveyRef} />
+      <Survey className="container mx-auto my-auto" model={survey} ref={surveyRef} />
     </>
   );
 }
