@@ -10,54 +10,66 @@ Currently, two official plugins are available:
 
 When we collect data, the web app will be run on a server, so everyone can interact with the same instance. But for development, you will need to follow these steps to run the web app on your own device.
 
-## Step 1: Install dependencies using NPM
+## Dev
 
-This project includes several components:
+For development, please follow the instructions below.
 
-- Install [NPM](https://www.npmjs.com/). Once installed, open this directory and run `npm i` to install dependencies. You may need to run `npm i --force`.
+### Step 1: Install dependencies using NPM
 
-## Step 2: Install Docker
+1. Make sure NPM is installed or install it from [here](https://www.npmjs.com/). 
+2. Navigate to the directory containing this project and install the dependencies:
+
+    ```
+    npm i
+    ``` 
+
+    You may need to run `npm i --force`.
+
+### Step 2: Install and initialize Docker
 In addition to the NPM dependencies, we will be using:
 - Node.js, which will run our JavaScript application.
 - MongoDB, our database.
 - MongoExpress, an interface used to interact with MongoDB on the web.
 
-It would be time-consuming to install and configure all of these on your computer, so we use [Docker](https://docs.docker.com/get-docker/). Importantly, if you use **Windows**, you will need to download the Windows Subsystem for Linux (WSL) from the Microsoft Store.
+It would be time-consuming to install and configure all of these on your computer. Importantly, if you use **Windows**, you will need to download the Windows Subsystem for Linux (WSL) from the Microsoft Store.
 
-## Step 3: Initialize Docker
+1. Make sure [Docker](https://docs.docker.com/get-docker/) is installed and setup
+2. Navigate to the directory containing this project and run:
 
-Once you have downloaded and opened Docker, run `docker compose up` or `docker compose up -d` in the exam directory. This will create a Docker instance with all the required software installed. Use `docker compose stop` to stop the instance. You can run `docker container ls` to see a list of your containers. Learn more about Docker commands [here](https://docs.docker.com/engine/reference/commandline/container_ls/).
+    ```
+    docker compose build
+    ```
 
+### Step 3: Start development
 
-## How To Run
+1. Start up the required development infrastructure:
+    ```
+    docker compose up
+    ``` 
+    or 
+    ```
+    docker compose up -d
+    ```
 
-Start server:
-```
-docker compose build
-```
-Start frontend:
-```
-npm run dev
-```
+    > Note: You can run `docker container ls` to see a list of your containers. Learn more about Docker commands [here](https://docs.docker.com/engine/reference/commandline/container_ls/).
 
-To dump the database to a CSV file, run:
-```
-node mongo_to_csv.js
-```
+2. Start the React frontend:
+    ```
+    npm run dev
+    ```
 
-# Docker and MongoDB
+### Step 4: Stop development
 
-To start docker:
+1. (Optional) Dump the database to a CSV file:
+    ```
+    node mongo_to_csv.js
+    ```
 
-```
-docker compose up -d
-```
+2. Stop development infrastruture by running:
 
-To stop docker:
-
-```
-docker compose stop
-```
+    ```
+    docker compose stop
+    ```
 
 # Input Prolific ID
 
