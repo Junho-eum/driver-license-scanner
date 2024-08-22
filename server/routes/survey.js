@@ -95,13 +95,11 @@ router.patch("/", async (request, res) => {
 
 // GET is just used to choose a treatment
 router.get("/", async (request, res) => {
-  const treatments = ["camera", "proctor", "none", "AI", "lockdown"];
+  const treatments = ["treatment1", "treatment2", "treatment3"];
   const treatmentMinCounts = {
-    camera: 0,
-    proctor: 0,
-    none: 0,
-    AI: 0,
-    lockdown: 0,
+    treatment1: 0,
+    treatment2: 0,
+    treatment3: 0,
   };
   let minCount = Infinity;
   let minTreatment;
