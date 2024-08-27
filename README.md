@@ -89,6 +89,6 @@ npm run build
 
 # Need More Help?
 
-Be sure to check the wiki for additional tutorials on how to add modify your survey.
+Be sure to check the wiki for additional tutorials on how to modify your survey.
 
 Otherwise, please add an issue to this repo.
