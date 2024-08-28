@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 
 export function ExamNextButton(Survey) {
   const componentName = "exam_next_button";
-  const activateCamera = {
+  const button_name = {
     // Unique name for the widget
     name: "exam_next_button",
 
@@ -69,7 +69,7 @@ export function ExamNextButton(Survey) {
     },
   };
   SurveyCore.CustomWidgetCollection.Instance.addCustomWidget(
-    activateCamera,
+    button_name,
     "myCustomWidget"
   );
 }

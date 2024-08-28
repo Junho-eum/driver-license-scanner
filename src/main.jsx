@@ -8,7 +8,7 @@ import Debug from "./pages/Debug.jsx";
 import SurveyPage from "./pages/surveyPage";
 import EndingPage from "./pages/endingPage.jsx";
 
-class CameraStartComponent extends HTMLElement {
+class ButtonComponent extends HTMLElement {
   constructor() {
     super();
     const shadow = this.attachShadow({ mode: "open" });
@@ -36,7 +36,7 @@ class CameraStartComponent extends HTMLElement {
   }
 }
 
-customElements.define("camera-start", CameraStartComponent);
+customElements.define("button-component", ButtonComponent);
 
 //Note we can create a settings file to ensure we are allowed to debug
 ReactDOM.createRoot(document.getElementById("root")).render(
