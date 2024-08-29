@@ -1,6 +1,6 @@
 import * as SurveyCore from "survey-core";
 import Cookies from "js-cookie";
-import './NextButton.css'
+import '../assets/css/NextButton.css'
 
 
 export function ExamNextButton(Survey) {
