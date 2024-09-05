@@ -2,7 +2,8 @@
 import { Survey } from "survey-react-ui";
 import { Model } from "survey-core";
 import surveyJson from "../survey";
-import {useRef, useState } from "react";
+import { useRef, useState } from "react";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
 // cookie
 import Cookies from "js-cookie";
@@ -24,9 +25,9 @@ function saveSurveyData(survey) {
   window.localStorage.setItem(storageItemKey, JSON.stringify(data));
 }
 
-async function SendToServer(surveyData, prolific, T, WD){
+async function SendToServer(surveyData, prolific, T, WD) {
 
-  await fetch("/postsurvey", { 
+  await fetch("/postsurvey", {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -45,52 +46,50 @@ async function SendToServer(surveyData, prolific, T, WD){
 const OptOutButton = ({ surveyRef, handleWithdrawSurvey }) => {
   const [isSurveyOpen, setIsSurveyOpen] = useState(false);
   const handleCloseSurvey = () => {
-    
-    localStorage.setItem("finished","true");
+
+    localStorage.setItem("finished", "true");
     setIsSurveyOpen(!isSurveyOpen);
 
   };
 
   return (
     <nav >
-      <div className="topnav"> 
+      <div className="topnav">
         <div className="topnav-right">
-          {isSurveyOpen && (
-            <div  className="bg-dark p-4">
-              <div>
-                <h5
-                  className="card-title text-black text-xl font-bold h4 my-2"
-                  id="withdrawDialogBackdropLabel"
-                >
-                  Withdraw from the Survey
-                </h5>
-              </div>
-              <div 
-                className="text-black h4 my-2">
-                Do you really want to withdraw from the survey?
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="buttonSuccess"
-                  onClick={handleCloseSurvey}
-                >
-                  No, take me back
-                </button>
-                <button
-                  type="button"
-                  className="buttonDanger"
-                  onClick={() => {
-                    handleCloseSurvey();
-                    handleWithdrawSurvey(); // Call the callback function passed as a prop
-                  }}
-                >
-                  Yes, I want to withdraw
-                </button>
-              </div>
-            </div>
-          )}
-          <button style={{  marginTop: '1%'}} className="opt-out" onClick={handleCloseSurvey}>
+          <Dialog
+            open={isSurveyOpen}
+            onClose={handleCloseSurvey}
+            aria-labelledby="withdrawDialogTitle"
+            aria-describedby="withdrawDialogDescription"
+          >
+            <DialogTitle id="withdrawDialogTitle">Are you sure you want to withdraw from the survey?</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="withdrawDialogDescription">
+                If you choose to withdraw, your responses will <strong>not be saved</strong>, and any partial progress will be lost.
+                This action cannot be undone, and you may <strong>not be eligible for compensation</strong> if you haven't completed the survey.
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <button
+                onClick={handleCloseSurvey}
+                type="button"
+                className="buttonSuccess"
+              >
+                No, take me back
+              </button>
+              <button
+                onClick={() => {
+                  handleCloseSurvey();
+                  handleWithdrawSurvey();
+                }}
+                type="button"
+                className="buttonDanger"
+              >
+                Yes, I want to withdraw
+              </button>
+            </DialogActions>
+          </Dialog>
+          <button style={{ marginTop: '1%' }} className="opt-out" onClick={handleCloseSurvey}>
             Opt-Out
           </button>
         </div>
@@ -103,35 +102,43 @@ const OptOutButton = ({ surveyRef, handleWithdrawSurvey }) => {
 // this function checks the expire time of the data
 function getWithExpiry() {
 
-	const itemStr = localStorage.getItem("expire-time")
-	const item = JSON.parse(itemStr);
-	const now = new Date();
+  const itemStr = localStorage.getItem("expire-time")
+  const item = JSON.parse(itemStr);
+  const now = new Date();
 
-	// compare the expiry time of the item with the current time
-	if (now.getTime() > item.expiry) {
-		localStorage.removeItem("survey-data");
+  // compare the expiry time of the item with the current time
+  if (now.getTime() > item.expiry) {
+    localStorage.removeItem("survey-data");
     localStorage.removeItem("expire-date");
-		window.location.href = window.history.back();
-	}
+    window.location.href = window.history.back();
+  }
 }
-function checkStorage(){
+function checkStorage() {
   const itemStr = localStorage.getItem("expire-time");
-  if ( itemStr == null) {
+  if (itemStr == null) {
     window.location.href = window.history.back();
   }
 }
 
 
 export default function SurveyPage() {
-  
+
   // check if we have storage
   checkStorage();
   // check if we're expired
   getWithExpiry();
-  
+
   var survey = new Model(surveyJson);
   survey.onValueChanged.add(saveSurveyData);
   survey.onCurrentPageChanged.add(saveSurveyData);
+  survey.applyTheme({
+    "cssVariables": {
+      "--sjs-font-size": "20px", // according to this paper, 18px should be the minimum font size for text-heavy websites: https://pielot.org/pubs/Rello2016-Fontsize.pdf
+    },
+    "isPanelless": false,
+    "themeName": "default",
+    "colorPalette": "light"
+  })
 
   // custom widgets
   ExamConfirmationButton(survey);
@@ -153,37 +160,37 @@ export default function SurveyPage() {
     const updatedData = survey.data;
     updatedData.pageNo = survey.currentPageNo;
     const WD = "true";
-    
+
     SendToServer(updatedData, cDataProlific, cDataTreatment, WD);
     window.location.href = "/end";
   };
 
-  survey.onCurrentPageChanged.add( async (survey) => {
-      const cDataProlific = Cookies.get("prolificID");
-      const cDataTreatment = Cookies.get("treatment");
-      const updatedData = survey.data;
-      updatedData.pageNo = survey.currentPageNo;
-      const WD = "false";
-      
-      SendToServer(updatedData, cDataProlific, cDataTreatment, WD);
-      getWithExpiry();
-      
-    });
+  survey.onCurrentPageChanged.add(async (survey) => {
+    const cDataProlific = Cookies.get("prolificID");
+    const cDataTreatment = Cookies.get("treatment");
+    const updatedData = survey.data;
+    updatedData.pageNo = survey.currentPageNo;
+    const WD = "false";
 
-    // gotta do it this way to actually send to the survey, yes it's annoying
-    survey.onComplete.add (async (survey) => {
-        const cDataProlific = Cookies.get("prolificID");
-        const cDataTreatment = Cookies.get("treatment");
-        const updatedData = survey.data;
-        const WD = "false";
-      
-        SendToServer(updatedData, cDataProlific, cDataTreatment, WD);
+    SendToServer(updatedData, cDataProlific, cDataTreatment, WD);
+    getWithExpiry();
 
-        console.log("Survey is on the last page!");
-        window.location.href = "/end";
-      });
+  });
 
-    const surveyRef = useRef(survey);
+  // gotta do it this way to actually send to the survey, yes it's annoying
+  survey.onComplete.add(async (survey) => {
+    const cDataProlific = Cookies.get("prolificID");
+    const cDataTreatment = Cookies.get("treatment");
+    const updatedData = survey.data;
+    const WD = "false";
+
+    SendToServer(updatedData, cDataProlific, cDataTreatment, WD);
+
+    console.log("Survey is on the last page!");
+    window.location.href = "/end";
+  });
+
+  const surveyRef = useRef(survey);
 
   return (
     <>

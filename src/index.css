@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+    font-size: 20px; /* according to this paper, 18px should be the **minimum** font size for text-heavy websites: https://pielot.org/pubs/Rello2016-Fontsize.pdf */
+  }
+
+  body {
+    background-color: #f3f3f3;
+  }
