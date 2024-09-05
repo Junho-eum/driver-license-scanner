@@ -11,9 +11,11 @@ import Cookies from "js-cookie";
 // other components
 import TopBar from "../web-components/TopBar";
 
-// custom widgets
+// custom widgets and components
 import { ExamConfirmationButton } from "../survey-components/ExamConfirmationButton";
 import { ExamNextButton } from "../survey-components/NextButton";
+import { RegisterHTMLSlideShow } from "../survey-components/CustomHTMLSlideShowComponent";
+import '../survey-components/CustomMatrixComponent';
 
 // good resource: https://github.com/mongodb-developer/mern-stack-example/
 
@@ -140,9 +142,10 @@ export default function SurveyPage() {
     "colorPalette": "light"
   })
 
-  // custom widgets
+  // custom widgets and components
   ExamConfirmationButton(survey);
   ExamNextButton(survey);
+  RegisterHTMLSlideShow(survey);
 
   // Restore survey results
   const prevData = window.localStorage.getItem(storageItemKey);
