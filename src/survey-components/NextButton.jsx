@@ -11,10 +11,10 @@ export function ExamNextButton(Survey) {
 
     // Check if the widget applies to the current question
     isFit: (question) => question.name === componentName,
-    htmlTemplate:` 
+    htmlTemplate: ` 
       <div style='height: 39px'>
         <div class="tooltip" style='float:right;'>
-          <button type='button' id='exam_next_button' disabled class= 'rounded px-8 py-4 mb-5 shadow-lg text-2xl font-extrabold focus:outline-none focus:ring focus:ring-red-500'></button>
+          <button type='button' id='exam_next_button' disabled class='rounded px-8 py-4 mb-5 shadow-lg text-2xl font-extrabold focus:outline-none focus:ring focus:ring-red-500'></button>
           <span id='tooltip' class="tooltiptext">Please answer all required questions (*) before clicking next.</span>
         </div>
         &nbsp;&nbsp; 
@@ -30,13 +30,16 @@ export function ExamNextButton(Survey) {
         mutations.forEach(function (mutation) {
           // Check the modified attributeName is "disabled"
           if (mutation.attributeName === "disabled") {
-            if(buttonCustom.disabled) {
+            if (buttonCustom.disabled) {
               buttonCustom.classList.remove("bg-gw-primary-blue");
               buttonCustom.classList.remove("text-white");
+              buttonCustom.classList.add("bg-gw-primary-disabled");
+              buttonCustom.classList.add("text-gw-primary-text-disabled");
             } else {
+              buttonCustom.classList.remove("bg-gw-primary-disabled");
+              buttonCustom.classList.remove("text-gw-primary-text-disabled");
               buttonCustom.classList.add("bg-gw-primary-blue");
               buttonCustom.classList.add("text-white");
-
             }
           }
         });
@@ -51,7 +54,7 @@ export function ExamNextButton(Survey) {
       let isAllAnswered = true;
       for (var i = 0; i < Survey.currentPage.questions.length; i++) {
         let q = Survey.currentPage.questions[i];
-        if(!q.validate(false)) {
+        if (!q.validate(false)) {
           isAllAnswered = false;
           break;
         }
@@ -60,26 +63,26 @@ export function ExamNextButton(Survey) {
       tooltip.hidden = isAllAnswered;
 
       // Register event listeners to react to changes on questions being answered:
-        Survey.onValueChanged.add((sender, options) => {
-          for (var i = 0; i < Survey.currentPage.questions.length; i++) {
-            let q = Survey.currentPage.questions[i];
-            if (!q.validate(false)) {
-              buttonCustom.disabled = true;
-              tooltip.hidden = false;
-              break;
-            } else {
-              buttonCustom.disabled = false;
-              tooltip.hidden = true;
-            }
+      Survey.onValueChanged.add((sender, options) => {
+        for (var i = 0; i < Survey.currentPage.questions.length; i++) {
+          let q = Survey.currentPage.questions[i];
+          if (!q.validate(false)) {
+            buttonCustom.disabled = true;
+            tooltip.hidden = false;
+            break;
+          } else {
+            buttonCustom.disabled = false;
+            tooltip.hidden = true;
           }
-        });
+        }
+      });
 
       {
         Survey.isLastPage
           ? (buttonCustom.innerText = "Complete")
           : (buttonCustom.innerText = "Next");
       }
-      
+
 
       buttonCustom.addEventListener("click", function () {
         {
@@ -87,7 +90,7 @@ export function ExamNextButton(Survey) {
           const localCheck = window.localStorage.getItem("expire-time");
           const cookieCheck = Cookies.get('treatment');
 
-          if(localCheck == null){
+          if (localCheck == null) {
 
             alert("Error with localstorage corrupted. Please return to prolific and reclick the survey link");
             localStorage.clear();
@@ -95,7 +98,7 @@ export function ExamNextButton(Survey) {
             window.location.href = "/";
 
           }
-          else if(cookieCheck == null){
+          else if (cookieCheck == null) {
 
             alert("Error with cookie corrupted. Please return to prolific and reclick the survey link");
             localStorage.clear();
@@ -103,20 +106,20 @@ export function ExamNextButton(Survey) {
             window.location.href = "/";
 
           }
-          else{
+          else {
 
-            if(Survey.isLastPage){
+            if (Survey.isLastPage) {
 
               localStorage.setItem("finished", "true");
               Survey.doComplete();
-              document.getElementById('top-bar').scrollIntoView(); 
+              document.getElementById('top-bar').scrollIntoView();
 
 
             }
-            else{
+            else {
 
               Survey.nextPage();
-              document.getElementById('top-bar').scrollIntoView(); 
+              document.getElementById('top-bar').scrollIntoView();
 
             }
           }
