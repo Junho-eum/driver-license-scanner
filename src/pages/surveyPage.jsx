@@ -5,6 +5,8 @@ import surveyJson from "../survey";
 import { useRef, useState } from "react";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
+import './surveyPage.css';
+
 // cookie
 import Cookies from "js-cookie";
 
@@ -27,9 +29,28 @@ function saveSurveyData(survey) {
   window.localStorage.setItem(storageItemKey, JSON.stringify(data));
 }
 
+/**
+ * Stores survey data to the remote DB using async function.
+ * @param {*} surveyData 
+ * @param {*} prolific 
+ * @param {*} T 
+ * @param {*} WD 
+ */
 async function SendToServer(surveyData, prolific, T, WD) {
+  await PatchSurveyData(surveyData, prolific, T, WD);
+}
 
-  await fetch("/postsurvey", {
+/**
+ * Patches survey data in the remote DB using the fetch API.
+ * @param {*} surveyData 
+ * @param {*} prolific 
+ * @param {*} T 
+ * @param {*} WD 
+ * @returns Promise using the fetch API 
+ */
+async function PatchSurveyData(surveyData, prolific, T, WD) {
+
+  return fetch("/postsurvey", {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -125,12 +146,13 @@ function checkStorage() {
 
 export default function SurveyPage() {
 
+  const [survey] = useState(new Model(surveyJson));
+
   // check if we have storage
   checkStorage();
   // check if we're expired
   getWithExpiry();
 
-  var survey = new Model(surveyJson);
   survey.onValueChanged.add(saveSurveyData);
   survey.onCurrentPageChanged.add(saveSurveyData);
   survey.applyTheme({
@@ -193,7 +215,7 @@ export default function SurveyPage() {
     window.location.href = "/end";
   });
 
-  const surveyRef = useRef(survey);
+  const surveyRef = useRef(null);
 
   return (
     <>

@@ -1,5 +1,3 @@
-version: '3.1'
-
 services:
 
   mongo:
@@ -7,10 +5,12 @@ services:
 #    restart: always
     ports:
      - 27000:27017
+    env_file:
+      - .env
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
-      INIT_WAIT_SEC: 3 
+      INIT_WAIT_SEC: 3
     volumes:
       - ./data:/data/db
 
@@ -19,6 +19,8 @@ services:
 #    restart: always    
     ports:
       - 8081:8081
+    env_file:
+      - .env
     environment:
       ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_USERNAME}
       ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_PASSWORD}
@@ -26,18 +28,15 @@ services:
       ME_CONFIG_MONGODB_PORT: "27000"
       ME_CONFIG_MONGODB_ADMINUSERNAME: ${ME_ADMIN_USERNAME}
       ME_CONFIG_MONGODB_ADMINPASSWORD: ${ME_ADMIN_PASSWORD}
-      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017
+      ME_CONFIG_MONGODB_URL: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017
   
-  node:
-    image: node-express
-    build: ./docker-node
-    #    restart: always    
+  node-survey:
+    image: ${DOCKER_DEPLOY_IMAGE_NAME}
     ports: 
       - 8888:8888
     environment:
       EXPRESS_PORT: 8888
-      MONGO_DB_CONNECTION_STRING: mongodb://root:example@mongo:27017
-    volumes:
-      - ./dist:/usr/src/express/dist
-      - ./server:/usr/src/express/server
+      MONGO_DB_CONNECTION_STRING: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017
+    env_file:
+      - .env
     

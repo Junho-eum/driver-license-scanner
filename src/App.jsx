@@ -13,7 +13,7 @@ import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 
 
-const expireTime = import.meta.env.VITE_TIME_TO_EXPIRE;
+const expireTime = import.meta.env.VITE_SURVEY_DATA_EXPIRE_DAYS;
 
 // this function sets the expiration time of the localstorage
 function setWithExpiry() {

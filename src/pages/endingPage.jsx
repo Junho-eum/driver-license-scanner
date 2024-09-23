@@ -36,7 +36,7 @@ async function SendToServer(survey, FB){
   });
 }  
 
-const prolificLink = import.meta.env.VITE_PROLIFIC_LINK;
+const prolificLink = import.meta.env.VITE_LINK_REDIRECT_TO_URL_ON_SURVEY_SUBMISSION;
 
 
 export default function EndingPage() {
