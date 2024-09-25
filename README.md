@@ -161,7 +161,7 @@ graph TD
     ```
 6. Run in terminal on deployment host:
     ```
-    docker-compose up
+    docker-compose -f ./deploy-as-git-repository/docker-compose.yml up
     ```
 
 7. Setup additional software, such as nginx to proxy traffic to the survey.
