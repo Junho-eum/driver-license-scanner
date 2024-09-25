@@ -1,8 +1,9 @@
 // database
-import db from "./server/db/connection.js";
+import mongodbConn from './express-server-backend/db/connection.js'
 import {Parser} from 'json2csv';
 import fs from 'fs';
 
+const db = await mongodbConn.getDBSurvey();
 const collection = await db.collection("survey-results");
 
 // replace with appropriate name

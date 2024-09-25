@@ -25,3 +25,9 @@ dist-ssr
 
 data/*
 prolific_survey_data.csv
+
+.env
+*/*.env
+
+# mongodb
+data

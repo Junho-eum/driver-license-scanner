@@ -1,6 +1,8 @@
 // database
-import db from "./server/db/connection.js";
+import mongodbConn from "./server/db/connection.js";
 import readline  from "readline";
+
+const db = await mongodbConn.getDBSurvey();
 const collection = await db.collection("survey-results");
 
 function confirmDelete(){
