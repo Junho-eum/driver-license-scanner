@@ -1,13 +1,13 @@
 import express from "express";
+import mongodbConn from "../db/connection.js";
 
-// database
-import db from "../db/connection.js";
 const router = express.Router();
 
 // This section will help you get a single record by id
 router.post("/", async (request, res) => {
   console.log("Server: POST: " + request);
-  let collection = await db.collection("survey-results");
+  const db = await mongodbConn.getDBSurvey();
+  let collection = db.collection("survey-results");
   const prolificID = request.body.prolificID;
 
   // used to get every record
@@ -32,6 +32,7 @@ router.patch("/", async (request, res) => {
   try {
     // data from fetch
     const data = request.body;
+    const db = await mongodbConn.getDBSurvey();
     const collection = await db.collection("survey-results");
 
     // get survey info and prolificID and store it in JSON
@@ -105,6 +106,7 @@ router.get("/", async (request, res) => {
   let minTreatment;
 
   try {
+    const db = await mongodbConn.getDBSurvey();
     const collection = await db.collection("survey-results");
     const results = await collection
       .aggregate([

@@ -10,11 +10,29 @@ Currently, two official plugins are available:
 
 When we collect data, the web app will be run on a server, so everyone can interact with the same instance. But for development, you will need to follow these steps to run the web app on your own device.
 
-## Dev
+## Development
 
 For development, please follow the instructions below.
 
-### Step 1: Install dependencies using NPM
+### TL;DR
+
+```
+cp base.env .env
+npm i
+docker compose up -d
+npm run dev
+```
+
+### Step 1: Set local environment variables
+
+Create a `.env` file and copy all from `base.env`.
+Update the variables in `.env` according to your preferences and development environment.
+
+```
+cp base.env .env
+```
+
+### Step 2: Install dependencies using NPM
 
 1. Make sure NPM is installed or install it from [here](https://www.npmjs.com/). 
 2. Navigate to the directory containing this project and install the dependencies:
@@ -25,7 +43,7 @@ For development, please follow the instructions below.
 
     You may need to run `npm i --force`.
 
-### Step 2: Install and initialize Docker
+### Step 3: Install and initialize Docker
 In addition to the NPM dependencies, we will be using:
 - Node.js, which will run our JavaScript application.
 - MongoDB, our database.
@@ -40,7 +58,7 @@ It would be time-consuming to install and configure all of these on your compute
     docker compose build
     ```
 
-### Step 3: Start development
+### Step 4: Start development
 
 1. Start up the required development infrastructure:
     ```
@@ -58,7 +76,7 @@ It would be time-consuming to install and configure all of these on your compute
     npm run dev
     ```
 
-### Step 4: Stop development
+### Step 5: Stop development
 
 1. (Optional) Dump the database to a CSV file:
     ```
@@ -71,34 +89,47 @@ It would be time-consuming to install and configure all of these on your compute
     docker compose stop
     ```
 
+### Overview components in development
+
+During development, these are the components:
+
+```mermaid
+graph TD
+  subgraph Docker
+    Mongodb[(MongoDB)]
+    MongoExpress[Mongo-Express]
+  end
+
+  ExpressBackend[Express-Server-Backend]
+  ViteServer[Vite-Server-Frontend]
+
+  ViteServer -->|http| ExpressBackend
+  ExpressBackend -->|connection| Mongodb
+  MongoExpress -->|connection| Mongodb
+```
+
 # Environment Variables
 
 | Var | Description | When to set |
 |---|---| --- |
-| `VITE_LINK_REDIRECT_TO_URL_ON_SURVEY_SUBMISSION` | The URL to which the survey should redirect when survey is submitted. For example, it might be the receiving URL of Prolific. | Before build |
-| `VITE_SURVEY_DATA_EXPIRE_DAYS` | Expiration of survey data in the browser's local storage in days | Before build |
+| `VITE_LINK_REDIRECT_TO_URL_ON_SURVEY_SUBMISSION` | The URL to which the survey should redirect when survey is submitted. For example, it might be the receiving URL of Prolific. | Always |
+| `VITE_SURVEY_DATA_EXPIRE_DAYS` | Expiration of survey data in the browser's local storage in days | Always |
 | `DOCKER_DEPLOY_IMAGE_NAME` | The name of the deployment ready docker image. | Before building the deployment docker image |
-| MONGO_USERNAME |  | |
-| MONGO_PASSWORD |  | |
-| ME_USERNAME |  | |
-| ME_PASSWORD |  | |
-| ME_ADMIN_USERNAME |  | |
-| ME_ADMIN_PASSWORD |  | |
-| MONGO_DB_CONNECTION_STRING | | |
-| EXPRESS_PORT=8080 |  | |
+| `MONGO_USERNAME` | username with root access | Always|
+| `MONGO_PASSWORD` | password for username | Always|
+| `MONGO_HOST` | hostname where MongoDB is reachable (usually localhost) | Always|
+| `MONGO_HOST_PORT` | port on host where MongoDB is reachable | Always|
+| `ME_ADMIN_USERNAME` | username for MongoDB Express | Always |
+| `ME_ADMIN_PASSWORD` | password for MongoDB Express | Always |
+| `EXPRESS_PORT` | port where express server is running (serving the survey in production) | Always |
 
 # Deployment
 
-## Build deploy-ready Docker image
+## Deploy as Docker Image
 
 1. Navigate to the root directory of this repository
-2. Create a `.env` file with the following environment variables:
-    ```
-    VITE_LINK_REDIRECT_TO_URL_ON_SURVEY_SUBMISSION=
-    VITE_SURVEY_DATA_EXPIRE_DAYS=
-    DOCKER_DEPLOY_IMAGE_NAME=
-    ```
-2. Run in terminal:
+2. Create a `.env` file with all required environment variables. Use the `base.env` file to get started.
+3. Run in terminal:
     ```
     npm install && \
     npm run build && \
@@ -106,18 +137,56 @@ It would be time-consuming to install and configure all of these on your compute
     docker build -t "$DOCKER_DEPLOY_IMAGE_NAME" -f docker-deploy-as-image/Dockerfile .
     ```
 
-3. Copy the following files to the host where you want to run the survey:
+4. Copy the following files to the host where you want to run the survey:
     - `docker-deploy-as-image/docker-compose.yml` --> `docker-compose.yml`
-    - `docker-deploy-as-image/env_deployment` --> `.env`
+    - `.env` --> `.env`
 
-4. Update all variables' in these files to match your deployment environment.
+5. Update all variables' in these files to match your deployment environment.
 
-5. Run in terminal on deployment host:
+6. Run in terminal on deployment host:
     ```
     docker compose up
     ```
 
+7. Setup additional software, such as nginx to proxy traffic to the survey.
 
+## Deploy as Git Repository
+
+1. Clone this git repository to the server where you want to serve the survey from
+2. Create a `.env` file with all required environment variables. Use the `base.env` file to get started.
+3. Run in terminal:
+    ```
+    npm install && \
+    npm run build
+    ```
+6. Run in terminal on deployment host:
+    ```
+    docker-compose up
+    ```
+
+7. Setup additional software, such as nginx to proxy traffic to the survey.
+
+## Deployment architecture
+
+A deployment typically looks something like this:
+
+```mermaid
+graph TD
+subgraph Server
+  subgraph Docker
+    Mongodb[(MongoDB)]
+    MongoExpress[Mongo-Express]
+    ExpressBackend[Express-Server-Backend]
+  end
+
+  
+    Nginx[Nginx Proxy]
+    Nginx -->|proxy to| ExpressBackend
+  end
+
+  ExpressBackend -->|connection| Mongodb
+  MongoExpress -->|connection| Mongodb
+```
 
 # Input Prolific ID
 
@@ -126,14 +195,6 @@ To add a prolific ID to the start of the survey, you can edit the url to add:
 http://localhost:5173/?PROLIFIC_PID=[ID_HERE]
 ```
 Where [ID_HERE] is the prolific ID.
-
-# Run Production
-
-To run the production build, use: 
-
-```
-npm run build
-```
 
 # Need More Help?
 

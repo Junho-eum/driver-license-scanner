@@ -5,7 +5,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node db_init.js && concurrently \"vite\" \"node --env-file .env server/server.js\"",
+    "dev": "concurrently \"vite\" \"node --env-file .env express-server-backend/server.js\"",
     "build": "dotenvx run -f .env -- vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",

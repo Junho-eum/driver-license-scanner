@@ -1,19 +1,10 @@
-import { MongoClient } from "mongodb";
+import mongodbConn from './connection.js';
 
 const dbName = "survey";
 const collectionName = "survey-results";
 
-let connectionString =
-  process.env.MONGO_DB_CONNECTION_STRING || "mongodb://root:example@localhost:27000/";
-
-if (!connectionString) {
-  throw new Error(
-    "No connection string provided. \n\nPlease create a `.env` file in the root of this project. Add a MONGO_DB_CONNECTION_STRING variable to that file with the connection string to your MongoDB cluster. \nRefer to the README.md file for more information."
-  );
-}
-
 async function initDB() {
-  const client = await MongoClient.connect(connectionString);
+  let client = await mongodbConn.getMongoDBInstance();
   const db = client.db(dbName);
 
   try {

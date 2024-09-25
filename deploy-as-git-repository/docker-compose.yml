@@ -24,3 +24,18 @@ services:
       ME_CONFIG_BASICAUTH_USERNAME: ${ME_ADMIN_USERNAME}  # Basic auth username for Mongo Express
       ME_CONFIG_BASICAUTH_PASSWORD: ${ME_ADMIN_PASSWORD}  # Basic auth password for Mongo Express
       ME_CONFIG_MONGODB_URL: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017
+  
+  node:
+    image: node-express
+    build: ./docker-node
+    restart: always
+    depends_on:
+      - mongo
+    ports: 
+      - 8888:8888
+    env_file:
+      - .env
+    volumes:
+      - ./dist:/usr/src/express/dist
+      - ./server:/usr/src/express/server
+    

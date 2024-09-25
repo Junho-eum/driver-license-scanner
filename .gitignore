@@ -27,3 +27,6 @@ data/*
 prolific_survey_data.csv
 
 */*.env
+
+# mongodb
+data
