@@ -125,16 +125,28 @@ graph TD
 
 # Deployment
 
-## Deploy as Docker Image
+## Deploy as Docker Image to Remote Host via SSH
+
+This deployment option will build a single Docker image containing all files required for deployment. The Docker image is copied to the remote host that is hosting the study.
 
 1. Navigate to the root directory of this repository
 2. Create a `.env` file with all required environment variables. Use the `base.env` file to get started.
-3. Run in terminal:
+3. Run the following command to build the docker image and copy the image to the remote host via ssh:
+
     ```
     npm install && \
     npm run build && \
     set -a && source .env && set +a && \
-    docker build -t "$DOCKER_DEPLOY_IMAGE_NAME" -f docker-deploy-as-image/Dockerfile .
+    export DOCKER_DEPLOY_IMAGE_NAME="trails-react-survey-main" && \
+    chmod +x deploy-as-docker-image/build_and_deploy_docker_image_to_remote_host.sh && \
+    deploy-as-docker-image/build_and_deploy_docker_image_to_remote_host.sh \
+        -h <remote_host> \
+        -d <remote_path> \
+        -i $DOCKER_DEPLOY_IMAGE_NAME \
+        -k <ssh_key_file> \
+        -u <ssh_username> \
+        [-p <ssh_port>] \
+        [-t linux/amd64,linux/arm64]
     ```
 
 4. Copy the following files to the host where you want to run the survey:

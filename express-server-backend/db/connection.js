@@ -28,10 +28,7 @@ async function getMongoDBInstance() {
   if (!_mongodb || !_mongodb.topology || !_mongodb.topology.isConnected()) {
     try {
       // Create and connect the MongoClient if it doesn't exist
-      const client = new MongoClient(connectionString, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
+      const client = new MongoClient(connectionString);
 
       _mongodb = await client.connect();
       console.log("MongoDB connected successfully!");
