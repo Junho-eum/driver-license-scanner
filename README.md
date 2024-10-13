@@ -137,7 +137,7 @@ This deployment option will build a single Docker image containing all files req
     npm install && \
     npm run build && \
     set -a && source .env && set +a && \
-    export DOCKER_DEPLOY_IMAGE_NAME="trails-react-survey-main" && \
+    export DOCKER_DEPLOY_IMAGE_NAME="gwusec-react-survey" && \
     chmod +x deploy-as-docker-image/build_and_deploy_docker_image_to_remote_host.sh && \
     deploy-as-docker-image/build_and_deploy_docker_image_to_remote_host.sh \
         -h <remote_host> \
