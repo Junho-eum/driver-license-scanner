@@ -15,7 +15,7 @@ async function SendToServer(survey, FB){
   const cDataTreatment = Cookies.get("treatment");
   const updatedData = survey.data;
   const withdraw = "true";
-  const endDate = Date();
+  const endDate = new Date().toISOString();
   const hasCompleted = "true";
 
   await fetch("/postsurvey", { 
@@ -36,10 +36,9 @@ async function SendToServer(survey, FB){
   });
 }  
 
-const prolificLink = import.meta.env.VITE_LINK_REDIRECT_TO_URL_ON_SURVEY_SUBMISSION;
-
-
 export default function EndingPage() {
+
+  const [prolificLink, setProlificLink] = useState(import.meta.env.LINK_REDIRECT_TO_URL_ON_SURVEY_SUBMISSION);
 
   const survey = new Model(surveyJson);
   const prevData = window.localStorage.getItem(storageItemKey);
@@ -56,6 +55,20 @@ export default function EndingPage() {
     const [showPage, setShowPage] = useState(false);
 
     useEffect(() => {
+
+      if (process.env.NODE_ENV === 'production') {
+        // Fetch the content of the text file only in production
+        fetch('/x3lohxbw1rmkrea5tx67is34u4x2pa.json')
+          .then((response) => response.json())
+          .then((data) => {
+            setProlificLink(data.LINK_REDIRECT_TO_URL_ON_SURVEY_SUBMISSION);
+          })
+          .catch((error) => {
+            console.error('Error reading the JSON config file:', error);
+          });
+      } else {
+        console.log('Not in production mode, skipping config file fetch.');
+      }
 
       const finished = localStorage.getItem("finished");
 
@@ -79,13 +92,13 @@ export default function EndingPage() {
       setFeedback(event.target.value);
     };
   
-    const submitFeedback = () => {
+    const submitFeedback = async () => {
       setFeedbackSubmitted(true);
-      SendToServer(survey, feedback);
+      await SendToServer(survey, feedback);
     };
 
-  const backtoProlific = () => {
-    SendToServer(survey, feedback);
+  const backtoProlific = async () => {
+    await SendToServer(survey, feedback);
     localStorage.removeItem("survey-data");
     Cookies.remove('prolificID');
     Cookies.remove('treatment');

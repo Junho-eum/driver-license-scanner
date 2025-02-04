@@ -4,6 +4,8 @@ import example_instructions_page from './surveyPages/example_instructions_page.j
 import example_custom_matrix_page from './surveyPages/example_custom_matrix_page.jsx';
 
 const surveyJson = {
+  progressTitle: "Survey Progress",
+  progressBarType: "questions",
   completedHtml: "<div class=\"container mb-4\"><div class=\"bg-light p-5\"><h4>Thank you for participating in this survey!</h4><hr class=\"my-4\"><p class=\"lead\">Please click the button below to complete the study and return to Prolific.</p></div></div><surveyjs-feedback-form></surveyjs-feedback-form>",
   completedHtmlOnCondition: [
     {
@@ -19,7 +21,6 @@ const surveyJson = {
   ],
   sendResultOnPageNext: true,
   showPrevButton: false,
-  progressBarType: "pages",
   showQuestionNumbers: "off",
   widthMode: "responsive",
   showNavigationButtons: false,

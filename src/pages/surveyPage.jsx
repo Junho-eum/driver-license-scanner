@@ -2,9 +2,11 @@
 import { Survey } from "survey-react-ui";
 import { Model } from "survey-core";
 import surveyJson from "../survey";
-import { useRef, useState } from "react";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-
+import { useEffect, useRef, useState } from "react";
+import Grid from "@mui/material/Grid";
+import { Backdrop, Card, CardContent, Typography } from '@mui/material';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import './surveyPage.css';
 
 // cookie
@@ -12,6 +14,8 @@ import Cookies from "js-cookie";
 
 // other components
 import TopBar from "../web-components/TopBar";
+import PercentageProgressBar from "../web-components/ProgressBar";
+import OptOutButton from "../web-components/OptOutButton";
 
 // custom widgets and components
 import { ExamConfirmationButton } from "../survey-components/ExamConfirmationButton";
@@ -19,10 +23,13 @@ import { ExamNextButton } from "../survey-components/NextButton";
 import { RegisterHTMLSlideShow } from "../survey-components/CustomHTMLSlideShowComponent";
 import '../survey-components/CustomMatrixComponent';
 
+//import { from } from "json2csv/JSON2CSVTransform";
+import '../survey-components/CustomMatrixComponent';
 // good resource: https://github.com/mongodb-developer/mern-stack-example/
 
 const storageItemKey = "survey-data";
-const currentDate = Date();
+
+// const currentDate = Date();
 function saveSurveyData(survey) {
   const data = survey.data;
   data.pageNo = survey.currentPageNo;
@@ -36,8 +43,10 @@ function saveSurveyData(survey) {
  * @param {*} T 
  * @param {*} WD 
  */
-async function SendToServer(surveyData, prolific, T, WD) {
-  await PatchSurveyData(surveyData, prolific, T, WD);
+async function SendToServer(surveyData, prolific, T, WD, theStartDate, theEndDate) {
+  console.log("Start date being sent:", theStartDate);
+  console.log("End date being sent:", theEndDate);
+  await PatchSurveyData(surveyData, prolific, T, WD, theStartDate, theEndDate);
 }
 
 /**
@@ -48,7 +57,7 @@ async function SendToServer(surveyData, prolific, T, WD) {
  * @param {*} WD 
  * @returns Promise using the fetch API 
  */
-async function PatchSurveyData(surveyData, prolific, T, WD) {
+async function PatchSurveyData(surveyData, prolific, T, WD, theStartDate, theEndDate) {
 
   return fetch("/postsurvey", {
     method: "PATCH",
@@ -59,73 +68,25 @@ async function PatchSurveyData(surveyData, prolific, T, WD) {
       prolificID: prolific,
       surveyData: surveyData,
       treatment: T,
-      startDate: currentDate,
+      startDate: theStartDate,
+      endDate: theEndDate,
       withdrawn: WD,
       feedback: "",
     }),
   });
 }
 
-const OptOutButton = ({ surveyRef, handleWithdrawSurvey }) => {
-  const [isSurveyOpen, setIsSurveyOpen] = useState(false);
-  const handleCloseSurvey = () => {
-
-    localStorage.setItem("finished", "true");
-    setIsSurveyOpen(!isSurveyOpen);
-
-  };
-
-  return (
-    <nav >
-      <div className="topnav">
-        <div className="topnav-right">
-          <Dialog
-            open={isSurveyOpen}
-            onClose={handleCloseSurvey}
-            aria-labelledby="withdrawDialogTitle"
-            aria-describedby="withdrawDialogDescription"
-          >
-            <DialogTitle id="withdrawDialogTitle">Are you sure you want to withdraw from the survey?</DialogTitle>
-            <DialogContent>
-              <DialogContentText id="withdrawDialogDescription">
-                If you choose to withdraw, your responses will <strong>not be saved</strong>, and any partial progress will be lost.
-                This action cannot be undone, and you may <strong>not be eligible for compensation</strong> if you haven't completed the survey.
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <button
-                onClick={handleCloseSurvey}
-                type="button"
-                className="buttonSuccess"
-              >
-                No, take me back
-              </button>
-              <button
-                onClick={() => {
-                  handleCloseSurvey();
-                  handleWithdrawSurvey();
-                }}
-                type="button"
-                className="buttonDanger"
-              >
-                Yes, I want to withdraw
-              </button>
-            </DialogActions>
-          </Dialog>
-          <button style={{ marginTop: '1%' }} className="opt-out" onClick={handleCloseSurvey}>
-            Opt-Out
-          </button>
-        </div>
-      </div>
-    </nav>
-  );
-};
-
+// Retrieve the `endDate` from localStorage if it exists, else null.
+function getEndDateOrNull() {
+  const ed = localStorage.getItem("endDate");
+  console.log("Retrieved endDate from localStorage:", ed);
+  return ed ? ed : null;
+}
 
 // this function checks the expire time of the data
 function getWithExpiry() {
 
-  const itemStr = localStorage.getItem("expire-time")
+  const itemStr = localStorage.getItem("expire-time");
   const item = JSON.parse(itemStr);
   const now = new Date();
 
@@ -143,10 +104,46 @@ function checkStorage() {
   }
 }
 
+function setTimeStampPageEntered() {
+  try {
+    const now = Date.now();
+    const item = {
+      timeStamp: now,
+    }
+    localStorage.setItem("timeStampPageEntered", JSON.stringify(item));
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+function getTimeStampPageEntered() {
+  try {
+    const itemStr = localStorage.getItem("timeStampPageEntered");
+    const item = JSON.parse(itemStr);
+    return item.timeStamp;
+  } catch (error) {
+    console.log(error);
+    return 0;
+  }
+}
 
 export default function SurveyPage() {
 
+  const [openWindowTooSmallDialogue, setOpenWindowTooSmallDialogue] = useState(false);
+
   const [survey] = useState(new Model(surveyJson));
+
+  // If there's already a start date in localStorage, use it; else create a new one
+  const [startDate] = useState(() => {
+    const storedStart = localStorage.getItem("startDate");
+    if (storedStart) {
+      return storedStart;
+    } else {
+      const newStart = new Date().toISOString();
+      localStorage.setItem("startDate", newStart);
+      return newStart;
+    }
+  });
 
   // check if we have storage
   checkStorage();
@@ -179,27 +176,50 @@ export default function SurveyPage() {
     }
   }
 
-  const handleWithdrawSurvey = () => {
+  // Called once AFTER each page is rendered
+  survey.onAfterRenderPage.add((survey, options) => {
+    const pageName = survey.currentPage?.name || survey.currentPageNo;
+    let times = survey.getValue("timeSpentOnPages") || {};
+    times[pageName] = {timeStampEntered: Date.now(), timeStampLeft: null};
+    survey.setValue('timeSpentOnPages', times)
+  });
+
+  // Called BEFORE leaving the current page
+  survey.onCurrentPageChanging.add((survey, options) => {
+    const pageName = survey.currentPage?.name || survey.currentPageNo;
+    let times = survey.getValue("timeSpentOnPages") || {};
+    times[pageName].timeStampLeft = Date.now();
+    // Store the updated timing info back into survey data
+    survey.setValue("timeSpentOnPages", times);
+  });
+
+  const handleWithdrawSurvey = async () => {
     const cDataProlific = Cookies.get("prolificID");
     const cDataTreatment = Cookies.get("treatment");
     const updatedData = survey.data;
     updatedData.pageNo = survey.currentPageNo;
     const WD = "true";
-
-    SendToServer(updatedData, cDataProlific, cDataTreatment, WD);
+    const endDate = new Date().toISOString(); // Mark end date
+    // Save to localStorage so future calls won't overwrite it with null
+    localStorage.setItem("endDate", endDate);
+    localStorage.setItem("finished", "true");
+    await SendToServer(updatedData, cDataProlific, cDataTreatment, WD, startDate, endDate);
     window.location.href = "/end";
   };
 
   survey.onCurrentPageChanged.add(async (survey) => {
+    console.log("[INFO] Current survey page: " + survey.currentPage.toString());
     const cDataProlific = Cookies.get("prolificID");
     const cDataTreatment = Cookies.get("treatment");
     const updatedData = survey.data;
     updatedData.pageNo = survey.currentPageNo;
     const WD = "false";
 
-    SendToServer(updatedData, cDataProlific, cDataTreatment, WD);
-    getWithExpiry();
+    // Pull the existing endDate (if any) from localStorage
+    const storedEndDate = getEndDateOrNull();
 
+    await SendToServer(updatedData, cDataProlific, cDataTreatment, WD, startDate, storedEndDate);
+    getWithExpiry();
   });
 
   // gotta do it this way to actually send to the survey, yes it's annoying
@@ -208,23 +228,63 @@ export default function SurveyPage() {
     const cDataTreatment = Cookies.get("treatment");
     const updatedData = survey.data;
     const WD = "false";
+    const endDate = new Date().toISOString()
+    // Save to localStorage
+    localStorage.setItem("endDate", endDate);
 
-    SendToServer(updatedData, cDataProlific, cDataTreatment, WD);
-
-    console.log("Survey is on the last page!");
+    await SendToServer(updatedData, cDataProlific, cDataTreatment, WD, startDate, endDate);
     window.location.href = "/end";
   });
 
   const surveyRef = useRef(null);
 
+  // Take take of window size not getting too small for the Survey-component
+  const surveyWindowSizeCheck = new ResizeObserver((entries) => {
+    const entry = entries[0];
+    setOpenWindowTooSmallDialogue(entry.contentRect.width <= 992);
+  });
+
+  useEffect(() => {
+    if (surveyRef != null) {
+      surveyWindowSizeCheck.observe(surveyRef.current.rootRef.current);
+    }
+  }, [surveyRef]);
+
   return (
     <>
       <div>
-        <TopBar />
-        <div className="static">
-          <OptOutButton surveyRef={surveyRef} handleWithdrawSurvey={handleWithdrawSurvey} />
-        </div>
+        <TopBar>
+          <OptOutButton handleWithdrawSurvey={handleWithdrawSurvey} />
+        </TopBar>
+
+        <PercentageProgressBar surveyModel={survey} title="Progress" />
       </div>
+
+      {/* Dialogue for window too small TODO: move to web-components */}
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={openWindowTooSmallDialogue}
+      >
+        <Card>
+          <CardContent>
+            <Grid container spacing={2}>
+              <Grid item xs style={{ display: "flex", alignItems: "center" }}>
+                <ArrowBackIosIcon fontSize="large" />
+              </Grid>
+              <Grid item xs={8}>
+                <Typography gutterBottom variant="h5" component="div">
+                  Please increase the width of your browser window.
+                </Typography>
+                <p>To ensure a high quality of our survey, we want to make sure that all questions are displayed correctly for all participants.</p>
+              </Grid>
+              <Grid item xs style={{ display: "flex", alignItems: "center", direction: "rtl", textAlign: "justify" }}>
+                <ArrowForwardIosIcon fontSize="large" />
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
+      </Backdrop>
+      
       <Survey className="container mx-auto my-auto" model={survey} ref={surveyRef} />
     </>
   );

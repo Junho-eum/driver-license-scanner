@@ -7,6 +7,17 @@ const __dirname = import.meta.dirname;
 const app = express();
 const port = process.env.EXPRESS_PORT || 8080;
 
+if(!process.env.DB_DATABASE_NAME){
+  console.error("Missing environment variable DB_COLLECTION_NAME");
+  process.exit();
+}
+if(!process.env.DB_COLLECTION_NAME){
+  console.error("Missing environment variable DB_COLLECTION_NAME");
+  process.exit();
+}
+
+const dbDatabaseName = process.env.DB_DATABASE_NAME
+const dbCollectionName = process.env.DB_COLLECTION_NAME
 
 app.use(express.json());
 app.use(cors());
@@ -15,7 +26,7 @@ import survey from "./routes/survey.js";
 
 app.use("/postsurvey", survey);
 
-await initDB();
+await initDB(dbDatabaseName, dbCollectionName);
 
 console.log('Will serve from ' + path.join(__dirname, '../dist'));
 app.use('/', express.static(path.join(__dirname, '../dist')));

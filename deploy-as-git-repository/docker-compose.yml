@@ -38,4 +38,3 @@ services:
     volumes:
       - ./dist:/usr/src/express/dist
       - ./server:/usr/src/express/server
-    

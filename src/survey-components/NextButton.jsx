@@ -24,7 +24,6 @@ export function ExamNextButton(Survey) {
       const buttonCustom = document.getElementById("exam_next_button");
       const tooltip = document.getElementById("tooltip");
 
-
       // Set up a new observer to handle changes to our button
       var observer = new MutationObserver(function (mutations) {
         mutations.forEach(function (mutation) {
@@ -64,6 +63,7 @@ export function ExamNextButton(Survey) {
 
       // Register event listeners to react to changes on questions being answered:
       Survey.onValueChanged.add((sender, options) => {
+        console.log(options);
         for (var i = 0; i < Survey.currentPage.questions.length; i++) {
           let q = Survey.currentPage.questions[i];
           if (!q.validate(false)) {

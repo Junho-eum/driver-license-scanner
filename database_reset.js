@@ -3,7 +3,7 @@ import mongodbConn from "./server/db/connection.js";
 import readline  from "readline";
 
 const db = await mongodbConn.getDBSurvey();
-const collection = await db.collection("survey-results");
+const collection = await db.collection(process.env.DB_COLLECTION_NAME);
 
 function confirmDelete(){
     const ask = readline.createInterface({
