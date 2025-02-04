@@ -14,9 +14,12 @@ COPY express-server-backend/routes ./express-backend/routes
 # Install the dependencies for the Express backend
 RUN cd express-backend && npm install
 
+# Copy the shell script into the container
+COPY deploy-as-docker-image/write_env_to_file.sh /app/
+RUN chmod +x /app/write_env_to_file.sh
+
 # Expose port 80
 EXPOSE 80
 
-CMD ["node", "express-backend/server.js"]
-
-# run this in your terminal: docker build -t trails-survey-main .
+# Use the shell script as the entry point
+ENTRYPOINT ["/app/write_env_to_file.sh"]

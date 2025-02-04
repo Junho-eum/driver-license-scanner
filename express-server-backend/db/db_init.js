@@ -1,9 +1,15 @@
 import mongodbConn from './connection.js';
 
-const dbName = "survey";
-const collectionName = "survey-results";
+async function initDB(dbName, collectionName) {
+  console.log("Initializing database...");
 
-async function initDB() {
+  if(!dbName) {
+    throw new Error("No database name provided");
+  }
+  if(!collectionName) {
+    throw new Error("No collection name provided");
+  }
+
   let client = await mongodbConn.getMongoDBInstance();
   const db = client.db(dbName);
 

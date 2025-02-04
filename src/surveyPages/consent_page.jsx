@@ -5,7 +5,7 @@ const consent_page = {
       {
         type: "html",
         name: "consent_text",
-        html: '<html><h1 class="text-uppercase" style="font-size:30px;">Participant Informed Consent Form</h1><br>' 
+        html: '<html><h1 class="text-uppercase" style="font-size:30px;">This is an example of a consent form embedded as HTML; Participant Informed Consent Form</h1><br>' 
               + '<p class="lead">The following information is provided to inform you about the research project and your participation in it. Your participation in this research study is voluntary. You are free to withdraw from this study at any time prior to submitting the survey. We encourage you to ask the researchers any questions about this study during this process.</p><p>You are being asked to participate in a research study investigating the connection between privacy and exam proctoring software. This page will give you key information to help you decide whether or not you want to participate.</p>'
               + '<br aria-hidden="true"><p>The goal of this research is to measure how users react to privacy risks when taking an online proctored exam.</p>'
               + '<br aria-hidden="true"><h2 style="font-size:25px;"> 1. Who Is Eligible to Participate?</h2>'
@@ -24,9 +24,21 @@ const consent_page = {
               + '<br aria-hidden="true"><h2 style="font-size:25px;">11. Use of Data in Future Studies</h2><br aria-hidden="true"><p>We will create a publicly available dataset that does not contain identifiable information from you based on the survey responses. This dataset can be used by the research team or shared with other researchers without additional informed consent. This dataset will consist of the answers provided in this survey.</p></html>',
       },
       {
+        type: "html",
+        name: "consent",
+        html:
+          `
+          <h1 class="text-uppercase" style="font-size:30px;">This is an example of a consent form embedded as PDF;Participant Informed Consent Form</h1>
+          <p>Please carefully study the following information. We explain the contents of the study and how we respect your privacy.
+          Please feel free to save the PDF to your computer for your personal reference.</p><br>
+          <object data="/consent_form.pdf" type="application/pdf" width="100%" height="100%" style="min-height: 1024px;">
+            <p>Alternative text - include a link <a href="/consent_form.pdf">to the PDF!</a></p>
+          </object>        `
+      },
+      {
         type: "matrixdropdown",
-        name: "informed_consent",
-        title: "Statement by person agreeing to participate in this study",
+        name: "informedConsent",
+        title: "Please respond to the following statements.",
         hideNumber: true,
         isRequired: true,
         requiredErrorText: "Please answer the following questions.",
@@ -35,7 +47,7 @@ const consent_page = {
             type: "expression",
             text: "Not all requirements for participation are fulfilled.",
             expression:
-              "{informed_consent.age.confirmation} = true and {informed_consent.read.confirmation} = true and {informed_consent.participation.confirmation} = true",
+              "{informedConsent.age.confirmation} = true and {informedConsent.read.confirmation} = true and {informedConsent.participation.confirmation} = true",
           },
         ],
         showHeader: false,

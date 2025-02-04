@@ -6,7 +6,7 @@ const router = express.Router();
 // This section will help you get a single record by id
 router.post("/", async (request, res) => {
   const db = await mongodbConn.getDBSurvey();
-  let collection = db.collection("survey-results");
+  const collection = await db.collection(process.env.DB_COLLECTION_NAME);
   const prolificID = request.body.prolificID;
 
   // used to get every record
@@ -32,7 +32,7 @@ router.patch("/", async (request, res) => {
     // data from fetch
     const data = request.body;
     const db = await mongodbConn.getDBSurvey();
-    const collection = await db.collection("survey-results");
+    const collection = await db.collection(process.env.DB_COLLECTION_NAME);
 
     // get survey info and prolificID and store it in JSON
     const jsonData = data.surveyData;
@@ -106,7 +106,7 @@ router.get("/", async (request, res) => {
 
   try {
     const db = await mongodbConn.getDBSurvey();
-    const collection = await db.collection("survey-results");
+    const collection = await db.collection(process.env.DB_COLLECTION_NAME);
     const results = await collection
       .aggregate([
         {

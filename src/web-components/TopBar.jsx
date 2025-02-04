@@ -1,33 +1,30 @@
-import gwusec_logo from "../assets/gw_monogram_wht_rev.png";
+import gwusec_logo from "../assets/images/gw_monogram_wht_rev.png";
+import './TopBar.css';
 
-
-export default function TopBar() {
-  return (    
-    <nav className="bg-gw-primary-blue text-color-white ">
+export default function TopBar({ children }) {
+  return (
+    <nav className="bg-gw-primary-blue text-color-white">
       <div
         id="top-bar"
-        className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4"
+        className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2"
       >
-        <div className="grid grid-cols-3 gap-4">
-          <div className="place-self-center">
-            <img src={gwusec_logo} className="max-h-16 p-2" alt="The George Washington University Security Lab logo"></img>
+        <div className="grid grid-cols-4 gap-4 w-full">
+          <div className="flex items-center justify-left">
+            <div className="bg-dark">
+            <img
+              src={gwusec_logo}
+              className="max-h-16 p-2" // Add border and rounded corners
+              alt="Logo of The George Washington University"
+            />
+            </div>
           </div>
-          <div className="place-self-center">
-            <span className="text-2xl font-bold underline text-white">
-              Exam Proctoring
-            </span>
-          </div>
-        </div>
-        <div>
-          <div className="bg-dark p-4">
-            <p className=" card-title text-white h4">
-              <strong>Research Study: </strong> <em>Exam Proctoring Software</em>
+          <div className="col-span-3 bg-dark text-right w-full">
+            <p className="card-title text-white h4">
+              <strong>Research Study: </strong> <em>Your Study's Name</em>
             </p>
-            <hr></hr>
-            <p className="text-white h4">
-              <strong>Principle Investigator:</strong> Dr. Adam J. Aviv, The
-              George Washington University
-            </p>
+            <div>
+              {children}
+            </div>
           </div>
         </div>
       </div>
