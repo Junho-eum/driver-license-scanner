@@ -60,24 +60,29 @@ function DriverLicenseScanner({ onScanSuccess }) {
       if (videoRef.current) {
         console.log("✅ Attaching video stream...");
         videoRef.current.srcObject = stream;
-        videoRef.current.play(); // Ensure video starts playing
+        videoRef.current.play();
       }
 
+      // ✅ Ensure the scanner only processes PDF417 (Driver’s License format)
       codeReader.decodeFromVideoDevice(
-        undefined, // Let the browser choose the default camera
+        undefined, // Let browser pick camera
         videoRef.current,
+        { formats: [BarcodeFormat.PDF_417] }, // 🔥 Restrict to PDF417
         (result, err) => {
           if (result) {
-            console.log("✅ Barcode Scanned:", result.getText());
-            processScannedBarcode(result.getText());
+            console.log("✅ FULL Barcode Scanned:", result.getText());
+            processScannedBarcode(result.getText()); // Pass full barcode text
           }
         }
       );
     } catch (error) {
       console.error("🚨 Camera access failed:", error);
-      setScanStatus("❌ Camera access denied. Please allow camera permissions.");
+      setScanStatus(
+        "❌ Camera access denied. Please allow camera permissions."
+      );
     }
   };
+
 
   // ✅ Start Quagga Live Scanner (for Gym Cards, Code 128/39)
   const startQuaggaScanner = async () => {
@@ -134,13 +139,14 @@ function DriverLicenseScanner({ onScanSuccess }) {
   // ✅ Process the scanned barcode (From Live Camera or Image Upload)
   const processScannedBarcode = (barcode) => {
     if (barcode !== lastScanned) {
-      console.log("✅ Barcode Scanned:", barcode);
+      console.log("✅ FULL Barcode Scanned:", barcode); // 🔥 Log full barcode
       setLastScanned(barcode);
-      onScanSuccess(barcode);
-      setScanStatus(`✅ Scan Successful: ${barcode}`);
+      onScanSuccess(barcode); // Ensure the full data is passed
+      setScanStatus(`✅ Scan Successful`);
       stopScanner();
     }
   };
+
 
   // ✅ Stop All Scanners (Fixed `undefined` error)
   const stopScanner = () => {
