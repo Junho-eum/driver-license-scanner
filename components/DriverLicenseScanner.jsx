@@ -88,13 +88,17 @@ function DriverLicenseScanner({ onScanSuccess }) {
     }
   };
 
-  // ✅ Upload Photo Handler (Same as Before)
+  // ✅ Upload Photo Handler (Ensures DecodeDL Processes Image)
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setUploadedImage(imageUrl); // Store the image for preview
-      setLastScanned(imageUrl); // Pass to DecodeDL
+
+      // Ensure DecodeDL processes the image
+      setTimeout(() => {
+        setLastScanned(imageUrl);
+      }, 500); // Small delay ensures state updates correctly
     }
   };
 
