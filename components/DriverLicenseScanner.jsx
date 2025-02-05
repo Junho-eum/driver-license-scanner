@@ -149,18 +149,22 @@ function DriverLicenseScanner({ onScanSuccess }) {
   // ✅ Append Scanned Data & Ensure Full Barcode Before Passing
   const processScannedBarcode = (barcode) => {
     setLastScanned((prevData) => {
-      const newData = prevData ? prevData + "\n" + barcode : barcode;
+      if (!prevData.includes(barcode)) {
+        // Prevent duplicate entries
+        const newData = prevData ? prevData + barcode : barcode;
 
-      if (newData.length > 100) {
-        // Ensures full barcode before updating state
-        onScanSuccess(newData); // Pass to parent only when complete
-        setScanning(false); // Stop scanning after full barcode is captured
-        stopScanner();
+        if (newData.length > 100) {
+          // Ensure full barcode before updating
+          setScanning(false);
+          stopScanner();
+        }
+
+        return newData;
       }
-
-      return newData;
+      return prevData; // No duplicate updates
     });
   };
+
 
   // ✅ Stop All Scanners (Fixed `undefined` error)
   const stopScanner = () => {
@@ -214,11 +218,12 @@ function DriverLicenseScanner({ onScanSuccess }) {
           Scan Driver’s License (PDF417)
         </label>
       </div>
-
+      
       {lastScanned && (
         <div>
-          <h3>Decoded Data:</h3>
-          <p>{lastScanned}</p>
+          <h3>✅ FULL Barcode Scanned:</h3>
+          <p style={{ whiteSpace: "pre-wrap" }}>{lastScanned}</p>{" "}
+          {/* Preserve format */}
         </div>
       )}
 
