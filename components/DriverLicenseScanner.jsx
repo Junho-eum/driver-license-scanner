@@ -55,19 +55,21 @@ function DriverLicenseScanner({ onScanSuccess }) {
     // Store the captured image for preview
     setUploadedImage(imageDataUrl);
 
-    // Pass the image to ZXing for barcode decoding
-    decodeBarcodeFromImage(imageDataUrl);
+    // Pass the image to the same function used for uploaded files
+    decodeBarcodeFromCapturedImage(imageDataUrl);
   };
 
-  // ✅ Decode Barcode from Captured Image
-  const decodeBarcodeFromImage = async (imageDataUrl) => {
+  // ✅ Decode Barcode from Captured Image using DecodeDL (Same as Upload)
+  const decodeBarcodeFromCapturedImage = async (imageDataUrl) => {
+    console.log("🔍 Decoding barcode from captured image...");
+
     try {
-      const codeReader = new BrowserMultiFormatReader();
-      const result = await codeReader.decodeFromImageUrl(imageDataUrl);
+      // Using DecodeDL component to process the image
+      setLastScanned(""); // Clear previous result
+      setTimeout(() => {
+        setLastScanned(imageDataUrl); // Store image for DecodeDL
+      }, 500);
 
-      console.log("✅ Image Decoded Barcode:", result.getText());
-
-      setLastScanned(result.getText()); // Show full decoded barcode
       setScanning(false);
       stopCamera();
     } catch (error) {
@@ -83,6 +85,16 @@ function DriverLicenseScanner({ onScanSuccess }) {
       const stream = videoRef.current.srcObject;
       stream.getTracks().forEach((track) => track.stop()); // Stop camera
       videoRef.current.srcObject = null;
+    }
+  };
+
+  // ✅ Upload Photo Handler (Same as Before)
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setUploadedImage(imageUrl); // Store the image for preview
+      setLastScanned(imageUrl); // Pass to DecodeDL
     }
   };
 
@@ -127,14 +139,22 @@ function DriverLicenseScanner({ onScanSuccess }) {
         </div>
       )}
 
-      {/* Display Scanned Barcode */}
+      {/* Use DecodeDL Component to Extract Barcode from Image */}
       {lastScanned && (
         <div>
           <h3>✅ FULL Barcode Scanned:</h3>
-          <p style={{ whiteSpace: "pre-wrap" }}>{lastScanned}</p>{" "}
-          {/* Preserve format */}
+          <DecodeDL
+            imageSrc={lastScanned}
+            onDecoded={(data) => setLastScanned(data)}
+          />
         </div>
       )}
+
+      {/* Upload Image Option */}
+      <div style={{ marginTop: "20px" }}>
+        <h3>Upload Back of License</h3>
+        <input type="file" accept="image/*" onChange={handleFileUpload} />
+      </div>
 
       {!scanning && (
         <button onClick={() => setScanning(true)}>Scan Again</button>
