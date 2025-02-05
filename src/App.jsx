@@ -11,16 +11,14 @@ function App() {
       <h1>Driver's License Scanner</h1>
       {scannedData ? (
         <div>
-          <h3>Scanned Data:</h3>
+          <h3>✅ FULL Barcode Scanned:</h3>
           <p>{scannedData}</p>
           <button onClick={() => setScannedData("")}>Scan Again</button>
         </div>
       ) : (
         <DriverLicenseScanner onScanSuccess={setScannedData} />
       )}
-      
     </div>
-    
   );
 }
 
