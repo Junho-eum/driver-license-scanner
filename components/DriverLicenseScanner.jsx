@@ -173,17 +173,40 @@ function DriverLicenseScanner({ onScanSuccess }) {
       <p>{scanStatus}</p>
 
       {/* Video Scanner Box */}
-      <div style={{ position: "relative", display: "inline-block", border: "2px solid black" }}>
-        <video ref={videoRef} style={{ width: "100%", height: "400px" }} autoPlay playsInline muted />
+      <div
+        style={{
+          position: "relative",
+          display: "inline-block",
+          border: "2px solid black",
+        }}
+      >
+        <video
+          ref={videoRef}
+          style={{ width: "100%", height: "400px" }}
+          autoPlay
+          playsInline
+          muted
+        />
       </div>
 
       {/* Toggle between scanning and upload */}
       <div style={{ marginTop: "10px" }}>
         <label>
-          <input type="checkbox" checked={isPDF417} onChange={() => setIsPDF417((prev) => !prev)} />
+          <input
+            type="checkbox"
+            checked={isPDF417}
+            onChange={() => setIsPDF417((prev) => !prev)}
+          />
           Scan Driver’s License (PDF417)
         </label>
       </div>
+      
+      {lastScanned && (
+        <div>
+          <h3>Decoded Data:</h3>
+          <p>{lastScanned}</p>
+        </div>
+      )}
 
       {/* Upload Image Button */}
       <div style={{ marginTop: "20px" }}>
@@ -195,8 +218,16 @@ function DriverLicenseScanner({ onScanSuccess }) {
       {uploadedImage && (
         <div style={{ marginTop: "10px" }}>
           <h3>Uploaded Image:</h3>
-          <img src={uploadedImage} alt="Uploaded License" style={{ width: "300px", border: "2px solid black" }} />
-          <DecodeDL imageSrc={uploadedImage} onDecoded={(data) => setLastScanned(data)} /> {/* Pass to Decoder */}
+          <img
+            src={uploadedImage}
+            alt="Uploaded License"
+            style={{ width: "300px", border: "2px solid black" }}
+          />
+          <DecodeDL
+            imageSrc={uploadedImage}
+            onDecoded={(data) => setLastScanned(data)}
+          />{" "}
+          {/* Pass to Decoder */}
         </div>
       )}
 
@@ -207,7 +238,9 @@ function DriverLicenseScanner({ onScanSuccess }) {
         </div>
       )}
 
-      {!scanning && <button onClick={() => setScanning(true)}>Scan Again</button>}
+      {!scanning && (
+        <button onClick={() => setScanning(true)}>Scan Again</button>
+      )}
     </div>
   );
 }
