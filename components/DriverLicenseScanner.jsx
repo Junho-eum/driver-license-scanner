@@ -199,13 +199,6 @@ function DriverLicenseScanner({ onScanSuccess }) {
           Scan Driver’s License (PDF417)
         </label>
       </div>
-      
-      {lastScanned && (
-        <div>
-          <h3>Decoded Data:</h3>
-          <p>{lastScanned}</p>
-        </div>
-      )}
 
       {/* Upload Image Button */}
       <div style={{ marginTop: "20px" }}>
