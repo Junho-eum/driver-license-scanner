@@ -157,7 +157,6 @@ function DriverLicenseScanner({ onScanSuccess }) {
       stream.getTracks().forEach((track) => track.stop()); // Stop camera
       videoRef.current.srcObject = null;
     }
-
     setScanning(false);
   };
 
