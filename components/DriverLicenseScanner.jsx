@@ -48,40 +48,49 @@ function DriverLicenseScanner({ onScanSuccess }) {
   };
 
   // ✅ Start ZXing Live Scanner (for PDF417 - Driver’s License)
-  const startZXingScanner = async () => {
-    console.log("🎥 Starting ZXing scanner...");
-    const codeReader = new BrowserMultiFormatReader();
+const startZXingScanner = async () => {
+  console.log("🎥 Starting ZXing scanner...");
+  const codeReader = new BrowserMultiFormatReader();
 
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
-      });
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "environment" },
+    });
 
-      if (videoRef.current) {
-        console.log("✅ Attaching video stream...");
-        videoRef.current.srcObject = stream;
-        videoRef.current.play();
-      }
-
-      // ✅ Ensure the scanner only processes PDF417 (Driver’s License format)
-      codeReader.decodeFromVideoDevice(
-        undefined, // Let browser pick camera
-        videoRef.current,
-        { formats: [BarcodeFormat.PDF_417] }, // 🔥 Restrict to PDF417
-        (result, err) => {
-          if (result) {
-            console.log("✅ FULL Barcode Scanned:", result.getText());
-            processScannedBarcode(result.getText()); // Pass full barcode text
-          }
-        }
-      );
-    } catch (error) {
-      console.error("🚨 Camera access failed:", error);
-      setScanStatus(
-        "❌ Camera access denied. Please allow camera permissions."
-      );
+    if (videoRef.current) {
+      console.log("✅ Attaching video stream...");
+      videoRef.current.srcObject = stream;
+      videoRef.current.play();
     }
-  };
+
+    // 🔥 Try decoding multiple times to extract the full barcode
+    codeReader.decodeFromVideoDevice(
+      undefined,
+      videoRef.current,
+      async (result, err) => {
+        if (result) {
+          console.log("✅ Partial Scan:", result.getText());
+
+          // Wait and attempt a second read to capture the full barcode
+          setTimeout(async () => {
+            const secondRead = await codeReader.decodeFromVideoDevice(
+              undefined,
+              videoRef.current
+            );
+            if (secondRead) {
+              console.log("✅ Full Barcode Captured:", secondRead.getText());
+              processScannedBarcode(secondRead.getText()); // Save the full barcode
+            }
+          }, 500);
+        }
+      }
+    );
+  } catch (error) {
+    console.error("🚨 Camera access failed:", error);
+    setScanStatus("❌ Camera access denied.");
+  }
+};
+
 
 
   // ✅ Start Quagga Live Scanner (for Gym Cards, Code 128/39)
@@ -200,7 +209,7 @@ function DriverLicenseScanner({ onScanSuccess }) {
           Scan Driver’s License (PDF417)
         </label>
       </div>
-      
+
       {lastScanned && (
         <div>
           <h3>Decoded Data:</h3>
