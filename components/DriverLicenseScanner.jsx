@@ -19,7 +19,6 @@ function DriverLicenseScanner({ onScanSuccess }) {
     return () => stopScanner(); // Cleanup on unmount
   }, [scanning]);
 
-
   // Upload Photo Handler
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -32,7 +31,9 @@ function DriverLicenseScanner({ onScanSuccess }) {
   const startScanner = async () => {
     console.log("🔵 Starting scanner...");
     const devices = await navigator.mediaDevices.enumerateDevices();
-    const videoDevices = devices.filter((device) => device.kind === "videoinput");
+    const videoDevices = devices.filter(
+      (device) => device.kind === "videoinput"
+    );
 
     if (videoDevices.length === 0) {
       console.error("🚨 No camera devices found.");
@@ -48,50 +49,48 @@ function DriverLicenseScanner({ onScanSuccess }) {
   };
 
   // ✅ Start ZXing Live Scanner (for PDF417 - Driver’s License)
-const startZXingScanner = async () => {
-  console.log("🎥 Starting ZXing scanner...");
-  const codeReader = new BrowserMultiFormatReader();
+  const startZXingScanner = async () => {
+    console.log("🎥 Starting ZXing scanner...");
+    const codeReader = new BrowserMultiFormatReader();
 
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: "environment" },
-    });
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" },
+      });
 
-    if (videoRef.current) {
-      console.log("✅ Attaching video stream...");
-      videoRef.current.srcObject = stream;
-      videoRef.current.play();
-    }
-
-    // 🔥 Try decoding multiple times to extract the full barcode
-    codeReader.decodeFromVideoDevice(
-      undefined,
-      videoRef.current,
-      async (result, err) => {
-        if (result) {
-          console.log("✅ Partial Scan:", result.getText());
-
-          // Wait and attempt a second read to capture the full barcode
-          setTimeout(async () => {
-            const secondRead = await codeReader.decodeFromVideoDevice(
-              undefined,
-              videoRef.current
-            );
-            if (secondRead) {
-              console.log("✅ Full Barcode Captured:", secondRead.getText());
-              processScannedBarcode(secondRead.getText()); // Save the full barcode
-            }
-          }, 500);
-        }
+      if (videoRef.current) {
+        console.log("✅ Attaching video stream...");
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
       }
-    );
-  } catch (error) {
-    console.error("🚨 Camera access failed:", error);
-    setScanStatus("❌ Camera access denied.");
-  }
-};
 
+      // 🔥 Try decoding multiple times to extract the full barcode
+      codeReader.decodeFromVideoDevice(
+        undefined,
+        videoRef.current,
+        async (result, err) => {
+          if (result) {
+            console.log("✅ Partial Scan:", result.getText());
 
+            // Wait and attempt a second read to capture the full barcode
+            setTimeout(async () => {
+              const secondRead = await codeReader.decodeFromVideoDevice(
+                undefined,
+                videoRef.current
+              );
+              if (secondRead) {
+                console.log("✅ Full Barcode Captured:", secondRead.getText());
+                processScannedBarcode(secondRead.getText()); // Save the full barcode
+              }
+            }, 500);
+          }
+        }
+      );
+    } catch (error) {
+      console.error("🚨 Camera access failed:", error);
+      setScanStatus("❌ Camera access denied.");
+    }
+  };
 
   // ✅ Start Quagga Live Scanner (for Gym Cards, Code 128/39)
   const startQuaggaScanner = async () => {
@@ -141,26 +140,32 @@ const startZXingScanner = async () => {
       });
     } catch (error) {
       console.error("🚨 Camera access failed:", error);
-      setScanStatus("❌ Camera access denied. Please allow camera permissions.");
+      setScanStatus(
+        "❌ Camera access denied. Please allow camera permissions."
+      );
     }
   };
 
-  // ✅ Process the scanned barcode (From Live Camera or Image Upload)
+  // ✅ Append Scanned Data & Ensure Full Barcode Before Passing
   const processScannedBarcode = (barcode) => {
-    if (barcode !== lastScanned) {
-      console.log("✅ FULL Barcode Scanned:", barcode); // 🔥 Log full barcode
-      setLastScanned(barcode);
-      onScanSuccess(barcode); // Ensure the full data is passed
-      setScanStatus(`✅ Scan Successful`);
-      stopScanner();
-    }
-  };
+    setLastScanned((prevData) => {
+      const newData = prevData ? prevData + "\n" + barcode : barcode;
 
+      if (newData.length > 100) {
+        // Ensures full barcode before updating state
+        onScanSuccess(newData); // Pass to parent only when complete
+        setScanning(false); // Stop scanning after full barcode is captured
+        stopScanner();
+      }
+
+      return newData;
+    });
+  };
 
   // ✅ Stop All Scanners (Fixed `undefined` error)
   const stopScanner = () => {
     console.log("🛑 Stopping scanners...");
-    
+
     if (quaggaStarted) {
       console.log("🛑 Stopping Quagga...");
       Quagga.stop(); // Stop Quagga if it started
