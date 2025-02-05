@@ -1,203 +1,141 @@
 import { useEffect, useRef, useState } from "react";
-import Quagga from "quagga";
-import { BrowserMultiFormatReader, BarcodeFormat } from "@zxing/browser";
 import DecodeDL from "./DecodeDL";
 
 function DriverLicenseScanner({ onScanSuccess }) {
   const videoRef = useRef(null);
-  const [lastScanned, setLastScanned] = useState("");
-  const [scanning, setScanning] = useState(true);
-  const [scanStatus, setScanStatus] = useState("Waiting for barcode...");
-  const [isPDF417, setIsPDF417] = useState(false); // Toggle between Gym Card & Driver's License
-  const [quaggaStarted, setQuaggaStarted] = useState(false); // 🔥 Track Quagga's state
-  const [uploadedImage, setUploadedImage] = useState(null); // Store uploaded image
+  const canvasRef = useRef(null);
+  const [capturedImage, setCapturedImage] = useState(null); // Stores captured image
+  const [uploadedImage, setUploadedImage] = useState(null); // Stores uploaded image
+  const [lastScanned, setLastScanned] = useState(""); // Stores barcode data
+  const [cameraActive, setCameraActive] = useState(false); // Track camera state
 
+  // ✅ Start the camera when the component mounts
   useEffect(() => {
-    if (scanning) {
-      startScanner();
-    }
-    return () => stopScanner(); // Cleanup on unmount
-  }, [scanning]);
+    startCamera();
+    return () => stopCamera(); // Cleanup when unmounting
+  }, []);
 
-
-  // Upload Photo Handler
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setUploadedImage(URL.createObjectURL(file)); // Store the image for preview
-    }
-  };
-
-  // 🟢 Start Live Scanner (Quagga for Gym Cards, ZXing for PDF417)
-  const startScanner = async () => {
-    console.log("🔵 Starting scanner...");
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    const videoDevices = devices.filter((device) => device.kind === "videoinput");
-
-    if (videoDevices.length === 0) {
-      console.error("🚨 No camera devices found.");
-      setScanStatus("❌ No camera detected.");
-      return;
-    }
-
-    if (isPDF417) {
-      await startZXingScanner(); // Use ZXing for PDF417 (Driver's License)
-    } else {
-      await startQuaggaScanner(); // Use Quagga for 1D barcodes (Gym card)
-    }
-  };
-
-  // ✅ Start ZXing Live Scanner (for PDF417 - Driver’s License)
-  const startZXingScanner = async () => {
-    console.log("🎥 Starting ZXing scanner...");
-    const codeReader = new BrowserMultiFormatReader();
-
+  const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
+        video: { facingMode: "environment" }, // Use back camera on mobile
       });
 
       if (videoRef.current) {
-        console.log("✅ Attaching video stream...");
         videoRef.current.srcObject = stream;
         videoRef.current.play();
+        setCameraActive(true);
       }
-
-      // ✅ Ensure the scanner only processes PDF417 (Driver’s License format)
-      codeReader.decodeFromVideoDevice(
-        undefined, // Let browser pick camera
-        videoRef.current,
-        { formats: [BarcodeFormat.PDF_417] }, // 🔥 Restrict to PDF417
-        (result, err) => {
-          if (result) {
-            console.log("✅ FULL Barcode Scanned:", result.getText());
-            processScannedBarcode(result.getText()); // Pass full barcode text
-          }
-        }
-      );
     } catch (error) {
-      console.error("🚨 Camera access failed:", error);
-      setScanStatus(
-        "❌ Camera access denied. Please allow camera permissions."
-      );
+      console.error("🚨 Camera access denied:", error);
+      setCameraActive(false);
     }
   };
 
-
-  // ✅ Start Quagga Live Scanner (for Gym Cards, Code 128/39)
-  const startQuaggaScanner = async () => {
-    console.log("🎥 Starting Quagga scanner...");
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
-      });
-
-      if (videoRef.current) {
-        console.log("✅ Attaching video stream...");
-        videoRef.current.srcObject = stream;
-        videoRef.current.play(); // Ensure video starts playing
-      }
-
-      Quagga.init(
-        {
-          inputStream: {
-            type: "LiveStream",
-            target: videoRef.current || undefined, // 🔥 Fix: Prevent undefined target
-            constraints: {
-              width: 640,
-              height: 480,
-              facingMode: "environment", // Use back camera
-            },
-          },
-          decoder: {
-            readers: ["code_128_reader", "code_39_reader"], // 1D barcode formats
-          },
-          locate: true, // Enables barcode localization
-        },
-        (err) => {
-          if (err) {
-            console.error("🚨 QuaggaJS Initialization Failed:", err);
-            setScanStatus("❌ Scanner initialization failed.");
-            return;
-          }
-          console.log("✅ Quagga Scanner Started");
-          Quagga.start();
-          setQuaggaStarted(true); // 🔥 Mark Quagga as started
-          setScanStatus("Scanning...");
-        }
-      );
-
-      Quagga.onDetected((result) => {
-        processScannedBarcode(result.codeResult.code);
-      });
-    } catch (error) {
-      console.error("🚨 Camera access failed:", error);
-      setScanStatus("❌ Camera access denied. Please allow camera permissions.");
-    }
-  };
-
-  // ✅ Process the scanned barcode (From Live Camera or Image Upload)
-  const processScannedBarcode = (barcode) => {
-    if (barcode !== lastScanned) {
-      console.log("✅ FULL Barcode Scanned:", barcode); // 🔥 Log full barcode
-      setLastScanned(barcode);
-      onScanSuccess(barcode); // Ensure the full data is passed
-      setScanStatus(`✅ Scan Successful`);
-      stopScanner();
-    }
-  };
-
-
-  // ✅ Stop All Scanners (Fixed `undefined` error)
-  const stopScanner = () => {
-    console.log("🛑 Stopping scanners...");
-    
-    if (quaggaStarted) {
-      console.log("🛑 Stopping Quagga...");
-      Quagga.stop(); // Stop Quagga if it started
-      setQuaggaStarted(false);
-    }
-
+  const stopCamera = () => {
     if (videoRef.current && videoRef.current.srcObject) {
-      const stream = videoRef.current.srcObject;
-      stream.getTracks().forEach((track) => track.stop()); // Stop camera
+      videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
       videoRef.current.srcObject = null;
     }
-    setScanning(false);
+    setCameraActive(false);
   };
+
+  // ✅ Capture Image from Video and Convert to URL
+  const captureImage = () => {
+    if (!videoRef.current) return;
+  
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+  
+    canvas.width = videoRef.current.videoWidth;
+    canvas.height = videoRef.current.videoHeight;
+    ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+  
+    // 🔥 Convert image to grayscale & enhance contrast
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const pixels = imageData.data;
+    for (let i = 0; i < pixels.length; i += 4) {
+      const avg = (pixels[i] + pixels[i + 1] + pixels[i + 2]) / 3;
+      const enhanced = avg > 128 ? 255 : 0; // Convert to black & white
+      pixels[i] = enhanced; 
+      pixels[i + 1] = enhanced;
+      pixels[i + 2] = enhanced;
+    }
+    ctx.putImageData(imageData, 0, 0);
+  
+    const imageUrl = canvas.toDataURL("image/png");
+    console.log("📸 Captured & Processed Image URL:", imageUrl);
+  
+    setCapturedImage(imageUrl);
+  };
+  
+
+  // ✅ Handle Image Upload
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+  
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+  
+    reader.onload = (e) => {
+      const image = new Image();
+      image.src = e.target.result;
+  
+      image.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+  
+        // Scale up for better barcode readability
+        const scaleFactor = 2; 
+        canvas.width = image.width * scaleFactor;
+        canvas.height = image.height * scaleFactor;
+        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+  
+        // ✅ Convert image to grayscale & apply adaptive contrast
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const pixels = imageData.data;
+  
+        for (let i = 0; i < pixels.length; i += 4) {
+          const avg = (pixels[i] + pixels[i + 1] + pixels[i + 2]) / 3;
+  
+          // 🔥 Adaptive threshold: Use avg - 30 for better contrast
+          const threshold = avg > (128 - 30) ? 255 : 0;
+          pixels[i] = threshold; 
+          pixels[i + 1] = threshold;
+          pixels[i + 2] = threshold;
+        }
+  
+        ctx.putImageData(imageData, 0, 0);
+  
+        // ✅ Convert canvas back to image URL
+        const processedImageUrl = canvas.toDataURL("image/png");
+        console.log("📸 Processed Uploaded Image:", processedImageUrl);
+        setUploadedImage(processedImageUrl);
+      };
+    };
+  };
+  
+  
 
   return (
     <div style={{ textAlign: "center" }}>
       <h2>Scan Your Driver's License</h2>
-      <p>{scanStatus}</p>
 
-      {/* Video Scanner Box */}
-      <div
-        style={{
-          position: "relative",
-          display: "inline-block",
-          border: "2px solid black",
-        }}
-      >
-        <video
-          ref={videoRef}
-          style={{ width: "100%", height: "400px" }}
-          autoPlay
-          playsInline
-          muted
-        />
+      {/* Camera Not Available Warning */}
+      {!cameraActive && <p>❌ Camera access denied or unavailable.</p>}
+
+      {/* Video Scanner */}
+      <div style={{ position: "relative", display: "inline-block", border: "2px solid black" }}>
+        <video ref={videoRef} style={{ width: "100%", height: "400px" }} autoPlay playsInline muted />
       </div>
 
-      {/* Toggle between scanning and upload */}
-      <div style={{ marginTop: "10px" }}>
-        <label>
-          <input
-            type="checkbox"
-            checked={isPDF417}
-            onChange={() => setIsPDF417((prev) => !prev)}
-          />
-          Scan Driver’s License (PDF417)
-        </label>
+      {/* Hidden Canvas for Capturing Frame */}
+      <canvas ref={canvasRef} style={{ display: "none" }} />
+
+      {/* Capture Button */}
+      <div style={{ marginTop: "20px" }}>
+        <button onClick={captureImage} disabled={!cameraActive}>📸 Capture License</button>
       </div>
 
       {/* Upload Image Button */}
@@ -206,32 +144,30 @@ function DriverLicenseScanner({ onScanSuccess }) {
         <input type="file" accept="image/*" onChange={handleFileUpload} />
       </div>
 
-      {/* Display Uploaded Image Preview */}
-      {uploadedImage && (
+      {/* Display Captured Image */}
+      {capturedImage && (
         <div style={{ marginTop: "10px" }}>
-          <h3>Uploaded Image:</h3>
-          <img
-            src={uploadedImage}
-            alt="Uploaded License"
-            style={{ width: "300px", border: "2px solid black" }}
-          />
-          <DecodeDL
-            imageSrc={uploadedImage}
-            onDecoded={(data) => setLastScanned(data)}
-          />{" "}
-          {/* Pass to Decoder */}
+          <h3>Captured Image:</h3>
+          <img src={capturedImage} alt="Captured License" style={{ width: "300px", border: "2px solid black" }} />
+          <DecodeDL imageSrc={capturedImage} onDecoded={setLastScanned} />
         </div>
       )}
 
+      {/* Display Uploaded Image */}
+      {uploadedImage && (
+        <div style={{ marginTop: "10px" }}>
+          <h3>Uploaded Image:</h3>
+          <img src={uploadedImage} alt="Uploaded License" style={{ width: "300px", border: "2px solid black" }} />
+          <DecodeDL imageSrc={uploadedImage} onDecoded={setLastScanned} />
+        </div>
+      )}
+
+      {/* Decoded Data */}
       {lastScanned && (
         <div>
           <h3>Decoded Data:</h3>
           <p>{lastScanned}</p>
         </div>
-      )}
-
-      {!scanning && (
-        <button onClick={() => setScanning(true)}>Scan Again</button>
       )}
     </div>
   );

@@ -12,6 +12,7 @@ function DecodeDL({ imageSrc, onDecoded }) {
 
   const decodeBarcode = async (imageUrl) => {
     setDecodeStatus("Decoding...");
+    console.log("🔍 Decoding Image URL:", imageUrl);
 
     try {
       const codeReader = new BrowserMultiFormatReader();
@@ -19,21 +20,33 @@ function DecodeDL({ imageSrc, onDecoded }) {
       image.src = imageUrl;
 
       image.onload = async () => {
-        try {
-          const result = await codeReader.decodeFromImageElement(image, {
-            formats: [BarcodeFormat.PDF_417], // 🔥 Decode PDF417 specifically
-          });
+        console.log("✅ Image Loaded Successfully");
 
-          console.log("✅ Decoded Barcode:", result.getText());
-          onDecoded(result.getText()); // Send decoded data back to parent
-          setDecodeStatus("✅ Decoding Successful");
+        try {
+          // ✅ Perform barcode scan
+          const result = await codeReader.decodeFromImageElement(image);
+
+          // ✅ Only process PDF417 barcodes
+          if (result.getBarcodeFormat() === BarcodeFormat.PDF_417) {
+            console.log("✅ FULL PDF417 Barcode Data:", result.getText());
+            onDecoded(result.getText());
+            setDecodeStatus("✅ Decoding Successful");
+          } else {
+            console.warn("⚠ Not a PDF417 barcode:", result.getBarcodeFormat());
+            setDecodeStatus("❌ This is not a PDF417 barcode.");
+          }
         } catch (error) {
-          console.error("❌ Error decoding image:", error);
-          setDecodeStatus("❌ Unable to scan barcode. Try another image.");
+          console.error("❌ Error decoding barcode:", error);
+          setDecodeStatus("❌ Unable to scan PDF417 barcode. Try another image.");
         }
       };
+
+      image.onerror = () => {
+        console.error("🚨 Error loading image! The URL might be invalid.");
+        setDecodeStatus("❌ Failed to load image.");
+      };
     } catch (error) {
-      console.error("❌ Error loading image:", error);
+      console.error("❌ Error processing image:", error);
       setDecodeStatus("❌ Failed to process image.");
     }
   };
