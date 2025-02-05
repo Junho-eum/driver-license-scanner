@@ -2,6 +2,7 @@ import { useState } from "react";
 import BarcodeScanner from "../components/BarcodeScanner";
 import DriverLicenseScanner from "../components/DriverLicenseScanner";
 
+
 function App() {
   const [scannedData, setScannedData] = useState("");
 
@@ -11,8 +12,7 @@ function App() {
       {scannedData ? (
         <div>
           <h3>✅ FULL Barcode Scanned:</h3>
-          <p style={{ whiteSpace: "pre-wrap" }}>{scannedData}</p>{" "}
-          {/* Preserve multi-line format */}
+          <p>{scannedData}</p>
           <button onClick={() => setScannedData("")}>Scan Again</button>
         </div>
       ) : (
