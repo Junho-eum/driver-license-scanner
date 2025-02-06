@@ -55,27 +55,33 @@ function DriverLicenseScanner({ onScanSuccess }) {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
 
-    canvas.width = videoRef.current.videoWidth;
-    canvas.height = videoRef.current.videoHeight;
+    // ✅ Increase resolution for better barcode readability
+    const scaleFactor = 2;
+    canvas.width = videoRef.current.videoWidth * scaleFactor;
+    canvas.height = videoRef.current.videoHeight * scaleFactor;
+
+    // ✅ Draw video frame onto canvas
     ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
 
-    // 🔥 Convert image to grayscale & enhance contrast
+    // ✅ Convert image to grayscale & enhance contrast
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const pixels = imageData.data;
     for (let i = 0; i < pixels.length; i += 4) {
       const avg = (pixels[i] + pixels[i + 1] + pixels[i + 2]) / 3;
-      const enhanced = avg > 128 ? 255 : 0; // Convert to black & white
-      pixels[i] = enhanced;
-      pixels[i + 1] = enhanced;
-      pixels[i + 2] = enhanced;
+      const threshold = avg > 128 - 30 ? 255 : 0; // Adaptive threshold
+      pixels[i] = threshold;
+      pixels[i + 1] = threshold;
+      pixels[i + 2] = threshold;
     }
     ctx.putImageData(imageData, 0, 0);
 
+    // ✅ Use high-quality PNG output
     const imageUrl = canvas.toDataURL("image/png");
     console.log("📸 Captured & Processed Image URL:", imageUrl);
 
     setCapturedImage(imageUrl);
   };
+
 
   // ✅ Handle Image Upload
   const handleFileUpload = (event) => {
