@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import Quagga from "quagga";
 import { BrowserMultiFormatReader, BarcodeFormat } from "@zxing/browser";
 import DecodeDL from "./DecodeDL";
 
@@ -8,71 +7,108 @@ function DriverLicenseScanner({ onScanSuccess }) {
   const [lastScanned, setLastScanned] = useState("");
   const [scanning, setScanning] = useState(true);
   const [scanStatus, setScanStatus] = useState("Waiting for barcode...");
-  const [isPDF417, setIsPDF417] = useState(false); // Toggle between Gym Card & Driver's License
-  const [quaggaStarted, setQuaggaStarted] = useState(false); // 🔥 Track Quagga's state
-  const [uploadedImage, setUploadedImage] = useState(null); // Store uploaded image
+  const [uploadedImage, setUploadedImage] = useState(null);
+  const codeReaderRef = useRef(null);
+  let scanningActive = true; // ✅ Prevents continuous execution
 
   useEffect(() => {
     if (scanning) {
-      startScanner();
+      startZXingScanner();
     }
     return () => stopScanner(); // Cleanup on unmount
   }, [scanning]);
 
-
-  // Upload Photo Handler
+  // ✅ Upload Photo Handler
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setUploadedImage(URL.createObjectURL(file)); // Store the image for preview
+      setUploadedImage(URL.createObjectURL(file));
     }
   };
 
-  // 🟢 Start Live Scanner (Quagga for Gym Cards, ZXing for PDF417)
-  const startScanner = async () => {
-    console.log("🔵 Starting scanner...");
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    const videoDevices = devices.filter((device) => device.kind === "videoinput");
+  // ✅ Function to Parse PDF417 Driver's License Data
+  const parsePDF417Data = (rawData) => {
+    const parsedData = {};
 
-    if (videoDevices.length === 0) {
-      console.error("🚨 No camera devices found.");
-      setScanStatus("❌ No camera detected.");
-      return;
-    }
+    // 🔥 Remove non-relevant header data (if exists)
+    rawData = rawData.replace(/@.*?\n/, "").trim(); // Removes "@" and ANSI headers
 
-    if (isPDF417) {
-      await startZXingScanner(); // Use ZXing for PDF417 (Driver's License)
-    } else {
-      await startQuaggaScanner(); // Use Quagga for 1D barcodes (Gym card)
-    }
+    // 🔥 Standard AAMVA-compliant field mappings
+    const fieldMap = {
+      DCA: "License Class",
+      DCB: "Endorsements",
+      DCD: "Restrictions",
+      DBA: "License Expiry Date",
+      DBB: "Date of Birth",
+      DBC: "Gender",
+      DCS: "Last Name",
+      DAC: "First Name",
+      DAD: "Middle Name",
+      DBD: "License Issue Date",
+      DAQ: "License Number",
+      DAG: "Street Address",
+      DAI: "City",
+      DAJ: "State",
+      DAK: "ZIP Code",
+    };
+
+    // 🔥 Extract each field based on AAMVA format
+    Object.entries(fieldMap).forEach(([key, label]) => {
+      const regex = new RegExp(`${key}([^\n\r]*)`);
+      const match = rawData.match(regex);
+      if (match) {
+        parsedData[label] = match[1].trim();
+      }
+    });
+
+    return parsedData;
   };
 
-  // ✅ Start ZXing Live Scanner (for PDF417 - Driver’s License)
+  // ✅ Start ZXing Live Scanner (Optimized for PDF417)
   const startZXingScanner = async () => {
     console.log("🎥 Starting ZXing scanner...");
+    scanningActive = true; // ✅ Reset scanning flag
     const codeReader = new BrowserMultiFormatReader();
+    codeReaderRef.current = codeReader;
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
+        video: {
+          facingMode: "environment",
+          width: { ideal: 1920 }, // Force high resolution
+          height: { ideal: 1080 },
+        },
       });
 
       if (videoRef.current) {
-        console.log("✅ Attaching video stream...");
+        console.log("✅ Attaching high-res video stream...");
         videoRef.current.srcObject = stream;
         videoRef.current.play();
       }
 
-      // ✅ Ensure the scanner only processes PDF417 (Driver’s License format)
+      // ✅ Scan Continuously Until a Valid PDF417 is Detected
       codeReader.decodeFromVideoDevice(
-        undefined, // Let browser pick camera
+        undefined,
         videoRef.current,
-        { formats: [BarcodeFormat.PDF_417] }, // 🔥 Restrict to PDF417
-        (result, err) => {
+        async (result, err) => {
+          if (!scanningActive) return; // ✅ Prevents multiple detections
+
           if (result) {
-            console.log("✅ FULL Barcode Scanned:", result.getText());
-            processScannedBarcode(result.getText()); // Pass full barcode text
+            const format = result.getBarcodeFormat();
+            if (format === BarcodeFormat.PDF_417) {
+              console.log("✅ PDF417 Barcode Scanned:", result.getText());
+              scanningActive = false; // ✅ Stop further detections
+              processScannedBarcode(result.getText());
+              await stopScanner();
+            } else if (scanningActive) {
+              // ✅ Log ignored barcodes only if scanning is active
+              console.warn("❌ Ignoring non-PDF417 barcode:", format);
+            }
           }
+        },
+        {
+          tryHarder: true, // Improve detection in blurry/low-light conditions
+          formats: [BarcodeFormat.PDF_417], // Restrict strictly to PDF417
         }
       );
     } catch (error) {
@@ -83,79 +119,30 @@ function DriverLicenseScanner({ onScanSuccess }) {
     }
   };
 
-
-  // ✅ Start Quagga Live Scanner (for Gym Cards, Code 128/39)
-  const startQuaggaScanner = async () => {
-    console.log("🎥 Starting Quagga scanner...");
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
-      });
-
-      if (videoRef.current) {
-        console.log("✅ Attaching video stream...");
-        videoRef.current.srcObject = stream;
-        videoRef.current.play(); // Ensure video starts playing
-      }
-
-      Quagga.init(
-        {
-          inputStream: {
-            type: "LiveStream",
-            target: videoRef.current || undefined, // 🔥 Fix: Prevent undefined target
-            constraints: {
-              width: 640,
-              height: 480,
-              facingMode: "environment", // Use back camera
-            },
-          },
-          decoder: {
-            readers: ["code_128_reader", "code_39_reader"], // 1D barcode formats
-          },
-          locate: true, // Enables barcode localization
-        },
-        (err) => {
-          if (err) {
-            console.error("🚨 QuaggaJS Initialization Failed:", err);
-            setScanStatus("❌ Scanner initialization failed.");
-            return;
-          }
-          console.log("✅ Quagga Scanner Started");
-          Quagga.start();
-          setQuaggaStarted(true); // 🔥 Mark Quagga as started
-          setScanStatus("Scanning...");
-        }
-      );
-
-      Quagga.onDetected((result) => {
-        processScannedBarcode(result.codeResult.code);
-      });
-    } catch (error) {
-      console.error("🚨 Camera access failed:", error);
-      setScanStatus("❌ Camera access denied. Please allow camera permissions.");
-    }
-  };
-
-  // ✅ Process the scanned barcode (From Live Camera or Image Upload)
+  
+  // ✅ Process the scanned barcode
   const processScannedBarcode = (barcode) => {
     if (barcode !== lastScanned) {
-      console.log("✅ FULL Barcode Scanned:", barcode); // 🔥 Log full barcode
-      setLastScanned(barcode);
-      onScanSuccess(barcode); // Ensure the full data is passed
+      console.log("✅ FULL PDF417 Barcode Scanned:", barcode);
+
+      // 🔥 Parse the barcode data
+      const parsedData = parsePDF417Data(barcode);
+
+      console.log("✅ Parsed Data:", parsedData);
+      setLastScanned(parsedData); // ✅ Store structured data instead of raw text
+      onScanSuccess(parsedData);
       setScanStatus(`✅ Scan Successful`);
-      stopScanner();
     }
   };
 
+  // ✅ Stop Camera Scanner
+  const stopScanner = async () => {
+    console.log("🛑 Stopping scanner...");
+    scanningActive = false; // ✅ Prevent future detections
 
-  // ✅ Stop All Scanners (Fixed `undefined` error)
-  const stopScanner = () => {
-    console.log("🛑 Stopping scanners...");
-    
-    if (quaggaStarted) {
-      console.log("🛑 Stopping Quagga...");
-      Quagga.stop(); // Stop Quagga if it started
-      setQuaggaStarted(false);
+    if (codeReaderRef.current) {
+      await codeReaderRef.current.reset(); // ✅ Stop decoding immediately
+      codeReaderRef.current = null;
     }
 
     if (videoRef.current && videoRef.current.srcObject) {
@@ -163,12 +150,13 @@ function DriverLicenseScanner({ onScanSuccess }) {
       stream.getTracks().forEach((track) => track.stop()); // Stop camera
       videoRef.current.srcObject = null;
     }
+
     setScanning(false);
   };
 
   return (
     <div style={{ textAlign: "center" }}>
-      <h2>Scan Your Driver's License</h2>
+      <h2>Scan Your Driver's License (PDF417 Only)</h2>
       <p>{scanStatus}</p>
 
       {/* Video Scanner Box */}
@@ -186,18 +174,6 @@ function DriverLicenseScanner({ onScanSuccess }) {
           playsInline
           muted
         />
-      </div>
-
-      {/* Toggle between scanning and upload */}
-      <div style={{ marginTop: "10px" }}>
-        <label>
-          <input
-            type="checkbox"
-            checked={isPDF417}
-            onChange={() => setIsPDF417((prev) => !prev)}
-          />
-          Scan Driver’s License (PDF417)
-        </label>
       </div>
 
       {/* Upload Image Button */}
@@ -218,8 +194,7 @@ function DriverLicenseScanner({ onScanSuccess }) {
           <DecodeDL
             imageSrc={uploadedImage}
             onDecoded={(data) => setLastScanned(data)}
-          />{" "}
-          {/* Pass to Decoder */}
+          />
         </div>
       )}
 
