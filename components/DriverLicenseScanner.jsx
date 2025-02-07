@@ -190,7 +190,7 @@ function DriverLicenseScanner({ onScanSuccess }) {
         video: {
           facingMode: "environment",
           width: isMobile ? { ideal: 960 } : { ideal: 1920 }, // ✅ Reduce width for mobile
-          height: isMobile ? { ideal: 720 } : { ideal: 1080 }, // ✅ Reduce height for mobile
+          height: isMobile ? { ideal: 480 } : { ideal: 1080 }, // ✅ Reduce height for mobile
           aspectRatio: isMobile ? 4 / 3 : 5 / 3, // ✅ Adjust aspect ratio dynamically
           focusMode: "continuous",
           depthNear: 0.2,
