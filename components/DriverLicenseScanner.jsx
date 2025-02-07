@@ -126,7 +126,6 @@ function DriverLicenseScanner({ onScanSuccess }) {
     }
   };
 
-  
   // ✅ Process the scanned barcode
   const processScannedBarcode = (barcode) => {
     if (barcode !== lastScanned) {
@@ -227,7 +226,7 @@ function DriverLicenseScanner({ onScanSuccess }) {
       )}
 
       {!scanning && (
-        <button onClick={() => setScanning(true)}>Scan Again</button>
+        <button onClick={() => window.location.reload()}>Scan Again</button>
       )}
     </div>
   );
