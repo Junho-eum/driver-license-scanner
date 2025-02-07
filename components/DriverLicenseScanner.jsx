@@ -307,22 +307,32 @@ function DriverLicenseScanner({ onScanSuccess }) {
         </p>
       )}
 
+      
       {/* Video Scanner Box */}
       <div
         style={{
           position: "relative",
           display: "inline-block",
           border: "2px solid black",
+          width: "100%", // ✅ Ensures responsiveness
+          maxWidth: "600px", // ✅ Limits the width on large screens
+          aspectRatio: "16 / 9", // ✅ Keeps a proper license scan ratio
         }}
       >
         <video
           ref={videoRef}
-          style={{ width: "100%", height: "400px" }}
+          style={{
+            width: "100%",
+            height: "auto",
+            objectFit: "cover", // ✅ Prevents stretching
+            borderRadius: "10px", // ✅ Adds smooth rounded edges
+          }}
           autoPlay
           playsInline
           muted
         />
       </div>
+
       {/* Display Scan Status Message (Success/Error) */}
 
       {/* Upload Image Button */}
