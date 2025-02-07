@@ -6,9 +6,17 @@ function DriverLicenseScanner({ onScanSuccess }) {
   const videoRef = useRef(null);
   const [lastScanned, setLastScanned] = useState("");
   const [scanning, setScanning] = useState(true);
-  const [scanStatus, setScanStatus] = useState("Waiting for barcode...");
   const [uploadedImage, setUploadedImage] = useState(null);
   const codeReaderRef = useRef(null);
+  const [showMessage, setShowMessage] = useState(false);
+  const [scanStatus, setScanStatus] = useState(
+    "📸 Please arrange your driver's license properly:\n" +
+      "- Hold it flat without tilting\n" +
+      "- Ensure good lighting\n" +
+      "- Avoid reflections and glare"
+  );
+
+
   let scanningActive = true; // ✅ Prevents continuous execution
 
   useEffect(() => {
@@ -64,58 +72,167 @@ function DriverLicenseScanner({ onScanSuccess }) {
     return parsedData;
   };
 
-  // ✅ Start ZXing Live Scanner (Optimized for PDF417)
+  const calculateBrightness = (imageData) => {
+    let total = 0;
+    const pixels = imageData.data;
+    for (let i = 0; i < pixels.length; i += 4) {
+      const r = pixels[i];
+      const g = pixels[i + 1];
+      const b = pixels[i + 2];
+      total += (r + g + b) / 3;
+    }
+    return total / (pixels.length / 4);
+  };
+
+  const detectBlurriness = (imageData) => {
+    let totalDifference = 0;
+    const pixels = imageData.data;
+
+    for (let i = 0; i < pixels.length - 4; i += 4) {
+      const diff = Math.abs(pixels[i] - pixels[i + 4]); // Compare adjacent pixels
+      totalDifference += diff;
+    }
+
+    return totalDifference / (pixels.length / 4);
+  };
+
+  const detectTilt = (videoElement) => {
+    const rect = videoElement.getBoundingClientRect();
+    const aspectRatio = rect.width / rect.height;
+
+    if (aspectRatio > 1.8 || aspectRatio < 1.2) {
+      return Math.abs(aspectRatio - 1.5) * 25; // Adjusted sensitivity
+    }
+    return 0;
+  };
+
+  const detectDistance = (videoElement) => {
+    const rect = videoElement.getBoundingClientRect();
+    const widthRatio = rect.width / window.innerWidth;
+    const heightRatio = rect.height / window.innerHeight;
+
+    // ✅ If barcode size is too small, it's too far
+    if (widthRatio < 0.3 || heightRatio < 0.3) {
+      return true; // License is too far
+    }
+    return false;
+  };
+
+  const monitorScanningIssues = () => {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    let lastMessage = ""; // Store last displayed message to avoid unnecessary updates
+
+    setInterval(() => {
+      if (!videoRef.current) return;
+
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
+      ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const brightness = calculateBrightness(imageData);
+      const blurLevel = detectBlurriness(imageData);
+      const barcodeAngle = detectTilt(videoRef.current);
+      const isTooFar = detectDistance(videoRef.current); // ✅ Detect Distance
+
+      let message = "";
+
+      // ✅ Detect lighting issues
+      if (brightness < 40) {
+        message =
+          "⚠️ Too dark! Move to a brighter area or turn on the flashlight.";
+      } else if (brightness > 220) {
+        message = "⚠️ Too bright! Reduce glare by adjusting your angle.";
+      }
+
+      // ✅ Detect blurriness
+      if (blurLevel < 5) {
+        message =
+          "⚠️ Barcode too blurry! Hold steady or ensure the camera lens is clean.";
+      }
+
+      // ✅ Detect tilt issues
+      if (barcodeAngle > 10) {
+        message = "⚠️ Barcode tilted! Keep the license flat and avoid angles.";
+      }
+
+      // ✅ Detect if the license is too far
+      if (isTooFar) {
+        message = "⚠️ License too far! Move closer to the camera for scanning.";
+      }
+
+      // ✅ Only update message if it's different to prevent unnecessary updates
+      if (message && message !== lastMessage) {
+        setScanStatus(message);
+        lastMessage = message;
+      }
+    }, 500);
+  };
+
+
+  // ✅ Start ZXing Live Scanner (Preserving other logic)
   const startZXingScanner = async () => {
     console.log("🎥 Starting ZXing scanner...");
-    scanningActive = true; // ✅ Reset scanning flag
+    scanningActive = true;
     const codeReader = new BrowserMultiFormatReader();
     codeReaderRef.current = codeReader;
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
+      const constraints = {
         video: {
           facingMode: "environment",
-          width: { ideal: 1920 }, // Force high resolution
+          width: { ideal: 1920 },
           height: { ideal: 1080 },
+          focusMode: "continuous",
+          depthNear: 0.2,
+          depthFar: 1.0,
         },
-      });
+      };
+
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      const track = stream.getVideoTracks()[0];
+      const capabilities = track.getCapabilities();
+
+      if (capabilities.torch) {
+        track.applyConstraints({ advanced: [{ torch: true }] });
+      }
 
       if (videoRef.current) {
         console.log("✅ Attaching high-res video stream...");
         videoRef.current.srcObject = stream;
         videoRef.current.play();
+
+        // ✅ Start issue detection
+        monitorScanningIssues();
       }
-      // ✅ Initial instruction for the user
-      setScanStatus(
-        "📸 Align the driver's license with the camera:\n- Hold it FLAT and avoid tilting\n- Ensure good lighting\n- Keep it within the frame"
-      );
       
-      // ✅ Scan Continuously Until a Valid PDF417 is Detected
+
       codeReader.decodeFromVideoDevice(
         undefined,
         videoRef.current,
         async (result, err) => {
-          if (!scanningActive) return; // ✅ Prevents multiple detections
+          if (!scanningActive) return;
 
           if (result) {
             const format = result.getBarcodeFormat();
             if (format === BarcodeFormat.PDF_417) {
               console.log("✅ PDF417 Barcode Scanned:", result.getText());
-              scanningActive = false; // ✅ Stop further detections
+              scanningActive = false;
               processScannedBarcode(result.getText());
               await stopScanner();
             } else if (scanningActive) {
-              // ✅ Log ignored barcodes only if scanning is active
               console.warn("❌ Ignoring non-PDF417 barcode:", format);
-              setScanStatus(
-                "⚠️ Cannot detect barcode!\nTry:\n- Holding it FLAT (not tilted)\n- Ensuring good lighting\n- try adjusting in slightly different angles or make sure the focus is on"
-              );
+              setShowMessage(true); // ✅ Show message once an invalid barcode is detected
+            
+              
             }
           }
         },
         {
-          tryHarder: true, // Improve detection in blurry/low-light conditions
-          formats: [BarcodeFormat.PDF_417], // Restrict strictly to PDF417
+          tryHarder: true,
+          formats: [BarcodeFormat.PDF_417],
         }
       );
     } catch (error) {
@@ -125,6 +242,7 @@ function DriverLicenseScanner({ onScanSuccess }) {
       );
     }
   };
+
 
   // ✅ Process the scanned barcode
   const processScannedBarcode = (barcode) => {
@@ -162,22 +280,33 @@ function DriverLicenseScanner({ onScanSuccess }) {
 
   return (
     <div style={{ textAlign: "center" }}>
-      <h2>Scan Your Driver's License (PDF417 Only)</h2>
+      <h2>Scan Your Driver's License</h2>
+      <div style={{ fontWeight: "bold", color: "white" }}>
+        📸 Please arrange your driver's license properly:
+        <ul>
+          <ul>Hold it flat without tilting</ul>
+          <ul>Keep the camera still to capture the barcode properly</ul>
+          <ul>Ensure good lighting</ul>
+        </ul>
+      </div>
+      {showMessage && (
+        <p
+          id="scanStatus"
+          style={{
+            color: scanStatus.includes("❌")
+              ? "red" // Critical errors (e.g., no camera, access denied)
+              : scanStatus.includes("⚠️")
+              ? "yellow" // Warnings (e.g., tilted barcode, bad lighting)
+              : scanStatus.includes("📸")
+              ? "white" // Camera alignment instructions
+              : "white", // Default
+            fontWeight: "bold",
+          }}
+        >
+          {scanStatus}
+        </p>
+      )}
 
-      <p
-        style={{
-          color: scanStatus.includes("❌")
-            ? "red" // Critical errors (e.g., no camera, access denied)
-            : scanStatus.includes("⚠️")
-            ? "yellow" // Warnings (e.g., tilted barcode, bad lighting)
-            : scanStatus.includes("📸")
-            ? "white" // Camera alignment instructions
-            : "white", // Default
-          fontWeight: "bold",
-        }}
-      >
-        {scanStatus}
-      </p>
       {/* Video Scanner Box */}
       <div
         style={{
