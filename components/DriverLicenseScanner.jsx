@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { BrowserMultiFormatReader, BarcodeFormat } from "@zxing/browser";
 import DecodeDL from "./DecodeDL";
+import "./DriverLicenseScanner.css"; // ✅ Import CSS file
 
 function DriverLicenseScanner({ onScanSuccess }) {
+  const [isMobile, setIsMobile] = useState(false);
   const videoRef = useRef(null);
   const [lastScanned, setLastScanned] = useState("");
   const [scanning, setScanning] = useState(true);
@@ -16,7 +18,11 @@ function DriverLicenseScanner({ onScanSuccess }) {
       "- Avoid reflections and glare"
   );
 
-
+  useEffect(() => {
+    // ✅ Detect if the user is on a mobile device
+    setIsMobile(/iPhone|iPad|Android/i.test(navigator.userAgent));
+  }, []);
+  
   let scanningActive = true; // ✅ Prevents continuous execution
 
   useEffect(() => {
@@ -195,9 +201,9 @@ function DriverLicenseScanner({ onScanSuccess }) {
       const track = stream.getVideoTracks()[0];
       const capabilities = track.getCapabilities();
 
-      if (capabilities.torch) {
-        track.applyConstraints({ advanced: [{ torch: true }] });
-      }
+      // if (capabilities.torch) {
+      //   track.applyConstraints({ advanced: [{ torch: true }] });
+      // }
 
       if (videoRef.current) {
         console.log("✅ Attaching high-res video stream...");
@@ -278,6 +284,7 @@ function DriverLicenseScanner({ onScanSuccess }) {
     setScanning(false);
   };
 
+
   return (
     <div style={{ textAlign: "center" }}>
       <h2>Scan Your Driver's License</h2>
@@ -307,30 +314,15 @@ function DriverLicenseScanner({ onScanSuccess }) {
         </p>
       )}
 
-      
-      {/* Video Scanner Box */}
+      {/* 📌 Video Scanner Box (Responsive for Mobile & Desktop) */}
       <div
+        className="video-container"
         style={{
-          position: "relative",
-          display: "inline-block",
-          border: "2px solid black",
-          width: "100%", // ✅ Ensures responsiveness
-          maxWidth: "600px", // ✅ Limits the width on large screens
-          aspectRatio: "16 / 9", // ✅ Keeps a proper license scan ratio
+          maxWidth: isMobile ? "100%" : "800px", // ✅ Adjust width dynamically
+          aspectRatio: isMobile ? "3 / 4" : "5 / 3", // ✅ Change ratio dynamically
         }}
       >
-        <video
-          ref={videoRef}
-          style={{
-            width: "100%",
-            height: "auto",
-            objectFit: "cover", // ✅ Prevents stretching
-            borderRadius: "10px", // ✅ Adds smooth rounded edges
-          }}
-          autoPlay
-          playsInline
-          muted
-        />
+        <video ref={videoRef} autoPlay playsInline muted />
       </div>
 
       {/* Display Scan Status Message (Success/Error) */}

@@ -1,8 +1,27 @@
+/* 📌 Default video container (for desktops & tablets) */
+.video-container {
+  width: 100%;
+  max-width: 800px; /* ✅ Default width for desktop */
+  aspect-ratio: 5 / 3; /* ✅ Best ratio for scanning driver's license */
+  border: 2px solid black;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 📌 Adjust video for mobile screens */
 @media (max-width: 768px) {
-  video {
-    width: 100%;
-    height: auto;
-    max-height: 320px; /* ✅ Prevents excessive vertical stretching */
-    aspect-ratio: 16 / 9; /* ✅ Keeps the correct aspect ratio */
+  .video-container {
+    max-width: 100%; /* ✅ Full width for mobile */
+    aspect-ratio: 3 / 4; /* ✅ Taller ratio for better mobile framing */
   }
+}
+
+/* 📌 Video styling */
+.video-container video {
+  width: 100%;
+  height: auto;
+  object-fit: cover; /* ✅ Ensures proper framing */
+  border-radius: 10px; /* ✅ Smooth rounded corners */
 }
