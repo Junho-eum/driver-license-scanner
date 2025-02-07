@@ -89,9 +89,7 @@ function DriverLicenseScanner({ onScanSuccess }) {
       setScanStatus(
         "📸 Align the driver's license with the camera:\n- Hold it FLAT and avoid tilting\n- Ensure good lighting\n- Keep it within the frame"
       );
-
-      let nonPdf417Count = 0; // Track how many times non-PDF417 barcodes are ignored
-
+      
       // ✅ Scan Continuously Until a Valid PDF417 is Detected
       codeReader.decodeFromVideoDevice(
         undefined,
@@ -108,18 +106,10 @@ function DriverLicenseScanner({ onScanSuccess }) {
               await stopScanner();
             } else if (scanningActive) {
               // ✅ Log ignored barcodes only if scanning is active
-              nonPdf417Count++; // ✅ Increment ignored barcode count
               console.warn("❌ Ignoring non-PDF417 barcode:", format);
-              // ✅ Show focus warning if 3+ non-PDF417 barcodes are ignored
-              if (nonPdf417Count >= 3) {
-                setScanStatus(
-                  "⚠️ Possible focus issue!\nTry:\n- Moving closer/farther\n- adjust angles slightly\n- Ensuring barcode is clear"
-                );
-              } else {
-                setScanStatus(
-                  "⚠️ Cannot detect barcode!\nTry:\n- Holding it FLAT (not tilted)\n- Ensuring good lighting\n- Adjusting angles slightly"
-                );
-              }
+              setScanStatus(
+                "⚠️ Cannot detect barcode!\nTry:\n- Holding it FLAT (not tilted)\n- Ensuring good lighting\n- try adjusting in slightly different angles or make sure the focus is on"
+              );
             }
           }
         },
