@@ -85,7 +85,10 @@ function DriverLicenseScanner({ onScanSuccess }) {
         videoRef.current.srcObject = stream;
         videoRef.current.play();
       }
-
+      // ✅ Initial instruction for the user
+      setScanStatus(
+        "📸 Align the driver's license with the camera:\n- Hold it FLAT and avoid tilting\n- Ensure good lighting\n- Keep it within the frame"
+      );
       // ✅ Scan Continuously Until a Valid PDF417 is Detected
       codeReader.decodeFromVideoDevice(
         undefined,
@@ -103,6 +106,9 @@ function DriverLicenseScanner({ onScanSuccess }) {
             } else if (scanningActive) {
               // ✅ Log ignored barcodes only if scanning is active
               console.warn("❌ Ignoring non-PDF417 barcode:", format);
+              setScanStatus(
+                "⚠️ Cannot detect barcode!\nTry:\n- Holding it FLAT (not tilted)\n- Ensuring good lighting\n- Keeping it steady"
+              );
             }
           }
         },
@@ -157,8 +163,21 @@ function DriverLicenseScanner({ onScanSuccess }) {
   return (
     <div style={{ textAlign: "center" }}>
       <h2>Scan Your Driver's License (PDF417 Only)</h2>
-      <p>{scanStatus}</p>
 
+      <p
+        style={{
+          color: scanStatus.includes("❌")
+            ? "red" // Critical errors (e.g., no camera, access denied)
+            : scanStatus.includes("⚠️")
+            ? "yellow" // Warnings (e.g., tilted barcode, bad lighting)
+            : scanStatus.includes("📸")
+            ? "white" // Camera alignment instructions
+            : "white", // Default
+          fontWeight: "bold",
+        }}
+      >
+        {scanStatus}
+      </p>
       {/* Video Scanner Box */}
       <div
         style={{
@@ -175,6 +194,7 @@ function DriverLicenseScanner({ onScanSuccess }) {
           muted
         />
       </div>
+      {/* Display Scan Status Message (Success/Error) */}
 
       {/* Upload Image Button */}
       <div style={{ marginTop: "20px" }}>
