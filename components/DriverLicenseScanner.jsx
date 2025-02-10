@@ -112,6 +112,21 @@ function DriverLicenseScanner({ onScanSuccess }) {
     return 0;
   };
 
+  const requestLandscapeMode = async () => {
+    if (screen.orientation && screen.orientation.lock) {
+      try {
+        await screen.orientation.lock("landscape");
+        console.log("📱 Switched to landscape mode");
+      } catch (err) {
+        console.error("❌ Orientation lock failed:", err);
+      }
+    } else {
+      console.warn("⚠️ Orientation lock is not supported in this browser.");
+    }
+  };
+  
+
+  
   const detectDistance = (videoElement) => {
     const rect = videoElement.getBoundingClientRect();
     const widthRatio = rect.width / window.innerWidth;
@@ -189,14 +204,21 @@ function DriverLicenseScanner({ onScanSuccess }) {
       const constraints = {
         video: {
           facingMode: "environment",
-          width: isMobile ? { ideal: 1280, min: 640 } : { ideal: 1920, min: 1280 }, // 🔥 Adjust for mobile
-          height: isMobile ? { ideal: 960, min: 480 } : { ideal: 1080, min: 720 },
-          aspectRatio: isMobile ? 4 / 3 : 5 / 3, // 🔥 Try enforcing 4:3 for mobile
+          width: isMobile
+            ? { ideal: window.innerHeight > window.innerWidth ? 1920 : 1280, min: 640 } // 🔥 Force wider view when in landscape
+            : { ideal: 1920, min: 1280 }, // Desktop uses standard HD
+          height: isMobile
+            ? { ideal: window.innerHeight > window.innerWidth ? 1080 : 960, min: 480 }
+            : { ideal: 1080, min: 720 },
+          aspectRatio: isMobile
+            ? window.innerHeight > window.innerWidth ? 16 / 9 : 4 / 3 // 🔥 Adjust for landscape vs portrait
+            : 5 / 3, // Desktop aspect ratio
           focusMode: "continuous",
           depthNear: 0.2,
           depthFar: 1.0,
         },
       };
+      
 
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       const track = stream.getVideoTracks()[0];
@@ -323,7 +345,22 @@ function DriverLicenseScanner({ onScanSuccess }) {
           aspectRatio: isMobile ? "3 / 4" : "5 / 3", // ✅ Change ratio dynamically
         }}
       >
-        <video ref={videoRef} autoPlay playsInline muted />
+        <video
+          ref={videoRef}
+          autoPlay
+          playsInline
+          muted
+          onClick={requestLandscapeMode} // 🔥 User taps to lock landscape
+          style={{
+            width: "100%",
+            height: "auto",
+            transform: isMobile && window.innerHeight > window.innerWidth ? "rotate(90deg)" : "none",
+            objectFit: "cover",
+          }}
+        />
+
+
+        
       </div>
 
       {/* Display Scan Status Message (Success/Error) */}
