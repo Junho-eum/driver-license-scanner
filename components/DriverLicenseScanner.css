@@ -16,7 +16,7 @@
     width: 100vw;
     height: 100vh;
     aspect-ratio: 16 / 9; /* 🔥 Forces a wider landscape camera */
-    transform: rotate(90deg); /* 🔥 Only for portrait mobile view */
+    
   }
 
   .video-container video {
