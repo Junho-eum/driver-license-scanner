@@ -32,11 +32,11 @@ function DriverLicenseScanner({ onScanSuccess }) {
     return () => stopScanner(); // Cleanup on unmount
   }, [scanning]);
 
-  // useEffect(() => {
-  //   if (isMobile) {
-  //     forceLandscapeMode();
-  //   }
-  // }, [isMobile]);
+  useEffect(() => {
+    if (isMobile) {
+      forceLandscapeMode();
+    }
+  }, [isMobile]);
 
   
   // ✅ Upload Photo Handler
@@ -92,6 +92,17 @@ function DriverLicenseScanner({ onScanSuccess }) {
       } catch (err) {
         console.warn("⚠️ Orientation lock failed:", err);
       }
+    }
+  };
+  const openLandscapeScanner = () => {
+    const scanWindow = window.open(
+      "/scan", // New route for scanning
+      "_blank",
+      "width=800,height=600"
+    );
+  
+    if (!scanWindow) {
+      alert("⚠️ Pop-up blocked! Please allow pop-ups for this site.");
     }
   };
   
@@ -346,6 +357,30 @@ function DriverLicenseScanner({ onScanSuccess }) {
         >
           {scanStatus}
         </p>
+      )}
+      {isMobile && (
+        <div 
+          onClick={openLandscapeScanner} 
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            background: "rgba(0, 0, 0, 0.7)",
+            color: "white",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
+            fontSize: "1.5rem",
+            fontWeight: "bold",
+            cursor: "pointer",
+            zIndex: 10,
+          }}
+        >
+          📸 Tap to scan in landscape mode
+        </div>
       )}
 
       {/* 📌 Video Scanner Box (Responsive for Mobile & Desktop) */}

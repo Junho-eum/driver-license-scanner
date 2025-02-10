@@ -1,5 +1,6 @@
 import { useState } from "react";
 import DriverLicenseScanner from "../components/DriverLicenseScanner";
+import ScanPage from "./ScanPage";
 
 function App() {
   const [scannedData, setScannedData] = useState(null);
@@ -18,6 +19,7 @@ function App() {
             ))}
           </ul>
           <button onClick={() => setScannedData(null)}>Scan Again</button>
+          <Route path="/scan" element={<ScanPage />} /> {/* ✅ New scanning page */}
         </div>
       ) : (
         <DriverLicenseScanner onScanSuccess={setScannedData} />
