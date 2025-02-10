@@ -1,6 +1,6 @@
 import { useState } from "react";
 import DriverLicenseScanner from "../components/DriverLicenseScanner";
-import ScanPage from "./ScanPage";
+import ScanPage from "../components/ScanPage";
 
 function App() {
   const [scannedData, setScannedData] = useState(null);
