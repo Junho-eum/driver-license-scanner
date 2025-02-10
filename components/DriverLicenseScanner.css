@@ -14,7 +14,7 @@
 @media (max-width: 768px) {
   .video-container {
     max-width: 100%; /* ✅ Full width for mobile */
-    aspect-ratio: 4 / 3; /* ✅ Adjusts height to prevent vertical stretching */
+    aspect-ratio: 5 / 3; /* ✅ Adjusts height to prevent vertical stretching */
   }
 }
 
