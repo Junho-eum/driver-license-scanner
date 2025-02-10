@@ -12,17 +12,15 @@
 /* 📌 Adjust Video Container for Mobile */
 @media (max-width: 768px) {
   .video-container {
-    width: 100vw;
-    max-height: 75vh; /* ✅ Limit max height */
-    aspect-ratio: 4 / 3; /* ✅ Better portrait-friendly aspect ratio */
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    max-width: 100%; /* ✅ Full width for mobile */
+    aspect-ratio: 5 / 3; /* ✅ Adjusts height to prevent vertical stretching */
   }
+}
 
-  .video-container video {
-    width: 100%;
-    height: auto;
-    object-fit: contain; /* ✅ Ensures it fits within bounds */
-  }
+/* 📌 Video Styling */
+.video-container video {
+  width: 100%;
+  height: auto;
+  object-fit: cover; /* ✅ Ensures barcode is centered */
+  border-radius: 10px; /* ✅ Smooth rounded edges */
 }

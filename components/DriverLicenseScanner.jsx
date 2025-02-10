@@ -232,9 +232,9 @@ function DriverLicenseScanner({ onScanSuccess }) {
       const constraints = {
         video: {
           facingMode: "environment",
-          width: { ideal: 1280, min: 640 }, 
-          height: { ideal: 720, min: 480 }, 
-          aspectRatio: isMobile ? 4 / 3 : 5 / 3, // ✅ Ensures correct ratio
+          width: isMobile ? { exact: 960 } : { exact: 1920 }, // ✅ Reduce width for mobile
+          height: isMobile ? { exact: 480 } : { exact: 1080 }, // ✅ Reduce height for mobile
+          aspectRatio: isMobile ? 4 / 3 : 5 / 3, // ✅ Adjust aspect ratio dynamically
           focusMode: "continuous",
           depthNear: 0.2,
           depthFar: 1.0,
