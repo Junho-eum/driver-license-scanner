@@ -32,6 +32,13 @@ function DriverLicenseScanner({ onScanSuccess }) {
     return () => stopScanner(); // Cleanup on unmount
   }, [scanning]);
 
+  useEffect(() => {
+    if (isMobile) {
+      forceLandscapeMode();
+    }
+  }, [isMobile]);
+
+  
   // ✅ Upload Photo Handler
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -78,6 +85,16 @@ function DriverLicenseScanner({ onScanSuccess }) {
     return parsedData;
   };
 
+  const forceLandscapeMode = async () => {
+    if (screen.orientation && screen.orientation.lock) {
+      try {
+        await screen.orientation.lock("landscape");
+      } catch (err) {
+        console.warn("⚠️ Orientation lock failed:", err);
+      }
+    }
+  };
+  
   const calculateBrightness = (imageData) => {
     let total = 0;
     const pixels = imageData.data;
@@ -204,15 +221,9 @@ function DriverLicenseScanner({ onScanSuccess }) {
       const constraints = {
         video: {
           facingMode: "environment",
-          width: isMobile
-            ? { ideal: window.innerHeight > window.innerWidth ? 1920 : 1280, min: 640 } // 🔥 Force wider view when in landscape
-            : { ideal: 1920, min: 1280 }, // Desktop uses standard HD
-          height: isMobile
-            ? { ideal: window.innerHeight > window.innerWidth ? 1080 : 960, min: 480 }
-            : { ideal: 1080, min: 720 },
-          aspectRatio: isMobile
-            ? window.innerHeight > window.innerWidth ? 16 / 9 : 4 / 3 // 🔥 Adjust for landscape vs portrait
-            : 5 / 3, // Desktop aspect ratio
+          width: { ideal: 1280, min: 640 }, 
+          height: { ideal: 720, min: 480 }, 
+          aspectRatio: isMobile ? 4 / 3 : 5 / 3, // ✅ Ensures correct ratio
           focusMode: "continuous",
           depthNear: 0.2,
           depthFar: 1.0,
@@ -354,10 +365,11 @@ function DriverLicenseScanner({ onScanSuccess }) {
           style={{
             width: "100%",
             height: "auto",
-            transform: isMobile && window.innerHeight > window.innerWidth ? "rotate(90deg)" : "none",
+            transform: isMobile && window.innerHeight > window.innerWidth ? "rotate(90deg) scaleX(-1)" : "scaleX(-1)", 
             objectFit: "cover",
           }}
         />
+
 
 
         
