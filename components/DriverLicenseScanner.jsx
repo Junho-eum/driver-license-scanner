@@ -32,11 +32,11 @@ function DriverLicenseScanner({ onScanSuccess }) {
     return () => stopScanner(); // Cleanup on unmount
   }, [scanning]);
 
-  useEffect(() => {
-    if (isMobile) {
-      forceLandscapeMode();
-    }
-  }, [isMobile]);
+  // useEffect(() => {
+  //   if (isMobile) {
+  //     forceLandscapeMode();
+  //   }
+  // }, [isMobile]);
 
   
   // ✅ Upload Photo Handler
