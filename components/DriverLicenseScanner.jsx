@@ -189,9 +189,9 @@ function DriverLicenseScanner({ onScanSuccess }) {
       const constraints = {
         video: {
           facingMode: "environment",
-          width: isMobile ? { exact: 960 } : { exact: 1920 }, // ✅ Reduce width for mobile
-          height: isMobile ? { exact: 480 } : { exact: 1080 }, // ✅ Reduce height for mobile
-          aspectRatio: isMobile ? 4 / 3 : 5 / 3, // ✅ Adjust aspect ratio dynamically
+          width: isMobile ? { ideal: 1280, min: 640 } : { ideal: 1920, min: 1280 }, // 🔥 Adjust for mobile
+          height: isMobile ? { ideal: 960, min: 480 } : { ideal: 1080, min: 720 },
+          aspectRatio: isMobile ? 4 / 3 : 5 / 3, // 🔥 Try enforcing 4:3 for mobile
           focusMode: "continuous",
           depthNear: 0.2,
           depthFar: 1.0,

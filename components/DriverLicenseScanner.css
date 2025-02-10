@@ -13,8 +13,9 @@
 /* 📌 Mobile View: Adjust Aspect Ratio */
 @media (max-width: 768px) {
   .video-container {
-    max-width: 100%; /* ✅ Full width for mobile */
-    aspect-ratio: 5 / 3; /* ✅ Adjusts height to prevent vertical stretching */
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3; /* 🔥 Try 4:3, common for mobile cameras */
   }
 }
 
