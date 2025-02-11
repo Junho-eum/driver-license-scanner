@@ -98,7 +98,7 @@ function DriverLicenseScanner({ onScanSuccess }) {
           facingMode: "environment",
           width: isMobile ? { exact: 960 } : { exact: 1920 }, // ✅ Reduce width for mobile
           height: isMobile ? { exact: 300 } : { exact: 1080 }, // ✅ Reduce height for mobile
-          aspectRatio: isMobile ? 4 / 3 : 5 / 3, // ✅ Adjust aspect ratio dynamically
+          aspectRatio: isMobile ? 6 / 4 : 5 / 3, // ✅ Adjust aspect ratio dynamically
           focusMode: "continuous",
           depthNear: 0.2,
           depthFar: 1.0,
@@ -222,7 +222,7 @@ function DriverLicenseScanner({ onScanSuccess }) {
         className="video-container"
         style={{
           maxWidth: isMobile ? "100%" : "800px", // ✅ Adjust width dynamically
-          aspectRatio: isMobile ? "3 / 4" : "5 / 3", // ✅ Change ratio dynamically
+          aspectRatio: isMobile ? "6 / 4" : "5 / 3", // ✅ Change ratio dynamically
         }}
       >
         <video ref={videoRef} autoPlay playsInline muted />
