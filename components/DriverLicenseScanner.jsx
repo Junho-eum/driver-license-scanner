@@ -189,61 +189,50 @@ function DriverLicenseScanner({ onScanSuccess }) {
   };
 
   return (
-    <div style={{ textAlign: "center" }}>
-      <h2>Scan Your Driver's License</h2>
-      <div style={{ fontWeight: "bold", color: "white" }}>
+    <div className="container">
+      <h2 className="heading">Scan Your Driver's License</h2>
+      <div className="instructions">
         📸 Please arrange your driver's license properly:
         <ul>
-          <ul>Hold it flat without tilting</ul>
-          <ul>Keep the camera still to capture the barcode properly</ul>
-          <ul>Ensure good lighting</ul>
+          <li>Hold it flat without tilting</li>
+          <li>Keep the camera still to capture the barcode properly</li>
+          <li>Ensure good lighting</li>
         </ul>
       </div>
       {showMessage && (
         <p
           id="scanStatus"
+          className="scan-status"
           style={{
             color: scanStatus.includes("❌")
-              ? "red" // Critical errors (e.g., no camera, access denied)
+              ? "red"
               : scanStatus.includes("⚠️")
-              ? "yellow" // Warnings (e.g., tilted barcode, bad lighting)
+              ? "yellow"
               : scanStatus.includes("📸")
-              ? "white" // Camera alignment instructions
-              : "white", // Default
-            fontWeight: "bold",
+              ? "white"
+              : "white",
           }}
         >
           {scanStatus}
         </p>
       )}
 
-      {/* 📌 Video Scanner Box (Responsive for Mobile & Desktop) */}
-      <div
-        className="video-container"
-        style={{
-          maxWidth: isMobile ? "100%" : "800px", // ✅ Adjust width dynamically
-          aspectRatio: isMobile ? "6 / 4" : "5 / 3", // ✅ Change ratio dynamically
-        }}
-      >
+      <div className="video-container">
         <video ref={videoRef} autoPlay playsInline muted />
       </div>
 
-      {/* Display Scan Status Message (Success/Error) */}
-
-      {/* Upload Image Button */}
-      <div style={{ marginTop: "20px" }}>
+      <div className="upload-section">
         <h3>Upload Back of License</h3>
         <input type="file" accept="image/*" onChange={handleFileUpload} />
       </div>
 
-      {/* Display Uploaded Image Preview */}
       {uploadedImage && (
-        <div style={{ marginTop: "10px" }}>
+        <div>
           <h3>Uploaded Image:</h3>
           <img
             src={uploadedImage}
             alt="Uploaded License"
-            style={{ width: "300px", border: "2px solid black" }}
+            className="uploaded-image"
           />
           <DecodeDL
             imageSrc={uploadedImage}
@@ -260,7 +249,12 @@ function DriverLicenseScanner({ onScanSuccess }) {
       )}
 
       {!scanning && (
-        <button onClick={() => window.location.reload()}>Scan Again</button>
+        <button
+          className="scan-again-button"
+          onClick={() => window.location.reload()}
+        >
+          Scan Again
+        </button>
       )}
     </div>
   );
