@@ -109,9 +109,9 @@ function DriverLicenseScanner({ onScanSuccess }) {
       const track = stream.getVideoTracks()[0];
       const capabilities = track.getCapabilities();
 
-      if (capabilities.torch) {
-        track.applyConstraints({ advanced: [{ torch: true }] });
-      }
+      // if (capabilities.torch) {
+      //   track.applyConstraints({ advanced: [{ torch: true }] });
+      // }
 
       if (videoRef.current) {
         console.log("✅ Attaching high-res video stream...");
