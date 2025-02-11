@@ -2,6 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { BrowserMultiFormatReader, BarcodeFormat } from "@zxing/browser";
 import DecodeDL from "./DecodeDL";
 import "./DriverLicenseScanner.css"; // ✅ Import CSS file
+import {
+  calculateBrightness,
+  detectBlurriness,
+  detectTilt,
+  detectDistance,
+  monitorScanningIssues,
+} from "./cameraUtils"; // Import functions from cameraUtils.js
 
 function DriverLicenseScanner({ onScanSuccess }) {
   const [isMobile, setIsMobile] = useState(false);
@@ -22,15 +29,15 @@ function DriverLicenseScanner({ onScanSuccess }) {
     // ✅ Detect if the user is on a mobile device
     setIsMobile(/iPhone|iPad|Android/i.test(navigator.userAgent));
   }, []);
-  
-  let scanningActive = true; // ✅ Prevents continuous execution
 
   useEffect(() => {
     if (scanning) {
       startZXingScanner();
     }
-    return () => stopScanner(); // Cleanup on unmount
+    return async () => await stopScanner(); // Cleanup on unmount
   }, [scanning]);
+
+  const scanningActiveRef = useRef(true); // ✅ Prevents continuous execution
 
   // ✅ Upload Photo Handler
   const handleFileUpload = (event) => {
@@ -78,110 +85,10 @@ function DriverLicenseScanner({ onScanSuccess }) {
     return parsedData;
   };
 
-  const calculateBrightness = (imageData) => {
-    let total = 0;
-    const pixels = imageData.data;
-    for (let i = 0; i < pixels.length; i += 4) {
-      const r = pixels[i];
-      const g = pixels[i + 1];
-      const b = pixels[i + 2];
-      total += (r + g + b) / 3;
-    }
-    return total / (pixels.length / 4);
-  };
-
-  const detectBlurriness = (imageData) => {
-    let totalDifference = 0;
-    const pixels = imageData.data;
-
-    for (let i = 0; i < pixels.length - 4; i += 4) {
-      const diff = Math.abs(pixels[i] - pixels[i + 4]); // Compare adjacent pixels
-      totalDifference += diff;
-    }
-
-    return totalDifference / (pixels.length / 4);
-  };
-
-  const detectTilt = (videoElement) => {
-    const rect = videoElement.getBoundingClientRect();
-    const aspectRatio = rect.width / rect.height;
-
-    if (aspectRatio > 1.8 || aspectRatio < 1.2) {
-      return Math.abs(aspectRatio - 1.5) * 25; // Adjusted sensitivity
-    }
-    return 0;
-  };
-
-  const detectDistance = (videoElement) => {
-    const rect = videoElement.getBoundingClientRect();
-    const widthRatio = rect.width / window.innerWidth;
-    const heightRatio = rect.height / window.innerHeight;
-
-    // ✅ If barcode size is too small, it's too far
-    if (widthRatio < 0.3 || heightRatio < 0.3) {
-      return true; // License is too far
-    }
-    return false;
-  };
-
-  const monitorScanningIssues = () => {
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-
-    let lastMessage = ""; // Store last displayed message to avoid unnecessary updates
-
-    setInterval(() => {
-      if (!videoRef.current) return;
-
-      canvas.width = videoRef.current.videoWidth;
-      canvas.height = videoRef.current.videoHeight;
-      ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const brightness = calculateBrightness(imageData);
-      const blurLevel = detectBlurriness(imageData);
-      const barcodeAngle = detectTilt(videoRef.current);
-      const isTooFar = detectDistance(videoRef.current); // ✅ Detect Distance
-
-      let message = "";
-
-      // ✅ Detect lighting issues
-      if (brightness < 40) {
-        message =
-          "⚠️ Too dark! Move to a brighter area or turn on the flashlight.";
-      } else if (brightness > 220) {
-        message = "⚠️ Too bright! Reduce glare by adjusting your angle.";
-      }
-
-      // ✅ Detect blurriness
-      if (blurLevel < 5) {
-        message =
-          "⚠️ Barcode too blurry! Hold steady or ensure the camera lens is clean.";
-      }
-
-      // ✅ Detect tilt issues
-      if (barcodeAngle > 10) {
-        message = "⚠️ Barcode tilted! Keep the license flat and avoid angles.";
-      }
-
-      // ✅ Detect if the license is too far
-      if (isTooFar) {
-        message = "⚠️ License too far! Move closer to the camera for scanning.";
-      }
-
-      // ✅ Only update message if it's different to prevent unnecessary updates
-      if (message && message !== lastMessage) {
-        setScanStatus(message);
-        lastMessage = message;
-      }
-    }, 500);
-  };
-
-
   // ✅ Start ZXing Live Scanner (Preserving other logic)
   const startZXingScanner = async () => {
     console.log("🎥 Starting ZXing scanner...");
-    scanningActive = true;
+    scanningActiveRef.current = true;
     const codeReader = new BrowserMultiFormatReader();
     codeReaderRef.current = codeReader;
 
@@ -189,9 +96,9 @@ function DriverLicenseScanner({ onScanSuccess }) {
       const constraints = {
         video: {
           facingMode: "environment",
-          width: isMobile ? { ideal: 1280, min: 640 } : { ideal: 1920, min: 1280 }, // 🔥 Adjust for mobile
-          height: isMobile ? { ideal: 960, min: 480 } : { ideal: 1080, min: 720 },
-          aspectRatio: isMobile ? 4 / 3 : 5 / 3, // 🔥 Try enforcing 4:3 for mobile
+          width: isMobile ? { exact: 960 } : { exact: 1920 }, // ✅ Reduce width for mobile
+          height: isMobile ? { exact: 480 } : { exact: 1080 }, // ✅ Reduce height for mobile
+          aspectRatio: isMobile ? 4 / 3 : 5 / 3, // ✅ Adjust aspect ratio dynamically
           focusMode: "continuous",
           depthNear: 0.2,
           depthFar: 1.0,
@@ -202,9 +109,9 @@ function DriverLicenseScanner({ onScanSuccess }) {
       const track = stream.getVideoTracks()[0];
       const capabilities = track.getCapabilities();
 
-      // if (capabilities.torch) {
-      //   track.applyConstraints({ advanced: [{ torch: true }] });
-      // }
+      if (capabilities.torch) {
+        track.applyConstraints({ advanced: [{ torch: true }] });
+      }
 
       if (videoRef.current) {
         console.log("✅ Attaching high-res video stream...");
@@ -212,28 +119,25 @@ function DriverLicenseScanner({ onScanSuccess }) {
         videoRef.current.play();
 
         // ✅ Start issue detection
-        monitorScanningIssues();
+        monitorScanningIssues(videoRef, setScanStatus);
       }
-      
 
       codeReader.decodeFromVideoDevice(
         undefined,
         videoRef.current,
         async (result, err) => {
-          if (!scanningActive) return;
+          if (!scanningActiveRef.current) return;
 
           if (result) {
             const format = result.getBarcodeFormat();
             if (format === BarcodeFormat.PDF_417) {
               console.log("✅ PDF417 Barcode Scanned:", result.getText());
-              scanningActive = false;
+              scanningActiveRef.current = false;
               processScannedBarcode(result.getText());
               await stopScanner();
-            } else if (scanningActive) {
+            } else if (scanningActiveRef.current) {
               console.warn("❌ Ignoring non-PDF417 barcode:", format);
               setShowMessage(true); // ✅ Show message once an invalid barcode is detected
-            
-              
             }
           }
         },
@@ -249,7 +153,6 @@ function DriverLicenseScanner({ onScanSuccess }) {
       );
     }
   };
-
 
   // ✅ Process the scanned barcode
   const processScannedBarcode = (barcode) => {
@@ -269,7 +172,7 @@ function DriverLicenseScanner({ onScanSuccess }) {
   // ✅ Stop Camera Scanner
   const stopScanner = async () => {
     console.log("🛑 Stopping scanner...");
-    scanningActive = false; // ✅ Prevent future detections
+    scanningActiveRef.current = false; // ✅ Prevent future detections
 
     if (codeReaderRef.current) {
       await codeReaderRef.current.reset(); // ✅ Stop decoding immediately
@@ -284,7 +187,6 @@ function DriverLicenseScanner({ onScanSuccess }) {
 
     setScanning(false);
   };
-
 
   return (
     <div style={{ textAlign: "center" }}>
