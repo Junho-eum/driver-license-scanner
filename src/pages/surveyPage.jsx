@@ -25,6 +25,9 @@ import '../survey-components/CustomMatrixComponent';
 
 //import { from } from "json2csv/JSON2CSVTransform";
 import '../survey-components/CustomMatrixComponent';
+import { render } from "react-dom";
+
+import ScannerPage from "./ScannerPage";
 // good resource: https://github.com/mongodb-developer/mern-stack-example/
 
 const storageItemKey = "survey-data";
@@ -128,8 +131,11 @@ function getTimeStampPageEntered() {
 }
 
 export default function SurveyPage() {
+  // create state to track when to switch from SurveyJS to ScannerPage
+  const [renderComponent, setRenderComponent] = useState("surveyjs");
 
-  const [openWindowTooSmallDialogue, setOpenWindowTooSmallDialogue] = useState(false);
+  const [openWindowTooSmallDialogue, setOpenWindowTooSmallDialogue] =
+    useState(false);
 
   const [survey] = useState(new Model(surveyJson));
 
@@ -153,13 +159,13 @@ export default function SurveyPage() {
   survey.onValueChanged.add(saveSurveyData);
   survey.onCurrentPageChanged.add(saveSurveyData);
   survey.applyTheme({
-    "cssVariables": {
+    cssVariables: {
       "--sjs-font-size": "20px", // according to this paper, 18px should be the minimum font size for text-heavy websites: https://pielot.org/pubs/Rello2016-Fontsize.pdf
     },
-    "isPanelless": false,
-    "themeName": "default",
-    "colorPalette": "light"
-  })
+    isPanelless: false,
+    themeName: "default",
+    colorPalette: "light",
+  });
 
   // custom widgets and components
   ExamConfirmationButton(survey);
@@ -180,8 +186,8 @@ export default function SurveyPage() {
   survey.onAfterRenderPage.add((survey, options) => {
     const pageName = survey.currentPage?.name || survey.currentPageNo;
     let times = survey.getValue("timeSpentOnPages") || {};
-    times[pageName] = {timeStampEntered: Date.now(), timeStampLeft: null};
-    survey.setValue('timeSpentOnPages', times)
+    times[pageName] = { timeStampEntered: Date.now(), timeStampLeft: null };
+    survey.setValue("timeSpentOnPages", times);
   });
 
   // Called BEFORE leaving the current page
@@ -203,7 +209,14 @@ export default function SurveyPage() {
     // Save to localStorage so future calls won't overwrite it with null
     localStorage.setItem("endDate", endDate);
     localStorage.setItem("finished", "true");
-    await SendToServer(updatedData, cDataProlific, cDataTreatment, WD, startDate, endDate);
+    await SendToServer(
+      updatedData,
+      cDataProlific,
+      cDataTreatment,
+      WD,
+      startDate,
+      endDate
+    );
     window.location.href = "/end";
   };
 
@@ -218,8 +231,21 @@ export default function SurveyPage() {
     // Pull the existing endDate (if any) from localStorage
     const storedEndDate = getEndDateOrNull();
 
-    await SendToServer(updatedData, cDataProlific, cDataTreatment, WD, startDate, storedEndDate);
+    await SendToServer(
+      updatedData,
+      cDataProlific,
+      cDataTreatment,
+      WD,
+      startDate,
+      storedEndDate
+    );
     getWithExpiry();
+
+    // Check if the current page is "ai_instruction_audit_page"
+    if (survey.currentPage.name === "example_instructions_page") {
+      // Switch to ScannerPage
+      setRenderComponent("scanner");
+    }
   });
 
   // gotta do it this way to actually send to the survey, yes it's annoying
@@ -228,11 +254,18 @@ export default function SurveyPage() {
     const cDataTreatment = Cookies.get("treatment");
     const updatedData = survey.data;
     const WD = "false";
-    const endDate = new Date().toISOString()
+    const endDate = new Date().toISOString();
     // Save to localStorage
     localStorage.setItem("endDate", endDate);
 
-    await SendToServer(updatedData, cDataProlific, cDataTreatment, WD, startDate, endDate);
+    await SendToServer(
+      updatedData,
+      cDataProlific,
+      cDataTreatment,
+      WD,
+      startDate,
+      endDate
+    );
     window.location.href = "/end";
   });
 
@@ -245,24 +278,61 @@ export default function SurveyPage() {
   });
 
   useEffect(() => {
-    if (surveyRef != null) {
+    const handlePageChange = (survey) => {
+      if (survey.currentPage.name === "example_instructions_page") {
+        setRenderComponent("scanner");
+
+        console.log("Switching to ScannerPage");
+      }
+    };
+
+    survey.onCurrentPageChanged.add(handlePageChange);
+
+    return () => {
+      survey.onCurrentPageChanged.remove(handlePageChange);
+    };
+  }, [survey]);
+
+  useEffect(() => {
+    if (renderComponent === "surveyjs" && surveyRef.current) {
       surveyWindowSizeCheck.observe(surveyRef.current.rootRef.current);
+    } else {
+      surveyWindowSizeCheck.disconnect(); // 🛑 Stop checking when ScannerPage is active
     }
-  }, [surveyRef]);
+
+    return () => {
+      surveyWindowSizeCheck.disconnect(); // ✅ Ensure cleanup when component unmounts
+    };
+  }, [surveyRef, renderComponent]); // ✅ Runs only when surveyRef or renderComponent changes
 
   return (
     <>
+      {/* Top Bar with Opt-Out Button */}
       <div>
         <TopBar>
           <OptOutButton handleWithdrawSurvey={handleWithdrawSurvey} />
         </TopBar>
 
+        {/* Progress Bar */}
         <PercentageProgressBar surveyModel={survey} title="Progress" />
       </div>
 
-      {/* Dialogue for window too small TODO: move to web-components */}
+      {/* Conditional Rendering Based on renderComponent State */}
+      {renderComponent === "surveyjs" ? (
+        <Survey
+          className="container mx-auto my-auto"
+          model={survey}
+          ref={surveyRef}
+        />
+      ) : renderComponent === "scanner" ? (
+        <ScannerPage onComplete={() => setRenderComponent("surveyjs")} />
+      ) : (
+        <div>Invalid component to render</div>
+      )}
+
+      {/* Dialogue for Small Window Size */}
       <Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={openWindowTooSmallDialogue}
       >
         <Card>
@@ -275,17 +345,28 @@ export default function SurveyPage() {
                 <Typography gutterBottom variant="h5" component="div">
                   Please increase the width of your browser window.
                 </Typography>
-                <p>To ensure a high quality of our survey, we want to make sure that all questions are displayed correctly for all participants.</p>
+                <p>
+                  To ensure a high quality of our survey, we want to make sure
+                  that all questions are displayed correctly for all
+                  participants.
+                </p>
               </Grid>
-              <Grid item xs style={{ display: "flex", alignItems: "center", direction: "rtl", textAlign: "justify" }}>
+              <Grid
+                item
+                xs
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  direction: "rtl",
+                  textAlign: "justify",
+                }}
+              >
                 <ArrowForwardIosIcon fontSize="large" />
               </Grid>
             </Grid>
           </CardContent>
         </Card>
       </Backdrop>
-      
-      <Survey className="container mx-auto my-auto" model={survey} ref={surveyRef} />
     </>
   );
 }

@@ -2,6 +2,8 @@ import consent_page from './surveyPages/consent_page.jsx';
 import SA6_page from './surveyPages/SA6_page.jsx';
 import example_instructions_page from './surveyPages/example_instructions_page.jsx';
 import example_custom_matrix_page from './surveyPages/example_custom_matrix_page.jsx';
+import ScannerPage from "./pages/ScannerPage.jsx";
+
 
 const surveyJson = {
   progressTitle: "Survey Progress",
@@ -13,11 +15,12 @@ const surveyJson = {
       html: "<div class=\"container mb-4\"><div class=\"bg-light p-5\"><h4>You have successfully withdrawn from this survey. Thank you for participating!</h4><hr class=\"my-4\"><p class=\"lead\">We will not use your answers. Please return the task in Prolific so that others may take the survey. You may close this browser window now.</p></div></div><surveyjs-feedback-form withdrawn=\"true\"></surveyjs-feedback-form>"
     }
   ],
+  // lists all pages in order and SurveyJS renders them in order
   pages: [
     consent_page, 
     example_instructions_page,
-    example_custom_matrix_page,
-    SA6_page
+    // example_custom_matrix_page,
+    // SA6_page
   ],
   sendResultOnPageNext: true,
   showPrevButton: false,
