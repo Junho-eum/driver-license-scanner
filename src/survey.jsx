@@ -3,7 +3,11 @@ import SA6_page from './surveyPages/SA6_page.jsx';
 import example_instructions_page from './surveyPages/example_instructions_page.jsx';
 import example_custom_matrix_page from './surveyPages/example_custom_matrix_page.jsx';
 import ScannerPage from "./pages/ScannerPage.jsx";
-
+import identity_app_usage_page from "./surveyPages/identity_app_usage_page.jsx";
+import privacy_concerns_matrix_page from './surveyPages/privacy_concerns_matrix_page.jsx';
+import selective_disclosure_page from './surveyPages/selective_disclosure_page.jsx';
+import data_retention_page from './surveyPages/data_retention_page.jsx';
+import { data } from 'autoprefixer';
 
 const surveyJson = {
   progressTitle: "Survey Progress",
@@ -19,6 +23,11 @@ const surveyJson = {
   pages: [
     consent_page, 
     example_instructions_page,
+    identity_app_usage_page,
+    privacy_concerns_matrix_page,
+    selective_disclosure_page,
+    data_retention_page,
+    example_custom_matrix_page,
     // example_custom_matrix_page,
     // SA6_page
   ],

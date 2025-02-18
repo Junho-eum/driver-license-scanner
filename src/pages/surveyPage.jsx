@@ -242,7 +242,7 @@ export default function SurveyPage() {
     getWithExpiry();
 
     // Check if the current page is "ai_instruction_audit_page"
-    if (survey.currentPage.name === "example_instructions_page") {
+    if (survey.currentPage.name === "example_custom_matrix_page") {
       // Switch to ScannerPage
       setRenderComponent("scanner");
     }
@@ -279,7 +279,7 @@ export default function SurveyPage() {
 
   useEffect(() => {
     const handlePageChange = (survey) => {
-      if (survey.currentPage.name === "example_instructions_page") {
+      if (survey.currentPage.name === "example_custom_matrix_page") {
         setRenderComponent("scanner");
 
         console.log("Switching to ScannerPage");
