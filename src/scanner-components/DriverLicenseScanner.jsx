@@ -190,8 +190,11 @@ function DriverLicenseScanner({ onScanSuccess }) {
 
   return (
     <div className="container">
-      <h2 className="heading">Scan Your Driver's License</h2>
+      
       <div className="instructions">
+      <h1 style={{ textAlign: "center", maxWidth: "400px", margin: "auto" }}>
+        Driver's License Scanner
+      </h1>
         📸 Please arrange your driver's license properly:
         <ul>
           <li>Hold it flat without tilting</li>

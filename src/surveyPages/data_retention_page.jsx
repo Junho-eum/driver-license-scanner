@@ -1,5 +1,6 @@
 const data_retention_page = {
   name: "data_retention_page",
+  title: "Data Retention",
   elements: [
     {
       type: "html",
@@ -9,7 +10,7 @@ const data_retention_page = {
                 </h1><br><p class="lead"><p>
                 Data retention policies in identity proofing services determine how long your personal data is stored after verification.  
                 <br><br>
-                This study explores your perceptions, concerns, and preferences regarding data retention in digital identity proofing.  
+                This section explores your perceptions, concerns, and preferences regarding data retention in digital identity proofing.  
                 <br><br>
                 Please answer the following questions based on your personal experiences and opinions.
             </p></html>`,
@@ -21,10 +22,10 @@ const data_retention_page = {
         "Would you be comfortable with identity proofing requesters storing some of your identity data for future verification?",
       isRequired: true,
       rateValues: [
-        { value: 1, text: "1 - Not comfortable at all" },
-        { value: 2, text: "2" },
+        { value: 1, text: "1 - Very uncomfortable" },
+        { value: 2, text: "2 - Slightly uncomfortable" },
         { value: 3, text: "3 - Neutral" },
-        { value: 4, text: "4" },
+        { value: 4, text: "4 - Slightly comfortable" },
         { value: 5, text: "5 - Very comfortable" },
       ],
     },
@@ -41,7 +42,15 @@ const data_retention_page = {
         "Date of birth",
         "Address",
         "ID number",
-        "None, I don’t want my information stored.",
+        "Issuance state",
+        "Issuance date",
+        "Expiration date",
+        "Sex",
+        "Height",
+        "Weight",
+        "Hair color",
+        "Eye color",
+        "None of the above",
       ],
       colCount: 2,
       showOtherItem: true,
@@ -68,9 +77,9 @@ const data_retention_page = {
       isAllRowRequired: true,
       columns: [
         { value: 1, text: "1 - Strongly disagree" },
-        { value: 2, text: "2" },
+        { value: 2, text: "2 - Somewhat disagree" },
         { value: 3, text: "3 - Neutral" },
-        { value: 4, text: "4" },
+        { value: 4, text: "4 - Somewhat agree" },
         { value: 5, text: "5 - Strongly agree" },
       ],
       rows: [
@@ -116,10 +125,6 @@ const data_retention_page = {
         {
           value: "delete_one_week",
           text: "Data should be deleted within a week.",
-        },
-        {
-          value: "retain_with_consent",
-          text: "Data should be retained only if the user consents.",
         },
         {
           value: "long_term_secure",

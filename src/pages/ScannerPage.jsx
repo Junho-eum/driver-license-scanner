@@ -22,10 +22,6 @@ function ScannerPage({ onComplete }) {
   
   return (
     <div>
-      <h1 style={{ textAlign: "center", maxWidth: "400px", margin: "auto" }}>
-        Driver's License Scanner
-      </h1>
-
       {/* ✅ Render new page with parsed data after scanning */}
       {scanComplete ? (
         <div>

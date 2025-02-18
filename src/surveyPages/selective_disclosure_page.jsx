@@ -1,15 +1,15 @@
 const selective_disclosure_page = {
   name: "selective_disclosure_page",
+  title: "Selective Disclosure",
   elements: [
     {
       type: "html",
       name: "consent_text",
-      html: `<html><h1 class="text-uppercase" style="font-size:30px;">
-                Selective Disclosure in Digital Identity Proofing
-                </h1><br><p class="lead"><p>
+      
+      html: `<html><br><p class="lead"><p>
                 Selective data disclosure allows users to share only the necessary personal information for identity proofing. 
                 <br><br>
-                This study aims to explore your perceptions and willingness to share specific identity attributes in different identity proofing scenarios. 
+                This section aims to explore your perceptions and willingness to share specific identity attributes in different identity proofing scenarios. 
                 <br><br>
                 Please answer the following questions based on your personal experiences and opinions.
             </p></html>`,
@@ -66,9 +66,9 @@ const selective_disclosure_page = {
       isRequired: true,
       rateValues: [
         { value: 1, text: "1 - Not influential at all" },
-        { value: 2, text: "2" },
+        { value: 2, text: "2 - slightly not influential" },
         { value: 3, text: "3 - Neutral" },
-        { value: 4, text: "4" },
+        { value: 4, text: "4 - slightly influential" },
         { value: 5, text: "5 - Very influential" },
       ],
     },

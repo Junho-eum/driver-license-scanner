@@ -14,8 +14,8 @@
 /* Instructions Styles */
 .instructions {
   text-align: center;
-  font-weight: bold;
-  color: white;
+  /* font-weight: bold; */
+  color: black;
   margin-bottom: 20px;
 }
 
@@ -31,6 +31,7 @@
 /* Video Container Styles */
 .video-container {
   width: 100%;
+  height: 100%;
   max-width: 600px; /* ✅ Limit width on large screens */
   aspect-ratio: 6 / 4; /* ✅ Wider ratio for proper license scanning */
   border: 2px solid black;
@@ -38,6 +39,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-left: 190px;
 }
 
 /* 📌 Mobile View: Adjust Aspect Ratio */
@@ -52,9 +54,8 @@
 /* 📌 Video Styling */
 .video-container video {
   width: 100%;
-  height: auto;
+  height: 100%;
   object-fit: cover; /* ✅ Ensures barcode is centered */
-  border-radius: 10px; /* ✅ Smooth rounded edges */
 }
 
 /* Upload Section Styles */

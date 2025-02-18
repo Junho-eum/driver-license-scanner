@@ -1,5 +1,6 @@
 const privacy_concerns_matrix_page = {
   name: "privacy_concerns_matrix_page",
+  title: "Privacy Concern Scale",
   elements: [
     {
       type: "custom-matrix",
@@ -14,19 +15,27 @@ const privacy_concerns_matrix_page = {
         },
         {
           value: 2,
-          text: "2",
+          text: "2 - Disagree",
         },
         {
           value: 3,
-          text: "3",
+          text: "3 -Somewhat disagree",
         },
         {
           value: 4,
-          text: "4",
+          text: "4 - Neutral",
         },
         {
           value: 5,
-          text: "5 - Strongly agree",
+          text: "5 - Somewhat agree",
+        },
+        {
+          value: 6,
+          text: "6 - Agree",
+        },
+        {
+          value: 7,
+          text: "7 - Strongly agree",
         },
       ],
       rows: [
@@ -70,26 +79,29 @@ const privacy_concerns_matrix_page = {
           value: "awareness_personal_info_use",
           text: "It is very important to me that I am aware and knowledgeable about how my personal information will be used.",
         },
-        {
-          type: "radiogroup",
-          name: "q-digital-id-influence",
-          title:
-            "Which factor most influences your decision to use a digital ID for identity proofing?",
-          isRequired: true,
-          choices: [
-            { value: "privacy_concern", text: "Personal privacy concern" },
-            { value: "ease_of_use", text: "Ease of use" },
-            { value: "familiarity", text: "Familiarity with the method" },
-            { value: "security", text: "Security of personal information" },
-            { value: "accuracy", text: "Accuracy of the verification method" },
-            { value: "trust", text: "Trust in the verification provider" },
-          ],
-          colCount: 2,
-        },
       ],
       alternateRows: true,
       isAllRowRequired: true,
       rowsOrder: "random",
+      cellFit: true,
+      isResponsive: true,
+      columnsFit: true,
+    },
+    {
+      type: "radiogroup",
+      name: "q-digital-id-influence",
+      title:
+        "Which factor most influences your decision to use a digital ID for identity proofing?",
+      isRequired: true,
+      choices: [
+        { value: "privacy_concern", text: "Personal privacy concern" },
+        { value: "ease_of_use", text: "Ease of use" },
+        { value: "familiarity", text: "Familiarity with the method" },
+        { value: "security", text: "Security of personal information" },
+        { value: "accuracy", text: "Accuracy of the verification method" },
+        { value: "trust", text: "Trust in the verification provider" },
+      ],
+      colCount: 2,
     },
     {
       type: "html",

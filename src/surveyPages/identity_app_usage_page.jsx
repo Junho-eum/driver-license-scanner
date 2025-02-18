@@ -1,12 +1,11 @@
 const ai_usage_page = {
   name: "ai-usage_page",
+  title: "Online Identity Proofing Experience",
   elements: [
     {
       type: "html",
       name: "consent_text",
-      html: `<html><h1 class="text-uppercase" style="font-size:30px;">
-                Online Identity Proofing Experience
-                </h1><br><p class="lead"><p>
+      html: `<html><br><p class="lead"><p>
                 Online identity proofing is used to verify a person's identity for various online activities, such as purchasing age-restricted products or accessing certain services. 
                 <br><br>
                 This study aims to explore your experiences with online identity proofing and understand your perceptions, concerns, and preferences regarding digital identity verification methods.

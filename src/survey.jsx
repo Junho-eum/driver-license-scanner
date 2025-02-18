@@ -22,11 +22,11 @@ const surveyJson = {
   // lists all pages in order and SurveyJS renders them in order
   pages: [
     consent_page, 
-    example_instructions_page,
-    identity_app_usage_page,
-    privacy_concerns_matrix_page,
-    selective_disclosure_page,
-    data_retention_page,
+    // example_instructions_page,
+    // identity_app_usage_page,
+    // privacy_concerns_matrix_page,
+    // selective_disclosure_page,
+    // data_retention_page,
     example_custom_matrix_page,
     // example_custom_matrix_page,
     // SA6_page
